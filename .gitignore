@@ -16,6 +16,11 @@
 # production
 /build
 
+#config
+.anima
+.idea
+.vscode
+
 # misc
 .DS_Store
 *.pem
