@@ -1,36 +1,111 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# My Portfolio Project
 
-## Getting Started
+This is a personal portfolio project built with Next.js, showcasing various web and full-stack development projects. The portfolio includes features like displaying GitHub statistics, project details, attractive homepage, resume section, contact form, and more. This README provides an overview of the project's features, setup instructions, and usage.
 
-First, run the development server:
+## Features
+
+- **Dynamic Project Slider**: View different projects with details, stack technologies, and GitHub links.
+- **GitHub Stats**: Displays the number of GitHub repositories and commits using GitHub's GraphQL API.
+- **Responsive Design**: Optimized for both desktop and mobile views.
+- **Animations**: Uses Framer Motion for smooth animations and transitions.
+- **Contact Page**: Allows users to send emails via the contact form using Nodemailer.
+- **Toast Notifications**: Provides user feedback with Sonner for toast notifications.
+- **Particle Design**: Adds interactive particle effects with tsParticles.
+- **Component Library**: Utilizes Shadcn for reusable components.
+
+## Technologies Used
+
+- **Next.js**: For server-side rendering and static site generation.
+- **React**: For building the user interface.
+- **Framer Motion**: For animations.
+- **Tailwind CSS**: For styling.
+- **Axios**: For making HTTP requests.
+- **GraphQL**: For fetching GitHub data efficiently.
+- **Nodemailer**: For sending emails from the contact page.
+- **Sonner**: For toast notifications.
+- **tsParticles**: For particle effects.
+- **Shadcn**: For component library.
+
+## Setup and Installation
+
+### Prerequisites
+
+- Node.js (v14 or higher)
+
+### Clone the Repository
+
+```bash
+git clone https://github.com/aakash-sharma-github/Portfolio.git
+cd Portfolio
+```
+
+### Install Dependencies
+
+```bash
+npm install
+```
+
+### Configure Environment Variables
+
+Create a `.env` file in the root directory and add the following environment variables:
+
+```makefile
+GITHUB_USERNAME=your-github-username
+GITHUB_TOKEN=your-github-token
+SMTP_EMAIL=your-email
+SMTP_EMAIL_PASSWORD=your-google-app-password
+```
+
+Replace `your-github-username`, `your-github-token`, and email-related variables with your credentials.
+
+### Running the Development Server
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open your browser and navigate to [http://localhost:3000](http://localhost:3000) to view the application.
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+### Building for Production
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+```bash
+npm run build
+npm start
+```
 
-## Learn More
+## Usage
 
-To learn more about Next.js, take a look at the following resources:
+### Viewing Projects
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Navigate to the main page to see a slider with different projects. Each project includes details, stack technologies, and links to GitHub repositories.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+### Viewing GitHub Stats
 
-## Deploy on Vercel
+The portfolio fetches GitHub statistics, including the total number of repositories and commits. This data is fetched from the GitHub GraphQL API.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Contact Page
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+Use the contact page to send emails. Ensure the Nodemailer configuration is set up correctly in your `.env` file.
+
+### Customizing the Project
+
+- **Projects**: Update the `projects` array in the `work` component to add or modify project details.
+- **GitHub Stats**: Modify the `fetchGitHubStats` function in the API route to customize how data is fetched and processed.
+- **Contact Form**: Update Nodemailer settings in the API route to fit your email provider's requirements.
+- **Styling**: Update styles in the `tailwind.config.js` or modify component styles directly.
+- **Particles**: Customize particle effects using tsParticles configuration.
+- **Toasts**: Adjust Sonner toast settings as needed.
+- **Components**: Use Shadcn components to enhance UI consistency.
+
+## Troubleshooting
+
+- **GitHub API Errors**: Verify that the GitHub token and username are correctly configured and have the necessary permissions.
+- **Email Sending Issues**: Ensure that Nodemailer settings and environment variables are correctly configured.
+
+## Contributing
+
+Feel free to fork the repository and submit pull requests. Contributions are welcome!
+
+## License
+
+This project is open-source.
