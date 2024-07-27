@@ -17,9 +17,9 @@
 /build
 
 #config
-.anima
-.idea
-.vscode
+/.anima
+/.idea
+/.vscode
 
 # misc
 .DS_Store

@@ -39,7 +39,6 @@ const projects = [
         ],
         image: '/images/portfolio_01.png',
         live: '',
-        msg: 'Not Live',
         github: ''
     },
     {
@@ -64,7 +63,6 @@ const projects = [
         ],
         image: '/images/portfolio_02.png',
         live: 'https://aakash-sharma-github.netlify.app/',
-        msg: 'Live',
         github: 'https://github.com/aakash-sharma-github/Portfolio_Website.git'
     },
     {
@@ -92,8 +90,14 @@ const projects = [
         ],
         image: '/images/esewa_khalti.webp',
         live: '',
-        msg: 'Not Live',
-        github: ''
+        github: [
+            {
+                frontend: 'https://github.com/aakash-sharma-github/esewa_khalti_frontend.git',
+            },
+            {
+                backend: 'https://github.com/aakash-sharma-github/esewa_khalti_backend.git',
+            }
+        ]
     },
     {
         num: '04',
@@ -120,7 +124,6 @@ const projects = [
         ],
         image: '/images/news_portal.png',
         live: '',
-        msg: 'Not Live',
         github: 'https://github.com/aakash-sharma-github/NEWS_Portal.git'
     },
     {
@@ -148,7 +151,6 @@ const projects = [
         ],
         image: '/images/wemeet.png',
         live: '',
-        msg: 'Not Live',
         github: 'https://github.com/aakash-sharma-github/WeMeet.git'
     },
     {
@@ -176,8 +178,41 @@ const projects = [
         ],
         image: '/images/book.png',
         live: '',
-        msg: 'Not Live',
         github: 'https://github.com/aakash-sharma-github/Books_Management.git'
+    },
+    {
+        num: '07',
+        category: 'Web Development',
+        title: 'Studyffy Admin Panel',
+        description:
+            'A web application that allows admin to assign online classes timing, make announcements for teachers, register new teachers and view all teachers. Built using React.js, Node.js, and MongoDB.',
+        stack: [
+            {
+                name: 'HTML 5'
+            },
+            {
+                name: 'Tailwind CSS'
+            },
+            {
+                name: 'React.js'
+            },
+            {
+                name: 'Node.js'
+            },
+            {
+                name: 'MongoDB'
+            },
+        ],
+        image: '/images/studyffy.png',
+        live: 'https://studyffy.netlify.app/',
+        github: [
+            {
+                frontend: 'https://github.com/aakash-sharma-github/studffy-frontend.git',
+            },
+            {
+                backend: 'https://github.com/aakash-sharma-github/studffy-backend.git'
+            }
+        ]
     },
 
 ]
@@ -250,32 +285,65 @@ const work = () => {
                             {/* button   */}
                             <div className="flex items-center gap-4">
                                 {/* live project btn */}
-                                <Link href={project.live} target="_blank">
+                                {project.live ? (
+                                    <Link href={project.live} target="_blank">
+                                        <TooltipProvider delayDuration={100}>
+                                            <Tooltip>
+                                                <TooltipTrigger className="w-[40px] h-[40px] rounded-full bg-white/5 flex justify-center items-center group" >
+                                                    <BsArrowUpRight className="text-white text-xl group-hover:text-accent" />
+                                                </TooltipTrigger>
+                                                <TooltipContent>
+                                                    <p>Live</p>
+                                                </TooltipContent>
+                                            </Tooltip>
+                                        </TooltipProvider>
+                                    </Link>
+                                ) : (
                                     <TooltipProvider delayDuration={100}>
                                         <Tooltip>
                                             <TooltipTrigger className="w-[40px] h-[40px] rounded-full bg-white/5 flex justify-center items-center group" >
                                                 <BsArrowUpRight className="text-white text-xl group-hover:text-accent" />
                                             </TooltipTrigger>
                                             <TooltipContent>
-                                                <p>{project.msg}</p>
+                                                <p>Not Live</p>
                                             </TooltipContent>
                                         </Tooltip>
                                     </TooltipProvider>
-                                </Link>
+                                )}
 
                                 {/* github repository link */}
-                                <Link href={project.github} target="_blank">
+                                {Array.isArray(project.github) && project.github.length === 2 ? (
                                     <TooltipProvider delayDuration={100}>
                                         <Tooltip>
                                             <TooltipTrigger className="w-[40px] h-[40px] rounded-full bg-white/5 flex justify-center items-center group" >
                                                 <BsGithub className="text-white text-xl group-hover:text-accent" />
                                             </TooltipTrigger>
                                             <TooltipContent>
-                                                <p>Github Repository</p>
+                                                <div className="flex flex-row gap-4">
+                                                    <Link href={project.github[0].frontend} target="_blank">
+                                                        <p>Frontend</p>
+                                                    </Link>
+                                                    <Link href={project.github[1].backend} target="_blank">
+                                                        <p>Backend</p>
+                                                    </Link>
+                                                </div>
                                             </TooltipContent>
                                         </Tooltip>
                                     </TooltipProvider>
-                                </Link>
+                                ) : (
+                                    <Link href={project.github} target="_blank">
+                                        <TooltipProvider delayDuration={100}>
+                                            <Tooltip>
+                                                <TooltipTrigger className="w-[40px] h-[40px] rounded-full bg-white/5 flex justify-center items-center group" >
+                                                    <BsGithub className="text-white text-xl group-hover:text-accent" />
+                                                </TooltipTrigger>
+                                                <TooltipContent>
+                                                    <p>Github Repository</p>
+                                                </TooltipContent>
+                                            </Tooltip>
+                                        </TooltipProvider>
+                                    </Link>
+                                )}
                             </div>
                         </div>
                     </div>

@@ -1,28 +1,58 @@
 "use client";
-
+import axios from 'axios';
+import React, { useEffect, useState } from 'react'
 import CountUp from "react-countup";
 
-const stats = [
-    {
-        num: 2,
-        text: "Years of experience.",
-    },
-    {
-        num: 4,
-        text: "Projects completed.",
-    },
-    {
-        num: 10,
-        text: "Technologies Learned.",
-    },
-    {
-        num: 24,
-        text: "Github Repositories.",
-    },
-
-]
 
 const Stats = () => {
+    const [repoCount, setRepoCount] = useState(0);
+    const [commitCount, setCommitCount] = useState(0);
+
+    const stats = [
+        {
+            num: 2,
+            text: "Years of experience.",
+        },
+        {
+            num: 6,
+            text: "Projects completed.",
+        },
+        {
+            num: 10,
+            text: "Technologies Learned.",
+        },
+        {
+            num: repoCount,
+            text: "Github Repositories.",
+        },
+        {
+            num: commitCount,
+            text: "Github Commits.",
+        },
+    ]
+
+
+    useEffect(() => {
+        const fetchGitHubStats = async () => {
+            try {
+                const response = await fetch('/api/github-stats');
+                const data = await response.json();
+
+                if (response.ok) {
+                    setRepoCount(data.repoCount);
+                    setCommitCount(data.totalCommits);
+                } else {
+                    console.error('Error fetching GitHub stats:', data.error);
+                }
+            } catch (error) {
+                console.error('Error fetching GitHub stats:', error.message);
+            }
+        };
+
+        fetchGitHubStats();
+    }, []);
+
+
     return (
         <section className="pt-4 pb-12 xl:pt-0 xl:pb-0">
             <div className="container mx-auto">
