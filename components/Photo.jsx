@@ -38,6 +38,7 @@ const Photo = () => {
                         quality={100}
                         alt="avatar"
                         className="object-contain"
+                        sizes="(max-width: 600px) 50vw, (max-width: 1200px) 33vw, 25vw"
                     />
                 </motion.div>
 

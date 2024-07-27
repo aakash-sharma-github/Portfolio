@@ -1,5 +1,4 @@
 "use client";
-import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import CountUp from "react-countup";
 
@@ -7,6 +6,28 @@ import CountUp from "react-countup";
 const Stats = () => {
     const [repoCount, setRepoCount] = useState(0);
     const [commitCount, setCommitCount] = useState(0);
+
+
+
+    useEffect(() => {
+        const fetchGitHubStats = async () => {
+            try {
+                const response = await fetch('/api/github-stats');
+                const data = await response.json();
+
+                if (response.ok) {
+                    setRepoCount(data.repoCount);
+                    setCommitCount(data.totalCommits);
+                } else {
+                    console.error('Error fetching GitHub stats:', data.error);
+                }
+            } catch (error) {
+                console.error('Error fetching GitHub stats:', error.message);
+            }
+        };
+
+        fetchGitHubStats();
+    }, []);
 
     const stats = [
         {
@@ -30,28 +51,6 @@ const Stats = () => {
             text: "Github Commits.",
         },
     ]
-
-
-    useEffect(() => {
-        const fetchGitHubStats = async () => {
-            try {
-                const response = await fetch('/api/github-stats');
-                const data = await response.json();
-
-                if (response.ok) {
-                    setRepoCount(data.repoCount);
-                    setCommitCount(data.totalCommits);
-                } else {
-                    console.error('Error fetching GitHub stats:', data.error);
-                }
-            } catch (error) {
-                console.error('Error fetching GitHub stats:', error.message);
-            }
-        };
-
-        fetchGitHubStats();
-    }, []);
-
 
     return (
         <section className="pt-4 pb-12 xl:pt-0 xl:pb-0">
