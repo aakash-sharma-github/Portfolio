@@ -16,7 +16,7 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 const myFont = localFont({
-  src: '../public/assets/Fonts/Forte.ttf',
+  src: '../public/assets/Fonts/FORTE.ttf',
 });
 
 

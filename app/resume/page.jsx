@@ -208,9 +208,7 @@ const Resume = () => {
           className="flex flex-col xl:flex-row gap-[60px]"
         >
           <TabsList className="flex flex-col w-full max-w-[380px] mx-auto xl:mx-0 gap-6">
-            <div className="text-center mb-12 ">
-              <h2 className="text-4xl font-bold">Why Hire Me?</h2>
-              <p className="text-white/60">lorem30</p>
+            <div className="text-center xl:mb-24 ">
             </div>
             <TabsTrigger value="education">Education</TabsTrigger>
             <TabsTrigger value="skils">Skils</TabsTrigger>
