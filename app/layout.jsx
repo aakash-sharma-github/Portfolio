@@ -7,6 +7,7 @@ import Header from "@/components/Header";
 import PageTransition from "@/components/PageTransition";
 import StairTransation from "@/components/StairTransation";
 import { useContextApi } from '../context/contextApi';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 
 
 const jetbrainsMono = JetBrains_Mono({
@@ -41,6 +42,7 @@ export default function RootLayout({ children }) {
         <PageTransition>
           {children}
         </PageTransition>
+        <SpeedInsights />
       </body>
     </html>
   );
