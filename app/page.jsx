@@ -9,7 +9,7 @@ import { TypeAnimation } from 'react-type-animation';
 import ParticlesContainer from "@/components/ParticleContainer";
 import Link from "next/link";
 
-const home = () => {
+const Home = () => {
 
   const font = useContextApi((state) => state.font)
 
@@ -85,5 +85,5 @@ const home = () => {
   )
 }
 
-export default home
+export default Home
 

@@ -41,7 +41,7 @@ const formSchema = z.object({
 })
 
 
-const contact = () => {
+const Contact = () => {
 
   const [isLoading, setIsLoading] = useState(false)
 
@@ -178,4 +178,4 @@ const contact = () => {
   )
 }
 
-export default contact
+export default Contact

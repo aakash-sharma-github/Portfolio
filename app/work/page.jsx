@@ -217,7 +217,7 @@ const projects = [
 
 ]
 
-const work = () => {
+const Work = () => {
     const [project, setProject] = useState(projects[0])
 
     const handleSlideChange = (swiper) => {
@@ -378,6 +378,7 @@ const work = () => {
                                                 alt={project.num}
                                                 fill
                                                 className="object-cover rounded-xl"
+                                                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                                             />
                                         </div>
                                     </div>
@@ -396,4 +397,4 @@ const work = () => {
     )
 }
 
-export default work
+export default Work;
