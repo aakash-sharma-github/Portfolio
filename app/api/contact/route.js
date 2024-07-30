@@ -1,9 +1,9 @@
 import { transporter } from '@/lib/nodeMailer'
 import { NextResponse } from 'next/server'
 
-export async function POST(request) {
+export async function POST(req) {
     try {
-        const body = await request.json()
+        const body = await req.json()
         const { fullname, email, subject, message } = body
 
         // Validate form data
