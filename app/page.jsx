@@ -52,7 +52,7 @@ const Home = () => {
               {/* button and socials */}
               <div className="flex flex-col xl:flex-row items-center gap-8">
                 <Link
-                  href=""
+                  href="/assets/Aakash_Sharma_CV.pdf"
                   target="_blank"
                   download={true}
                 >
