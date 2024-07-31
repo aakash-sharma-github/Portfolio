@@ -9,6 +9,7 @@ import StairTransation from "@/components/StairTransation";
 import { useContextApi } from '../context/contextApi';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import { Analytics } from '@vercel/analytics/react';
+import { GitHubProvider } from '../context/githubContext';
 
 
 const jetbrainsMono = JetBrains_Mono({
@@ -41,7 +42,9 @@ export default function RootLayout({ children }) {
         <Header myFont={myFont} />
         <StairTransation />
         <PageTransition>
-          {children}
+          <GitHubProvider>
+            {children}
+          </GitHubProvider>
         </PageTransition>
         <SpeedInsights />
         <Analytics />

@@ -1,33 +1,34 @@
 "use client";
 import React, { useEffect, useState } from 'react'
+import { useGitHub } from '../context/githubContext'
 import CountUp from "react-countup";
 
 
 const Stats = () => {
-    const [repoCount, setRepoCount] = useState(0);
-    const [commitCount, setCommitCount] = useState(0);
+    // const [repoCount, setRepoCount] = useState(0);
+    // const [commitCount, setCommitCount] = useState(0);
+    const { data } = useGitHub();
 
 
+    // useEffect(() => {
+    //     const fetchGitHubStats = async () => {
+    //         try {
+    //             const response = await fetch('/api/github-stats');
+    //             const data = await response.json();
 
-    useEffect(() => {
-        const fetchGitHubStats = async () => {
-            try {
-                const response = await fetch('/api/github-stats');
-                const data = await response.json();
+    //             if (response.ok) {
+    //                 setRepoCount(data.repoCount);
+    //                 setCommitCount(data.totalCommits);
+    //             } else {
+    //                 console.error('Error fetching GitHub stats:', data.error);
+    //             }
+    //         } catch (error) {
+    //             console.error('Error fetching GitHub stats:', error.message);
+    //         }
+    //     };
 
-                if (response.ok) {
-                    setRepoCount(data.repoCount);
-                    setCommitCount(data.totalCommits);
-                } else {
-                    console.error('Error fetching GitHub stats:', data.error);
-                }
-            } catch (error) {
-                console.error('Error fetching GitHub stats:', error.message);
-            }
-        };
-
-        fetchGitHubStats();
-    }, []);
+    //     fetchGitHubStats();
+    // }, []);
 
     const stats = [
         {
@@ -43,11 +44,11 @@ const Stats = () => {
             text: "Technologies Learned.",
         },
         {
-            num: repoCount,
+            num: data.repoCount,
             text: "Github Repositories.",
         },
         {
-            num: commitCount,
+            num: data.totalCommits,
             text: "Github Commits.",
         },
     ]
