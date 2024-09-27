@@ -23,8 +23,10 @@ import {
   SiIntellijidea,
   SiExpress,
   SiDjango,
-  SiPostman
+  SiPostman,
+  SiDocker
 } from "react-icons/si";
+import { AiOutlineKubernetes } from "react-icons/ai";
 import {
   Tabs,
   TabsContent,
@@ -92,6 +94,8 @@ const skils = {
       { icon: <SiIntellijidea />, name: "IntelliJ IDEA" },
       { icon: <SiPostman />, name: "Postman" },
       { icon: <PiMicrosoftExcelLogoDuotone />, name: "Microsoft Excel" },
+      { icon: <SiDocker />, name: "Docker" },
+      { icon: <AiOutlineKubernetes />, name: "Kubernetes" }
     ],
     Database: [
       { icon: <SiMysql />, name: "MySQL" },
