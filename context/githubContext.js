@@ -11,7 +11,6 @@ export const GitHubProvider = ({ children }) => {
             try {
                 const response = await axios.get('/api/github-stats');
                 setData(response.data);
-                console.log(`responsecontext: `, response.data);
             } catch (error) {
                 console.error('Error fetching GitHub stats:', error.message);
             }

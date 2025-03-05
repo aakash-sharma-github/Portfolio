@@ -9,7 +9,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { emailApi } from '@/lib/emailApi';
-import { Toaster, toast } from 'sonner'
+import { Toaster, toast } from 'sonner';
 import {
   Form,
   FormControl,

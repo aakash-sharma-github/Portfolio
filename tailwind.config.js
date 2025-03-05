@@ -45,7 +45,52 @@ module.exports = {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
       },
+      typography: (theme) => ({
+        DEFAULT: {
+          css: {
+            maxWidth: 'none',
+            color: theme('colors.white'),
+            a: {
+              color: theme('colors.accent.DEFAULT'),
+              '&:hover': {
+                color: theme('colors.accent.hover'),
+              },
+            },
+            h1: {
+              color: theme('colors.white'),
+            },
+            h2: {
+              color: theme('colors.white'),
+            },
+            h3: {
+              color: theme('colors.white'),
+            },
+            h4: {
+              color: theme('colors.white'),
+            },
+            h5: {
+              color: theme('colors.white'),
+            },
+            h6: {
+              color: theme('colors.white'),
+            },
+            strong: {
+              color: theme('colors.white'),
+            },
+            code: {
+              color: theme('colors.white'),
+            },
+            figcaption: {
+              color: theme('colors.white/70'),
+            },
+            blockquote: {
+              color: theme('colors.white/70'),
+              borderLeftColor: theme('colors.accent.DEFAULT'),
+            },
+          },
+        },
+      }),
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [require("tailwindcss-animate"), require('@tailwindcss/typography')],
 }
