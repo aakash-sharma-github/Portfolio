@@ -1,16 +1,15 @@
 "use client";
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import { FiCalendar, FiClock, FiTag, FiArrowLeft } from 'react-icons/fi';
 import { blogApi } from '@/lib/api';
 import RelatedPosts from '@/components/RelatedPosts';
 import ClientOnly from '@/components/ClientOnly';
+import { NextResponse } from 'next/server';
 
 const BlogPostPage = ({ params }) => {
     const { slug } = params;
-    const router = useRouter();
     const [post, setPost] = useState(null);
     const [allPosts, setAllPosts] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -32,14 +31,11 @@ const BlogPostPage = ({ params }) => {
                     return;
                 }
 
-                console.log('Current post category:', fetchedPost.category);
-                console.log('All posts categories:', fetchedPosts.blogs?.map(post => post.category));
-
                 setPost(fetchedPost);
                 setAllPosts(fetchedPosts.blogs || []);
             } catch (error) {
-                console.error('Error fetching blog post:', error);
                 setError('Failed to load blog post. Please try again later.');
+                throw new Error('Failed to load blog post', error);
             } finally {
                 setIsLoading(false);
             }
@@ -165,12 +161,6 @@ const BlogPostPage = ({ params }) => {
                     {/* Related Posts */}
                     <div className="mt-16">
                         <h2 className="text-2xl font-bold text-white mb-8 text-center">Related Articles</h2>
-                        {console.log('Rendering RelatedPosts with:', {
-                            currentSlug: post.slug,
-                            category: post.category,
-                            allPostsCount: allPosts.length,
-                            allPostsCategories: allPosts.map(p => p.category)
-                        })}
                         <RelatedPosts
                             currentSlug={post.slug}
                             category={post.category}

@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef } from 'react';
+import { useRef, useEffect } from 'react';
 import { Editor } from '@tinymce/tinymce-react';
 import { blogApi } from '@/lib/api';
 
@@ -19,17 +19,37 @@ const RichTextEditor = ({ value, onChange, height = 500 }) => {
             // Return the URL to TinyMCE
             return result.url;
         } catch (error) {
-            console.error('Error uploading image:', error);
-            throw new Error('Image upload failed');
+            throw new Error('Failed to upload image', error);
         }
     };
+
+    // Function to ensure proper content handling
+    const handleEditorChange = (content, editor) => {
+        // Make sure we're passing the raw HTML to the parent component
+        if (onChange) {
+            onChange(content);
+        }
+    };
+
+    // Set initial content if provided
+    useEffect(() => {
+        if (editorRef.current && value) {
+            editorRef.current.setContent(value);
+        }
+    }, [value, editorRef.current]);
 
     return (
         <Editor
             apiKey={process.env.NEXT_PUBLIC_TINYMCE_API_KEY}
-            onInit={(evt, editor) => (editorRef.current = editor)}
+            onInit={(evt, editor) => {
+                editorRef.current = editor;
+                if (value) {
+                    // Set the initial value directly after initialization
+                    editor.setContent(value);
+                }
+            }}
             value={value}
-            onEditorChange={onChange}
+            onEditorChange={handleEditorChange}
             init={{
                 height,
                 menubar: true,
@@ -50,9 +70,28 @@ const RichTextEditor = ({ value, onChange, height = 500 }) => {
                 file_picker_types: 'image',
                 promotion: false,
                 branding: false,
+
+                // Critical HTML handling settings
+                entity_encoding: 'raw',
+                verify_html: false,
+                valid_elements: '*[*]',
+                extended_valid_elements: '*[*]',
+                force_p_newlines: false,
+                forced_root_block: '',
+                paste_as_text: false,
+                paste_data_images: true,
+                convert_urls: false,
+                allow_html_in_named_anchor: true,
+
+                // Remove duplicate initialization code
+                setup: function (editor) {
+                    editor.on('keyup change', () => {
+                        handleEditorChange(editor.getContent(), editor);
+                    });
+                }
             }}
         />
     );
 };
 
-export default RichTextEditor; 
+export default RichTextEditor;

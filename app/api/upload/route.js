@@ -33,9 +33,8 @@ export async function POST(request) {
             publicId: result.public_id
         });
     } catch (error) {
-        console.error('Error uploading image:', error);
         return NextResponse.json(
-            { error: 'Failed to upload image' },
+            { error: 'Failed to upload image', details: error.message },
             { status: 500 }
         );
     }

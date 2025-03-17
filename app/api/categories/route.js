@@ -19,9 +19,8 @@ export async function GET() {
         // Return the combined unique categories
         return NextResponse.json(allCategories);
     } catch (error) {
-        console.error('Error fetching categories:', error);
         return NextResponse.json(
-            { error: 'Failed to fetch categories' },
+            { error: 'Failed to fetch categories', details: error.message },
             { status: 500 }
         );
     }

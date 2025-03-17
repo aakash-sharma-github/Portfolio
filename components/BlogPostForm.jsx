@@ -9,6 +9,7 @@ import ImageUpload from './ImageUpload';
 import ClientOnly from './ClientOnly';
 import blogCategories from '@/lib/blogCategories';
 import { Toaster, toast } from 'sonner';
+import { NextResponse } from 'next/server';
 
 const BlogPostForm = ({ post, onSubmit, isEditing = false }) => {
     const [formData, setFormData] = useState({
@@ -42,7 +43,10 @@ const BlogPostForm = ({ post, onSubmit, isEditing = false }) => {
                     });
                 }
             } catch (error) {
-                throw error;
+                return NextResponse.json(
+                    { error: 'Failed to load blog post', details: error.message },
+                    { status: 500 }
+                );
             } finally {
                 setIsLoading(false);
             }
@@ -128,7 +132,7 @@ const BlogPostForm = ({ post, onSubmit, isEditing = false }) => {
                 toast.success('Post created successfully!');
             } catch (error) {
                 toast.error('Failed to create blog post. Please try again.');
-                throw error;
+                throw new Error('Failed to create blog post', error);
             } finally {
                 setIsSubmitting(false);
             }

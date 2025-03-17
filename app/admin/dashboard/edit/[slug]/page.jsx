@@ -45,7 +45,7 @@ const EditBlogPost = ({ params }) => {
                 setPost(fetchedPost);
             } catch (error) {
                 setError('Failed to load blog post. Please try again.');
-                throw new Error('Failed to load blog post');
+                throw new Error('Failed to load blog post for editing', error);
             } finally {
                 setIsLoading(false);
             }
@@ -61,7 +61,7 @@ const EditBlogPost = ({ params }) => {
             toast.success('Post updated successfully.');
         } catch (error) {
             toast.error('Failed to update blog post. Please try again.');
-            throw new Error('Failed to update blog post');
+            throw new Error('Failed to update blog post', error);
         }
     };
 

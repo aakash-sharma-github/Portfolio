@@ -25,9 +25,8 @@ export async function GET(request, { params }) {
 
         return NextResponse.json(blog);
     } catch (error) {
-        console.error('Error fetching blog:', error);
         return NextResponse.json(
-            { error: 'Failed to fetch blog' },
+            { error: 'Failed to fetch blog', details: error.message },
             { status: 500 }
         );
     }
@@ -98,9 +97,8 @@ export async function PUT(request, { params }) {
 
         return NextResponse.json(updatedBlog);
     } catch (error) {
-        console.error('Error updating blog:', error);
         return NextResponse.json(
-            { error: 'Failed to update blog' },
+            { error: 'Failed to update blog', details: error.message },
             { status: 500 }
         );
     }
@@ -148,9 +146,8 @@ export async function DELETE(request, { params }) {
             { status: 200 }
         );
     } catch (error) {
-        console.error('Error deleting blog:', error);
         return NextResponse.json(
-            { error: 'Failed to delete blog' },
+            { error: 'Failed to delete blog', details: error.message },
             { status: 500 }
         );
     }

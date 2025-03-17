@@ -2,25 +2,18 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import Image from 'next/image';
 import { FiCalendar } from 'react-icons/fi';
+import { NextResponse } from 'next/server';
+import next from 'next';
 
 const RelatedPosts = ({ currentSlug, category, allPosts = [] }) => {
-    // Add logging to help debug issues
-    console.log('RelatedPosts props:', {
-        currentSlug,
-        category,
-        allPostsCount: allPosts.length,
-        uniqueCategories: [...new Set(allPosts.map(post => post.category))]
-    });
 
     // Validate inputs
     if (!Array.isArray(allPosts)) {
-        console.error('RelatedPosts: allPosts is not an array:', allPosts);
-        return null;
+        throw new Error('RelatedPosts: allPosts must be an array');
     }
 
     if (!currentSlug || !category) {
-        console.error('RelatedPosts: Missing required props:', { currentSlug, category });
-        return null;
+        throw new Error('RelatedPosts: currentSlug and category are required');
     }
 
     // First try to find posts in the same category
@@ -29,7 +22,6 @@ const RelatedPosts = ({ currentSlug, category, allPosts = [] }) => {
 
     // If no posts in the same category, show posts from any category
     if (relatedPosts.length === 0) {
-        console.log('No posts found in the same category. Showing posts from other categories.');
         relatedPosts = allPosts
             .filter(post => post.slug !== currentSlug)
             .sort(() => Math.random() - 0.5); // Randomly sort posts
@@ -38,11 +30,8 @@ const RelatedPosts = ({ currentSlug, category, allPosts = [] }) => {
     // Take up to 3 posts
     relatedPosts = relatedPosts.slice(0, 3);
 
-    console.log('RelatedPosts: Found', relatedPosts.length, 'posts to display');
-
     if (relatedPosts.length === 0) {
-        console.log('RelatedPosts: No posts available to display');
-        return null;
+        throw new Error('RelatedPosts: No related posts found');
     }
 
     return (

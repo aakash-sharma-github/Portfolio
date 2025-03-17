@@ -55,8 +55,6 @@ export async function GET(request) {
             },
         });
     } catch (error) {
-        console.error('Error generating default cover image:', error);
-
         // Create a simple fallback colored rectangle
         const width = 1200;
         const height = 630;

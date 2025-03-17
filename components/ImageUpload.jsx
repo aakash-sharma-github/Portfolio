@@ -41,7 +41,6 @@ const ImageUpload = ({ value, onChange, className = '', postTitle = 'Blog Post' 
                     onChange(result.url);
                     setImageError(false); // Reset error state on successful upload
                 } catch (error) {
-                    console.error('Error uploading image:', error);
                     setError('Failed to upload image. Please try again.');
                 } finally {
                     setIsUploading(false);
@@ -83,7 +82,6 @@ const ImageUpload = ({ value, onChange, className = '', postTitle = 'Blog Post' 
                             className="object-cover"
                             unoptimized={!value.startsWith('/')}
                             onError={() => {
-                                console.log('Image failed to load:', value);
                                 setImageError(true);
                             }}
                         />

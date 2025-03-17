@@ -5,43 +5,33 @@ import { uploadImage } from '@/lib/cloudinary';
 
 // GET handler to fetch all blogs
 export async function GET(request) {
-    console.log('API Route GET /api/blogs - Request received');
     try {
-        console.log('GET /api/blogs - Connecting to database...');
         // Connect to the database
         await connectToDatabase();
-        console.log('GET /api/blogs - Connected successfully');
 
         // Get query parameters
-        const { searchParams } = new URL(request.url);
-        const category = searchParams.get('category');
-        const search = searchParams.get('search');
-        const limit = Math.min(parseInt(searchParams.get('limit') || '6'), 12); // Cap at 12 items per page
-        const page = Math.max(parseInt(searchParams.get('page') || '1'), 1); // Ensure page is at least 1
-        const skip = (page - 1) * limit;
-
-        console.log('GET /api/blogs - Request params:', { category, search, page, limit, skip });
-        console.log('GET /api/blogs - Request URL:', request.url);
+        const url = new URL(request.url);
+        const category = url.searchParams.get('category');
+        const search = url.searchParams.get('search') || '';
+        const limit = Math.min(parseInt(url.searchParams.get('limit') || '6'), 12); // Cap at 12 items per page
+        const page = Math.max(parseInt(url.searchParams.get('page') || '1'), 1); // Ensure page is at least 1
 
         // Build query
-        const query = {};
+        const filter = {};
         if (category && category !== 'All') {
-            query.category = category;
+            filter.category = category;
         }
 
         // Add search by title or content
         if (search) {
-            query.$or = [
+            filter.$or = [
                 { title: { $regex: search, $options: 'i' } },
                 { content: { $regex: search, $options: 'i' } }
             ];
         }
 
-        console.log('GET /api/blogs - Query:', JSON.stringify(query));
-
         // Get total count for pagination
-        const total = await Blog.countDocuments(query);
-        console.log(`GET /api/blogs - Total matching documents: ${total}`);
+        const total = await Blog.countDocuments(filter);
 
         // Calculate total pages
         const totalPages = Math.ceil(total / limit);
@@ -49,8 +39,7 @@ export async function GET(request) {
         const currentSkip = (currentPage - 1) * limit;
 
         // Fetch blogs with pagination
-        console.log('GET /api/blogs - Executing query...');
-        const blogs = await Blog.find(query)
+        const blogs = await Blog.find(filter)
             .sort({ createdAt: -1 })
             .skip(currentSkip)
             .limit(limit)
@@ -65,8 +54,6 @@ export async function GET(request) {
                 createdAt: 1
             }); // Select only needed fields
 
-        console.log(`GET /api/blogs - Found ${blogs.length} blogs`);
-
         const response = {
             blogs,
             pagination: {
@@ -78,11 +65,8 @@ export async function GET(request) {
                 hasPrevPage: currentPage > 1
             }
         };
-
-        console.log('GET /api/blogs - Sending response with pagination:', response.pagination);
         return NextResponse.json(response);
     } catch (error) {
-        console.error('Error fetching blogs:', error);
         return NextResponse.json(
             { error: 'Failed to fetch blogs', details: error.message },
             { status: 500 }
@@ -138,12 +122,16 @@ export async function POST(request) {
                         publicId: uploadResult.public_id
                     };
                 } catch (error) {
-                    console.error('Error uploading image to Cloudinary:', error);
                     // Use default cover image if upload fails
                     coverImageData = {
                         url: `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/api/default-cover?title=${encodeURIComponent(data.title)}`,
                         publicId: 'default'
                     };
+                    
+                    return NextResponse.json(
+                        { error: 'Failed to upload image', details: error.message },
+                        { status: 500 }
+                    );
                 }
             } else {
                 // If it's already a URL, use it directly
@@ -173,10 +161,9 @@ export async function POST(request) {
 
         return NextResponse.json(blog, { status: 201 });
     } catch (error) {
-        console.error('Error creating blog:', error);
         return NextResponse.json(
             { error: 'Failed to create blog', details: error.message },
             { status: 500 }
         );
     }
-} 
+}

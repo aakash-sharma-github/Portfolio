@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { FiLock, FiLogIn, FiEye, FiEyeOff } from 'react-icons/fi';
 import ClientOnly from '@/components/ClientOnly';
 import { authApi } from '@/lib/api';
+import { toast } from 'sonner';
 
 const AdminLogin = () => {
     const [password, setPassword] = useState('');
@@ -27,7 +28,6 @@ const AdminLogin = () => {
                 }
             } catch (error) {
                 localStorage.removeItem('adminToken');
-                throw new Error('Failed to verify token');
             }
         };
 
@@ -45,12 +45,9 @@ const AdminLogin = () => {
             if (result.token) {
                 localStorage.setItem('adminToken', result.token);
                 router.push('/admin/dashboard');
-            } else {
-                setError('Invalid password. Please try again.');
             }
         } catch (error) {
             setError('Authentication failed. Please try again.');
-            throw new Error('Failed to login');
         } finally {
             setIsLoading(false);
         }
