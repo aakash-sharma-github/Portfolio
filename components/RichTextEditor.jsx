@@ -1,5 +1,4 @@
 'use client';
-
 import { useRef, useEffect } from 'react';
 import { Editor } from '@tinymce/tinymce-react';
 import { blogApi } from '@/lib/api';
@@ -12,10 +11,8 @@ const RichTextEditor = ({ value, onChange, height = 500 }) => {
         try {
             // Convert blob to base64
             const base64 = `data:${blobInfo.blob().type};base64,${blobInfo.base64()}`;
-
             // Upload to Cloudinary via our API
             const result = await blogApi.uploadImage(base64);
-
             // Return the URL to TinyMCE
             return result.url;
         } catch (error) {
@@ -31,24 +28,20 @@ const RichTextEditor = ({ value, onChange, height = 500 }) => {
         }
     };
 
-    // Set initial content if provided
+    // Set initial content if provided - only once when the editor is first initialized
     useEffect(() => {
-        if (editorRef.current && value) {
+        if (editorRef.current && value && editorRef.current.getContent() !== value) {
             editorRef.current.setContent(value);
         }
-    }, [value, editorRef.current]);
+    }, [value]);
 
     return (
         <Editor
             apiKey={process.env.NEXT_PUBLIC_TINYMCE_API_KEY}
             onInit={(evt, editor) => {
                 editorRef.current = editor;
-                if (value) {
-                    // Set the initial value directly after initialization
-                    editor.setContent(value);
-                }
             }}
-            value={value}
+            initialValue={value}
             onEditorChange={handleEditorChange}
             init={{
                 height,
@@ -70,7 +63,6 @@ const RichTextEditor = ({ value, onChange, height = 500 }) => {
                 file_picker_types: 'image',
                 promotion: false,
                 branding: false,
-
                 // Critical HTML handling settings
                 entity_encoding: 'raw',
                 verify_html: false,
@@ -82,13 +74,7 @@ const RichTextEditor = ({ value, onChange, height = 500 }) => {
                 paste_data_images: true,
                 convert_urls: false,
                 allow_html_in_named_anchor: true,
-
-                // Remove duplicate initialization code
-                setup: function (editor) {
-                    editor.on('keyup change', () => {
-                        handleEditorChange(editor.getContent(), editor);
-                    });
-                }
+                // Remove the setup function that was causing duplicate event handling
             }}
         />
     );

@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import jwt from 'jsonwebtoken';
 
 // Secret key for JWT
-const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
+const JWT_SECRET = process.env.JWT_SECRET;
 
 // POST handler for login
 export async function POST(request) {
@@ -32,7 +32,7 @@ export async function POST(request) {
         const token = jwt.sign(
             { role: 'admin' },
             JWT_SECRET,
-            { expiresIn: '24h' }
+            { expiresIn: '2h' }
         );
 
         // Return token

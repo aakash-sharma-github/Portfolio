@@ -127,7 +127,7 @@ export async function POST(request) {
                         url: `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/api/default-cover?title=${encodeURIComponent(data.title)}`,
                         publicId: 'default'
                     };
-                    
+
                     return NextResponse.json(
                         { error: 'Failed to upload image', details: error.message },
                         { status: 500 }
@@ -155,7 +155,7 @@ export async function POST(request) {
             author: data.author || {
                 name: 'Aakash Sharma',
                 avatar: '/assets/avatar.jpg',
-                bio: 'Full-stack developer with a passion for modern web technologies'
+                bio: 'Full-stack developer with a passion for modern new technologies'
             }
         });
 
