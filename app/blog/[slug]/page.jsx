@@ -34,8 +34,8 @@ const BlogPostPage = ({ params }) => {
                 setPost(fetchedPost);
                 setAllPosts(fetchedPosts.blogs || []);
             } catch (error) {
+                console.error('Error loading blog post:', error);
                 setError('Failed to load blog post. Please try again later.');
-                throw new Error('Failed to load blog post', error);
             } finally {
                 setIsLoading(false);
             }

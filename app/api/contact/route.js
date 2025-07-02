@@ -1,5 +1,7 @@
 import { transporter } from '@/lib/nodeMailer'
 import { NextResponse } from 'next/server'
+import connectToDatabase from '@/lib/mongodb'
+import Contact from '@/lib/models/Contact'
 
 export async function POST(req) {
     try {
@@ -13,6 +15,24 @@ export async function POST(req) {
                 { status: 400 }
             )
         }
+
+        // Connect to database and save the message
+        await connectToDatabase();
+        
+        // Get client IP and user agent for logging
+        const clientIp = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || 'unknown';
+        const userAgent = req.headers.get('user-agent') || 'unknown';
+        
+        // Save contact message to database
+        const contactMessage = await Contact.create({
+            name: fullname,
+            email,
+            subject,
+            message,
+            ipAddress: clientIp,
+            userAgent,
+            source: 'website'
+        });
 
         const myemail = process.env.SMTP_EMAIL
 

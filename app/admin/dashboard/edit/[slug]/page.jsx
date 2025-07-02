@@ -88,7 +88,7 @@ const EditBlogPost = ({ params }) => {
     return (
         <ClientOnly>
             {isAuthenticated && post && (
-                <AdminLayout>
+                <AdminLayout title="Edit Blog Post">
                     <div className="mb-8">
                         <h1 className="text-3xl font-bold text-white mb-2">Edit Blog Post</h1>
                         <p className="text-white/70">Update the details of your blog post</p>

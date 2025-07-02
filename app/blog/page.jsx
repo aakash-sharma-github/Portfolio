@@ -115,8 +115,8 @@ const BlogPage = () => {
                         </div>
                     </div>
 
-                    {/* Category Filter */}
-                    <div className="flex flex-wrap justify-center gap-2 mb-12">
+                    {/* Category Filter (hidden on mobile) */}
+                    <div className="flex flex-wrap justify-center gap-2 mb-12 hidden md:flex">
                         {categories.map((category) => (
                             <button
                                 key={category}

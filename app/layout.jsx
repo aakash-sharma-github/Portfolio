@@ -1,5 +1,6 @@
 "use client";
 import { useEffect } from 'react'
+import { usePathname } from 'next/navigation'
 import { JetBrains_Mono } from "next/font/google";
 import localFont from 'next/font/local';
 import "./globals.css";
@@ -25,6 +26,8 @@ const myFont = localFont({
 
 export default function RootLayout({ children }) {
   const setFont = useContextApi((state) => state.setFont);
+  const pathname = usePathname();
+  const isAdminRoute = pathname?.startsWith('/admin');
 
   useEffect(() => {
     setFont(myFont.className);
@@ -39,13 +42,17 @@ export default function RootLayout({ children }) {
         <title>Aakash Sharma Portfolio</title>
       </head>
       <body className={jetbrainsMono.variable}>
-        <Header myFont={myFont} />
-        <StairTransation />
-        <PageTransition>
-          <GitHubProvider>
-            {children}
-          </GitHubProvider>
-        </PageTransition>
+        {!isAdminRoute && <Header myFont={myFont} />}
+        {!isAdminRoute && <StairTransation />}
+        {!isAdminRoute ? (
+          <PageTransition>
+            <GitHubProvider>
+              {children}
+            </GitHubProvider>
+          </PageTransition>
+        ) : (
+          children
+        )}
         <SpeedInsights />
         <Analytics />
       </body>

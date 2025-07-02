@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import jwt from 'jsonwebtoken';
+import { comparePassword } from '../../../controllers/adminController';
 
 // Secret key for JWT
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -18,10 +19,29 @@ export async function POST(request) {
             );
         }
 
-        // Check if password is correct
-        const correctPassword = process.env.ADMIN_PASSWORD;
+        // Check if password is correct using hashed comparison
+        const adminPasswordHash = Buffer.from(process.env.ADMIN_PASSWORD_HASH, 'base64').toString('utf-8');
 
-        if (password !== correctPassword) {
+        if (!adminPasswordHash) {
+            console.error('ADMIN_PASSWORD_HASH not found in environment variables');
+            return NextResponse.json(
+                { error: 'Server configuration error' },
+                { status: 500 }
+            );
+        }
+
+        // Validate hash format (bcrypt hashes should be 60 characters)
+        if (adminPasswordHash.length !== 60) {
+            console.error(`Invalid hash length: ${adminPasswordHash.length}, expected 60`);
+            return NextResponse.json(
+                { error: 'Server configuration error - invalid hash format' },
+                { status: 500 }
+            );
+        }
+
+        const isPasswordValid = await comparePassword(password, adminPasswordHash);
+
+        if (!isPasswordValid) {
             return NextResponse.json(
                 { error: 'Invalid password' },
                 { status: 401 }

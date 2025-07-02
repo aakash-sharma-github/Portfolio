@@ -75,7 +75,7 @@ const CreateBlogPost = () => {
     return (
         <ClientOnly>
             {isAuthenticated && (
-                <AdminLayout>
+                <AdminLayout title="Create Blog Post">
                     <div className="mb-8">
                         <h1 className="text-3xl font-bold text-white mb-2">Create New Blog Post</h1>
                         <p className="text-white/70">Fill in the details below to create a new blog post</p>
