@@ -3,6 +3,10 @@ import connectToDatabase from '@/lib/mongodb';
 import Blog from '@/lib/models/Blog';
 import blogCategories from '@/lib/blogCategories';
 
+// Explicitly set Node.js runtime
+export const runtime = 'nodejs';
+
+
 // GET handler to fetch all unique categories
 export async function GET() {
     try {

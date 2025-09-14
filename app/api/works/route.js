@@ -3,6 +3,10 @@ import connectToDatabase from '@/lib/mongodb';
 import Work from '@/lib/models/Work';
 import { uploadImage } from '@/lib/cloudinary';
 
+// Explicitly set Node.js runtime
+export const runtime = 'nodejs';
+
+
 // GET handler to fetch all works
 export async function GET(request) {
     try {

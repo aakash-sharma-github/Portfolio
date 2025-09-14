@@ -1,6 +1,10 @@
 import axios from 'axios';
 import { getFromCache, setInCache } from '../../../lib/cache';
 
+// Explicitly set Node.js runtime
+export const runtime = 'nodejs';
+
+
 export async function GET() {
   const cacheKey = 'github-stats';
   const cachedData = getFromCache(cacheKey);

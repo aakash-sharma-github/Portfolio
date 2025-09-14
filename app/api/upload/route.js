@@ -1,6 +1,10 @@
 import { NextResponse } from 'next/server';
 import { uploadImage } from '@/lib/cloudinary';
 
+// Explicitly set Node.js runtime
+export const runtime = 'nodejs';
+
+
 // POST handler for image uploads
 export async function POST(request) {
     try {

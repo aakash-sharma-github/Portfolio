@@ -3,6 +3,10 @@ import connectToDatabase from '@/lib/mongodb';
 import Blog from '@/lib/models/Blog';
 import { uploadImage, deleteImage } from '@/lib/cloudinary';
 
+// Explicitly set Node.js runtime
+export const runtime = 'nodejs';
+
+
 // GET handler to fetch a specific blog by slug
 export async function GET(request, { params }) {
     try {

@@ -2,6 +2,10 @@ import { NextResponse } from 'next/server';
 import connectToDatabase from '@/lib/mongodb';
 import Contact from '@/lib/models/Contact';
 
+// Explicitly set Node.js runtime
+export const runtime = 'nodejs';
+
+
 // GET handler to fetch a specific contact message by ID
 export async function GET(request, { params }) {
     try {

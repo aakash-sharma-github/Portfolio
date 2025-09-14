@@ -3,6 +3,10 @@ import { NextResponse } from 'next/server'
 import connectToDatabase from '@/lib/mongodb'
 import Contact from '@/lib/models/Contact'
 
+// Explicitly set Node.js runtime
+export const runtime = 'nodejs';
+
+
 export async function POST(req) {
     try {
         const body = await req.json()

@@ -8,6 +8,9 @@ import Contact from '@/lib/models/Contact';
 // JWT Secret for verification
 const JWT_SECRET = process.env.JWT_SECRET;
 
+// Explicitly set Node.js runtime instead of Edge
+export const runtime = 'nodejs';
+
 // GET handler to fetch dashboard statistics
 export async function GET(request) {
     try {

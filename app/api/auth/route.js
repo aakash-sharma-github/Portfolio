@@ -2,6 +2,9 @@ import { NextResponse } from 'next/server';
 import jwt from 'jsonwebtoken';
 import { comparePassword } from '../../../controllers/adminController';
 
+// Explicitly set Node.js runtime
+export const runtime = 'nodejs';
+
 // Secret key for JWT
 const JWT_SECRET = process.env.JWT_SECRET;
 
@@ -101,4 +104,4 @@ export async function GET(request) {
             { status: 500 }
         );
     }
-} 
+}

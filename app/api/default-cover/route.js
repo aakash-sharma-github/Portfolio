@@ -1,6 +1,10 @@
 import { createCanvas } from 'canvas';
 import { NextResponse } from 'next/server';
 
+// Explicitly set Node.js runtime
+export const runtime = 'nodejs';
+
+
 export async function GET(request) {
     try {
         // Get title from query params or use default
