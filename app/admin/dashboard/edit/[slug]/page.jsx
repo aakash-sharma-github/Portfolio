@@ -57,8 +57,8 @@ const EditBlogPost = ({ params }) => {
     const handleSubmit = async (formData) => {
         try {
             await blogApi.updatePost(slug, formData);
-            // router.push('/admin/dashboard');
             toast.success('Post updated successfully.');
+            router.push('/admin/dashboard/blogs');
         } catch (error) {
             toast.error('Failed to update blog post. Please try again.');
             throw new Error('Failed to update blog post', error);

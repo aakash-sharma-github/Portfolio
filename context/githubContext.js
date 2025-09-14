@@ -4,15 +4,25 @@ import axios from 'axios';
 const GitHubContext = createContext();
 
 export const GitHubProvider = ({ children }) => {
-    const [data, setData] = useState({ repoCount: 0, totalCommits: 0 });
+    const [data, setData] = useState({ repoCount: 25, totalCommits: 500 }); // Set fallback as initial values
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState(null);
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get('/api/github-stats');
+                setIsLoading(true);
+                const response = await axios.get('/api/github-stats', {
+                    timeout: 10000 // 10 second timeout
+                });
                 setData(response.data);
+                setError(null);
             } catch (error) {
-                console.error('Error fetching GitHub stats:', error.message);
+                console.warn('GitHub stats not available, using fallback values:', error.message);
+                setError(error.message);
+                // Keep the fallback values already set in initial state
+            } finally {
+                setIsLoading(false);
             }
         };
 

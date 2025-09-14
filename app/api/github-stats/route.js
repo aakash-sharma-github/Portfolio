@@ -6,16 +6,32 @@ export async function GET() {
   const cachedData = getFromCache(cacheKey);
 
   if (cachedData) {
-    return new Response(JSON.stringify(cachedData), { status: 200 });
+    return new Response(JSON.stringify(cachedData), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' }
+    });
   }
 
   const token = process.env.GITHUB_TOKEN;
   const username = process.env.GITHUB_USERNAME;
 
+  // Return fallback values if GitHub credentials are not configured
   if (!token || !username) {
+    console.warn('GitHub credentials not configured, using fallback values');
+    const fallbackData = {
+      repoCount: 25, // Fallback repository count
+      totalCommits: 500 // Fallback commit count
+    };
+    
+    // Cache the fallback data for 1 hour
+    setInCache(cacheKey, fallbackData, 60);
+    
     return new Response(
-      JSON.stringify({ error: 'GitHub credentials are not configured' }),
-      { status: 500 }
+      JSON.stringify(fallbackData),
+      { 
+        status: 200,
+        headers: { 'Content-Type': 'application/json' }
+      }
     );
   }
 
@@ -117,7 +133,8 @@ export async function GET() {
     const totalCommits = commitCounts.reduce((acc, count) => acc + count, 0);
 
     const result = { repoCount, totalCommits };
-    setInCache(cacheKey, result);
+    // Cache for 6 hours since GitHub stats don't change frequently
+    setInCache(cacheKey, result, 360);
 
     return new Response(
       JSON.stringify(result),
@@ -125,9 +142,22 @@ export async function GET() {
     );
   } catch (error) {
     console.error('Error fetching GitHub stats:', error.message);
+    
+    // Return fallback data instead of error to prevent UI breaks
+    const fallbackData = {
+      repoCount: 25,
+      totalCommits: 500
+    };
+    
+    // Cache the fallback data for 30 minutes (shorter cache for errors)
+    setInCache(cacheKey, fallbackData, 30);
+    
     return new Response(
-      JSON.stringify({ error: error.message }),
-      { status: error.response?.status || 500 }
+      JSON.stringify(fallbackData),
+      { 
+        status: 200,
+        headers: { 'Content-Type': 'application/json' }
+      }
     );
   }
 }

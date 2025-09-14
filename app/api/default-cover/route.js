@@ -14,23 +14,33 @@ export async function GET(request) {
         const canvas = createCanvas(width, height);
         const ctx = canvas.getContext('2d');
 
-        // Create gradient background
+        // Generate unique colors based on title for visual differentiation
+        const titleCharSum = title.split('').reduce((sum, char) => sum + char.charCodeAt(0), 0);
+        const hue1 = (titleCharSum * 13) % 360; // Primary hue
+        const hue2 = (hue1 + 60) % 360; // Secondary hue (60 degrees apart)
+        
+        // Create gradient background with unique colors
         const gradient = ctx.createLinearGradient(0, 0, width, height);
-        gradient.addColorStop(0, '#3b82f6');  // Blue
-        gradient.addColorStop(1, '#8b5cf6');  // Purple
+        gradient.addColorStop(0, `hsl(${hue1}, 70%, 55%)`);
+        gradient.addColorStop(1, `hsl(${hue2}, 70%, 45%)`);
         ctx.fillStyle = gradient;
         ctx.fillRect(0, 0, width, height);
 
-        // Add some design elements
-        ctx.beginPath();
-        ctx.arc(width * 0.8, height * 0.2, 100, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
-        ctx.fill();
-
-        ctx.beginPath();
-        ctx.arc(width * 0.2, height * 0.7, 150, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
-        ctx.fill();
+        // Add unique design elements based on title
+        const elementCount = (titleCharSum % 3) + 2; // 2-4 elements
+        const elementOpacity = 0.1;
+        
+        for (let i = 0; i < elementCount; i++) {
+            const angle = (titleCharSum * (i + 1) * 47) % 360;
+            const x = width * (0.3 + 0.4 * Math.cos(angle * Math.PI / 180));
+            const y = height * (0.3 + 0.4 * Math.sin(angle * Math.PI / 180));
+            const radius = 50 + (titleCharSum * (i + 1) % 100);
+            
+            ctx.beginPath();
+            ctx.arc(x, y, radius, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(255, 255, 255, ${elementOpacity})`;
+            ctx.fill();
+        }
 
         // Add text
         ctx.font = 'bold 60px Arial, sans-serif';
@@ -47,11 +57,16 @@ export async function GET(request) {
         // Convert canvas to buffer
         const buffer = canvas.toBuffer('image/jpeg', { quality: 0.9 });
 
-        // Return the image
+        // Generate cache key based on title for unique caching
+        const titleHash = Buffer.from(title).toString('base64').replace(/[/+=]/g, '');
+        
+        // Return the image with title-specific caching
         return new NextResponse(buffer, {
             headers: {
                 'Content-Type': 'image/jpeg',
-                'Cache-Control': 'public, max-age=86400',
+                'Cache-Control': `public, max-age=3600`, // Reduce to 1 hour
+                'ETag': `"${titleHash}"`, // Add ETag for proper cache validation
+                'Vary': 'Accept-Encoding', // Vary header for proper caching
             },
         });
     } catch (error) {

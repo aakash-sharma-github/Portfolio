@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { FiUpload, FiX, FiImage } from 'react-icons/fi';
 
 const ImageUploader = ({ 
@@ -13,6 +13,11 @@ const ImageUploader = ({
   const [isUploading, setIsUploading] = useState(false);
   const [preview, setPreview] = useState(currentImage?.url || null);
   const [error, setError] = useState('');
+
+  // Update preview when currentImage changes (important for editing)
+  useEffect(() => {
+    setPreview(currentImage?.url || null);
+  }, [currentImage]);
 
   const handleFileChange = async (e) => {
     const file = e.target.files[0];
@@ -67,6 +72,9 @@ const ImageUploader = ({
       }
 
       const data = await response.json();
+      
+      // Update preview with the actual uploaded image URL
+      setPreview(data.url);
       
       // Call the callback with image data
       onImageUpload({

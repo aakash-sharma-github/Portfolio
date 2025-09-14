@@ -20,7 +20,6 @@ export async function GET(request) {
         // Get query parameters
         const url = new URL(request.url);
         const status = url.searchParams.get('status');
-        const priority = url.searchParams.get('priority');
         const search = url.searchParams.get('search') || '';
         const limit = Math.min(parseInt(url.searchParams.get('limit') || '20'), 100);
         const page = Math.max(parseInt(url.searchParams.get('page') || '1'), 1);
@@ -29,9 +28,6 @@ export async function GET(request) {
         const filter = {};
         if (status) {
             filter.status = status;
-        }
-        if (priority) {
-            filter.priority = priority;
         }
 
         // Add search by name, email, or subject
@@ -53,7 +49,7 @@ export async function GET(request) {
 
         // Fetch contacts with pagination
         const contacts = await Contact.find(filter)
-            .sort({ priority: -1, createdAt: -1 })
+            .sort({ createdAt: -1 })
             .skip(skip)
             .limit(limit)
             .select({
@@ -61,16 +57,8 @@ export async function GET(request) {
                 email: 1,
                 subject: 1,
                 message: 1,
-                phone: 1,
-                company: 1,
-                projectType: 1,
-                budget: 1,
-                timeline: 1,
                 status: 1,
-                priority: 1,
-                source: 1,
-                createdAt: 1,
-                replies: 1
+                createdAt: 1
             });
 
         const response = {
@@ -86,8 +74,6 @@ export async function GET(request) {
             stats: {
                 unread: await Contact.countDocuments({ status: 'unread' }),
                 read: await Contact.countDocuments({ status: 'read' }),
-                replied: await Contact.countDocuments({ status: 'replied' }),
-                archived: await Contact.countDocuments({ status: 'archived' }),
                 total: await Contact.countDocuments()
             }
         };

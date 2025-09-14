@@ -15,29 +15,47 @@ const CreateProject = () => {
         slug: '',
         description: '',
         content: '',
-        category: 'Web Application',
+        category: 'Web Development',
         technologies: [],
         status: 'completed',
         featured: false,
         coverImage: null,
-        images: []  // For additional project images
+        images: [],  // For additional project images
+        links: {
+            live: '',
+            github: ''
+        }
     });
 
     const [techInput, setTechInput] = useState('');
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setProject({ ...project, [name]: value });
 
-        // Auto-generate slug from title
-        if (name === 'title') {
+        // Handle nested link fields
+        if (name.startsWith('links.')) {
+            const linkType = name.split('.')[1]; // Either 'live' or 'github'
             setProject({
                 ...project,
-                title: value,
-                slug: value.toLowerCase()
-                    .replace(/[^\w\s]/gi, '')
-                    .replace(/\s+/g, '-')
+                links: {
+                    ...project.links,
+                    [linkType]: value
+                }
             });
+        } else {
+            // Handle regular fields
+            setProject({ ...project, [name]: value });
+
+            // Auto-generate slug from title
+            if (name === 'title') {
+                setProject({
+                    ...project,
+                    title: value,
+                    slug: value.toLowerCase()
+                        .replace(/[^\w\s]/gi, '')
+                        .replace(/\s+/g, '-')
+                });
+            }
         }
     };
 
@@ -192,12 +210,12 @@ const CreateProject = () => {
                             className="w-full bg-[#2a2a35] text-white border border-[#3a3a45] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-accent"
                             required
                         >
-                            <option value="Web Application">Web Application</option>
+                            <option value="Web Development">Web Development</option>
                             <option value="Mobile App">Mobile App</option>
                             <option value="Desktop App">Desktop App</option>
-                            <option value="API">API</option>
-                            <option value="Website">Website</option>
+                            <option value="API Development">API Development</option>
                             <option value="E-commerce">E-commerce</option>
+                            <option value="Full Stack Development">Full Stack Development</option>
                             <option value="Other">Other</option>
                         </select>
                     </div>
@@ -229,6 +247,32 @@ const CreateProject = () => {
                             onKeyDown={handleTechKeyDown}
                             className="w-full bg-[#2a2a35] text-white border border-[#3a3a45] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-accent"
                             placeholder="Add technologies (press Enter to add)"
+                        />
+                    </div>
+
+                    {/* Live Link */}
+                    <div>
+                        <label className="block text-white mb-2">Live Project URL</label>
+                        <input
+                            type="url"
+                            name="links.live"
+                            value={project.links.live}
+                            onChange={handleChange}
+                            className="w-full bg-[#2a2a35] text-white border border-[#3a3a45] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-accent"
+                            placeholder="https://project-live-link.com"
+                        />
+                    </div>
+
+                    {/* GitHub Link */}
+                    <div>
+                        <label className="block text-white mb-2">GitHub Repository URL</label>
+                        <input
+                            type="url"
+                            name="links.github"
+                            value={project.links.github}
+                            onChange={handleChange}
+                            className="w-full bg-[#2a2a35] text-white border border-[#3a3a45] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-accent"
+                            placeholder="https://github.com/username/repo"
                         />
                     </div>
 

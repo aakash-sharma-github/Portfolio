@@ -100,43 +100,28 @@ const BlogsManagement = () => {
         }
     };
 
-    const togglePublishStatus = async (slug, currentStatus) => {
-        try {
-            await fetch(`/api/blogs/${slug}`, {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ published: !currentStatus }),
-            });
+    // const togglePublishStatus = async (slug, currentStatus) => {
+    //     try {
+    //         await fetch(`/api/blogs/${slug}`, {
+    //             method: 'PATCH',
+    //             headers: {
+    //                 'Content-Type': 'application/json',
+    //             },
+    //             body: JSON.stringify({ published: !currentStatus }),
+    //         });
 
-            fetchBlogs();
-            toast.success(`Blog ${currentStatus ? 'unpublished' : 'published'} successfully`);
-        } catch (error) {
-            toast.error('Failed to update blog status');
-        }
-    };
+    //         fetchBlogs();
+    //         toast.success(`Blog ${currentStatus ? 'unpublished' : 'published'} successfully`);
+    //     } catch (error) {
+    //         toast.error('Failed to update blog status');
+    //     }
+    // };
 
     return (
         <AdminLayout title="Blogs">
 
             {/* Category Filter and Add New Button */}
-            <div className="flex justify-between items-center mb-6">
-                <div className="flex items-center gap-4 bg-[#1e1e24] p-2 rounded-lg">
-                    <FiFilter className="text-white/70 ml-2" />
-                    <select
-                        value={selectedCategory}
-                        onChange={(e) => setSelectedCategory(e.target.value)}
-                        className="bg-transparent text-white border-none focus:ring-0"
-                    >
-                        <option value="all">All Categories</option>
-                        {categories.map((category) => (
-                            <option key={category} value={category}>
-                                {category}
-                            </option>
-                        ))}
-                    </select>
-                </div>
+            <div className="flex justify-end items-center mb-6">
                 <Link
                     href="/admin/dashboard/blogs/create"
                     className="bg-accent hover:bg-accent/80 text-white px-4 py-2 rounded-lg flex items-center gap-2"
@@ -145,70 +130,79 @@ const BlogsManagement = () => {
                 </Link>
             </div>
 
-            {/* Blog Posts Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {blogs.map((blog) => (
-                    <div key={blog._id} className="bg-[#1e1e24] rounded-lg overflow-hidden">
-                        <div className="relative h-48">
-                            <img
-                                src={blog.coverImage.url}
-                                alt={blog.title}
-                                className="w-full h-full object-cover"
-                            />
-                            <div className="absolute top-2 right-2 flex gap-2">
-                                <button
-                                    onClick={() => togglePublishStatus(blog.slug, blog.published)}
-                                    className={`p-2 rounded ${blog.published
-                                            ? 'bg-green-500/20 text-green-500'
-                                            : 'bg-yellow-500/20 text-yellow-500'
-                                        }`}
-                                >
-                                    {blog.published ? 'Published' : 'Draft'}
-                                </button>
-                            </div>
-                        </div>
-                        <div className="p-4">
-                            <div className="flex justify-between items-start mb-4">
-                                <div>
-                                    <h3 className="text-white font-semibold">{blog.title}</h3>
-                                    <span className="text-white/70 text-sm">{blog.readTime}</span>
-                                </div>
-                                <span className="px-2 py-1 text-xs rounded-full bg-accent/20 text-accent">
-                                    {blog.category}
-                                </span>
-                            </div>
-                            <p className="text-white/70 text-sm mb-4 line-clamp-2">
-                                {blog.excerpt}
-                            </p>
-                            <div className="flex justify-between items-center">
-                                <span className="text-white/50 text-sm">
-                                    {new Date(blog.createdAt).toLocaleDateString()}
-                                </span>
-                                <div className="flex gap-2">
-                                    <Link
-                                        href={`/blog/${blog.slug}`}
-                                        target="_blank"
-                                        className="text-blue-400 hover:text-blue-300"
-                                    >
-                                        <FiEye size={18} />
-                                    </Link>
-                                    <Link
-                                        href={`/admin/dashboard/blogs/edit/${blog.slug}`}
-                                        className="text-yellow-400 hover:text-yellow-300"
-                                    >
-                                        <FiEdit2 size={18} />
-                                    </Link>
-                                    <button
-                                        onClick={() => handleDeleteBlog(blog.slug)}
-                                        className="text-red-400 hover:text-red-300"
-                                    >
-                                        <FiTrash2 size={18} />
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                ))}
+            {/* Blog Posts Table */}
+            <div className="bg-[#1e1e24] rounded-lg shadow-lg overflow-hidden">
+                <div className="flex flex-col sm:flex-row justify-between items-center gap-4 p-6 bg-[#2a2a35]">
+                    <h2 className="text-lg sm:text-xl font-semibold text-white">Blog Posts</h2>
+                </div>
+
+                <div className="overflow-x-auto">
+                    <table className="w-full min-w-[700px] text-sm">
+                        <thead>
+                            <tr className="bg-[#2a2a35]">
+                                <th className="px-6 py-3 text-left text-xs font-medium text-white/70 uppercase">Title</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-white/70 uppercase">Category</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-white/70 uppercase">Read Time</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-white/70 uppercase">Date</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-white/70 uppercase">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-[#2a2a35]">
+                            {blogs.map((blog) => (
+                                <tr key={blog._id} className="hover:bg-[#2a2a35]/50">
+                                    <td className="px-6 py-4">
+                                        <div className="flex items-center">
+                                            <img 
+                                                src={blog.coverImage.url}
+                                                alt={blog.title}
+                                                className="h-10 w-10 rounded object-cover mr-3"
+                                            />
+                                            <div className="text-white">{blog.title}</div>
+                                        </div>
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        <span className="px-2 py-1 text-xs rounded-full bg-accent/20 text-accent">
+                                            {blog.category}
+                                        </span>
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        <span className="text-white/70 text-sm">
+                                            {blog.readTime}
+                                        </span>
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        <span className="text-white/50 text-sm">
+                                            {new Date(blog.createdAt).toLocaleDateString()}
+                                        </span>
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        <div className="flex gap-3">
+                                            <Link
+                                                href={`/blog/${blog.slug}`}
+                                                target="_blank"
+                                                className="text-blue-400 hover:text-blue-300"
+                                            >
+                                                <FiEye size={18} />
+                                            </Link>
+                                            <Link
+                                                href={`/admin/dashboard/edit/${blog.slug}`}
+                                                className="text-yellow-400 hover:text-yellow-300"
+                                            >
+                                                <FiEdit2 size={18} />
+                                            </Link>
+                                            <button
+                                                onClick={() => handleDeleteBlog(blog.slug)}
+                                                className="text-red-400 hover:text-red-300"
+                                            >
+                                                <FiTrash2 size={18} />
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
             </div>
 
             {/* Pagination */}

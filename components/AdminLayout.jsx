@@ -61,7 +61,7 @@ const AdminLayout = ({ children, title }) => {
                 <div className="px-8 py-6">
                     {/* Admin Header */}
                     <div className="flex flex-col md:flex-row justify-between items-center mb-8 pb-4 border-b border-gray-700">
-                        <h1 className="text-3xl font-bold mb-4 md:mb-0">{title}</h1>
+                        <h1 className="text-3xl font-bold mb-4 md:mb-0 ml-12 md:ml-0">{title}</h1>
 
                         <div className="flex gap-4">
                             {/* Notifications Badge */}

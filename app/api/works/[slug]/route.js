@@ -68,64 +68,86 @@ export async function PUT(request, { params }) {
         // Handle cover image update if provided
         let coverImageData = existingWork.coverImage;
 
-        if (data.coverImage && data.coverImage !== existingWork.coverImage.url) {
-            if (data.coverImage.startsWith('data:image')) {
-                try {
-                    const uploadResult = await uploadImage(data.coverImage);
-                    coverImageData = {
-                        url: uploadResult.secure_url,
-                        publicId: uploadResult.public_id
-                    };
+        if (data.coverImage) {
+            // Check if the coverImage is a string (data URL) or object
+            if (typeof data.coverImage === 'string') {
+                // Handle data URL string
+                if (data.coverImage.startsWith('data:image')) {
+                    try {
+                        const uploadResult = await uploadImage(data.coverImage);
+                        coverImageData = {
+                            url: uploadResult.secure_url,
+                            publicId: uploadResult.public_id
+                        };
 
-                    // Delete old cover image if it's not the default
-                    if (existingWork.coverImage.publicId !== 'default') {
-                        await deleteImage(existingWork.coverImage.publicId);
+                        // Delete old cover image if it's not the default
+                        if (existingWork.coverImage.publicId !== 'default') {
+                            await deleteImage(existingWork.coverImage.publicId);
+                        }
+                    } catch (error) {
+                        console.error('Cover image upload failed:', error);
+                        // Continue with existing image
                     }
-                } catch (error) {
-                    console.error('Cover image upload failed:', error);
-                    // Continue with existing image
+                } else {
+                    // If it's a regular URL string, use it directly
+                    coverImageData = {
+                        url: data.coverImage,
+                        publicId: 'external'
+                    };
                 }
-            } else {
-                // If it's already a URL, use it directly
-                coverImageData = {
-                    url: data.coverImage,
-                    publicId: 'external'
-                };
+            } else if (typeof data.coverImage === 'object' && data.coverImage !== null) {
+                // Handle object (already formatted with url and publicId)
+                if (data.coverImage.url) {
+                    coverImageData = data.coverImage;
+                }
             }
         }
 
         // Handle additional images update if provided
-        let imagesData = existingWork.images;
+        let imagesData = Array.isArray(existingWork.images) ? existingWork.images : [];
 
         if (data.images && Array.isArray(data.images)) {
             imagesData = [];
             for (const imageData of data.images) {
-                if (typeof imageData === 'string' && imageData.startsWith('data:image')) {
-                    try {
-                        const uploadResult = await uploadImage(imageData);
+                
+                if (typeof imageData === 'string') {
+                    if (imageData.startsWith('data:image')) {
+                        // It's a base64 image, upload it
+                        try {
+                            const uploadResult = await uploadImage(imageData);
+                            imagesData.push({
+                                url: uploadResult.secure_url,
+                                publicId: uploadResult.public_id,
+                                caption: ''
+                            });
+                        } catch (error) {
+                            console.error('Additional image upload failed:', error);
+                            // Continue with next image
+                        }
+                    } else {
+                        // It's a URL string
                         imagesData.push({
-                            url: uploadResult.secure_url,
-                            publicId: uploadResult.public_id,
+                            url: imageData,
+                            publicId: 'external',
                             caption: ''
                         });
-                    } catch (error) {
-                        console.error('Additional image upload failed:', error);
-                        // Continue with next image
                     }
-                } else if (typeof imageData === 'object' && imageData.url) {
-                    // Keep existing image objects
+                } else if (typeof imageData === 'object' && imageData !== null && imageData.url) {
+                    // It's already an object with url property
                     imagesData.push(imageData);
                 }
             }
 
-            // Delete old additional images that are not in the new list
-            for (const oldImage of existingWork.images) {
-                const stillExists = imagesData.some(img => img.publicId === oldImage.publicId);
-                if (!stillExists && oldImage.publicId !== 'default') {
-                    try {
-                        await deleteImage(oldImage.publicId);
-                    } catch (error) {
-                        console.error('Failed to delete old image:', error);
+            // Delete old additional images that are not in the new list (only if existingWork.images exists and is an array)
+            if (Array.isArray(existingWork.images)) {
+                for (const oldImage of existingWork.images) {
+                    const stillExists = imagesData.some(img => img.publicId === oldImage.publicId);
+                    if (!stillExists && oldImage.publicId !== 'default') {
+                        try {
+                            await deleteImage(oldImage.publicId);
+                        } catch (error) {
+                            console.error('Failed to delete old image:', error);
+                        }
                     }
                 }
             }
@@ -192,13 +214,15 @@ export async function DELETE(request, { params }) {
             }
         }
 
-        // Delete additional images from Cloudinary
-        for (const image of work.images) {
-            if (image.publicId !== 'default') {
-                try {
-                    await deleteImage(image.publicId);
-                } catch (error) {
-                    console.error('Failed to delete additional image from Cloudinary:', error);
+        // Delete additional images from Cloudinary (only if images array exists)
+        if (Array.isArray(work.images)) {
+            for (const image of work.images) {
+                if (image.publicId !== 'default') {
+                    try {
+                        await deleteImage(image.publicId);
+                    } catch (error) {
+                        console.error('Failed to delete additional image from Cloudinary:', error);
+                    }
                 }
             }
         }

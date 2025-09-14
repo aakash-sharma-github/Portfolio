@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { FiPlus, FiEdit2, FiTrash2, FiEye } from 'react-icons/fi';
 import Link from 'next/link';
 import AdminLayout from '@/components/AdminLayout';
+import StatusBadge from '@/components/StatusBadge';
 import { Toaster, toast } from 'sonner';
 
 const WorksManagement = () => {
@@ -21,9 +22,24 @@ const WorksManagement = () => {
 
     const fetchWorks = async () => {
         try {
+            setIsLoading(true);
             const response = await fetch('/api/works');
+            
+            if (!response.ok) {
+                const errorData = await response.json();
+                console.error('API Error:', errorData);
+                throw new Error(errorData.error || 'Failed to fetch works');
+            }
+            
             const data = await response.json();
-            setWorks(data.works || []);
+            
+            // Check if data and data.works exist
+            if (!data || !Array.isArray(data.works)) {
+                console.error('Invalid API response format:', data);
+                throw new Error('Invalid API response format');
+            }
+            
+            setWorks(data.works);
             
             // Calculate stats
             const completed = data.works.filter(work => work.status === 'completed').length;
@@ -34,10 +50,11 @@ const WorksManagement = () => {
                 completed,
                 inProgress
             });
-            
-            setIsLoading(false);
         } catch (error) {
-            toast.error('Failed to fetch works');
+            console.error('Error fetching works:', error);
+            toast.error(error.message || 'Failed to fetch works');
+            setWorks([]);
+        } finally {
             setIsLoading(false);
         }
     };
@@ -57,11 +74,30 @@ const WorksManagement = () => {
                         onClick={async () => {
                             toast.dismiss(t.id);
                             try {
-                                await fetch(`/api/works/${slug}`, { method: 'DELETE' });
+                                // Get the authentication token
+                                const token = localStorage.getItem('adminToken');
+                                if (!token) {
+                                    toast.error('Authentication required. Please login again.');
+                                    return;
+                                }
+                                
+                                const response = await fetch(`/api/works/${slug}`, {
+                                    method: 'DELETE',
+                                    headers: {
+                                        'Authorization': `Bearer ${token}`
+                                    }
+                                });
+                                
+                                if (!response.ok) {
+                                    const errorData = await response.json();
+                                    throw new Error(errorData.error || 'Failed to delete work');
+                                }
+                                
                                 fetchWorks();
                                 toast.success('Work deleted successfully');
                             } catch (error) {
-                                toast.error('Failed to delete work');
+                                console.error('Delete error:', error);
+                                toast.error(error.message || 'Failed to delete work');
                             }
                         }}
                         className="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700"
@@ -78,18 +114,18 @@ const WorksManagement = () => {
 
             {/* Works Table */}
             <div className="bg-[#1e1e24] rounded-lg shadow-lg overflow-hidden">
-                <div className="flex justify-between items-center p-6 bg-[#2a2a35]">
-                    <h2 className="text-xl font-semibold text-white">Projects</h2>
+                <div className="flex flex-col sm:flex-row justify-between items-center gap-4 p-6 bg-[#2a2a35]">
+                    <h2 className="text-lg sm:text-xl font-semibold text-white">Projects</h2>
                     <Link 
                         href="/admin/dashboard/works/create"
-                        className="bg-accent hover:bg-accent/80 text-white px-4 py-2 rounded-lg flex items-center gap-2"
+                        className="bg-accent hover:bg-accent/80 text-white px-4 py-2 rounded-lg flex items-center gap-2 w-full sm:w-auto justify-center"
                     >
                         <FiPlus /> Add New Project
                     </Link>
                 </div>
 
                 <div className="overflow-x-auto">
-                    <table className="w-full">
+                    <table className="w-full min-w-[700px] text-sm">
                         <thead>
                             <tr className="bg-[#2a2a35]">
                                 <th className="px-6 py-3 text-left text-xs font-medium text-white/70 uppercase">Title</th>
@@ -117,20 +153,12 @@ const WorksManagement = () => {
                                         </span>
                                     </td>
                                     <td className="px-6 py-4">
-                                        <span className={`px-2 py-1 text-xs rounded-full ${
-                                            work.status === 'completed' 
-                                                ? 'bg-green-500/20 text-green-500'
-                                                : work.status === 'in-progress'
-                                                ? 'bg-yellow-500/20 text-yellow-500'
-                                                : 'bg-gray-500/20 text-gray-500'
-                                        }`}>
-                                            {work.status}
-                                        </span>
+                                        <StatusBadge status={work.status} size="sm" />
                                     </td>
                                     <td className="px-6 py-4">
                                         <div className="flex gap-3">
                                             <Link
-                                                href={`/work/${work.slug}`}
+                                                href="/work"
                                                 target="_blank"
                                                 className="text-blue-400 hover:text-blue-300"
                                             >

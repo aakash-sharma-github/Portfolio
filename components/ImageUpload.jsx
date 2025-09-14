@@ -59,7 +59,9 @@ const ImageUpload = ({ value, onChange, className = '', postTitle = 'Blog Post' 
     };
 
     const handleUseDefaultCover = () => {
-        const defaultCoverUrl = `/api/default-cover?title=${encodeURIComponent(postTitle)}`;
+        // Add timestamp to prevent browser caching issues
+        const timestamp = Date.now();
+        const defaultCoverUrl = `/api/default-cover?title=${encodeURIComponent(postTitle)}&t=${timestamp}`;
         onChange(defaultCoverUrl);
         setImageError(false);
     };

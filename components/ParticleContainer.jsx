@@ -1,7 +1,14 @@
-import { useCallback, useEffect, useState } from "react";
-import Particles, { initParticlesEngine } from "@tsparticles/react";
-// import { loadFull } from "tsparticles"; // if you are going to use `loadFull`, install the "tsparticles" package too.
-import { loadSlim } from "@tsparticles/slim"; // if you are going to use `loadSlim`, install the "@tsparticles/slim" package too.
+import { useCallback, useEffect, useState, memo } from "react";
+import dynamic from "next/dynamic";
+
+// Dynamically import particles to reduce bundle size and improve initial load
+const Particles = dynamic(() => import("@tsparticles/react"), {
+    ssr: false,
+    loading: () => null,
+});
+
+import { initParticlesEngine } from "@tsparticles/react";
+import { loadSlim } from "@tsparticles/slim";
 
 const ParticlesContainer = () => {
     const [init, setInit] = useState(false);
@@ -31,26 +38,32 @@ const ParticlesContainer = () => {
                     fullScreen: {
                         enable: true,
                     },
-                    fpsLimit: 120,
+                    fpsLimit: 60, // Reduced from 120 for better performance
+                    background: {
+                        color: "transparent",
+                    },
                     interactivity: {
+                        detectsOn: "window",
                         events: {
                             onClick: {
                                 enable: false,
-                                mode: "push",
                             },
                             onHover: {
                                 enable: true,
                                 mode: "repulse",
                             },
-                            resize: true,
+                            resize: {
+                                enable: true,
+                                delay: 0.5,
+                            },
                         },
                         modes: {
-                            push: {
-                                quantity: 500,
-                            },
                             repulse: {
-                                distance: 80,
-                                duration: 0.4,
+                                distance: 60, // Reduced distance for better performance
+                                duration: 0.2, // Reduced duration
+                                factor: 100,
+                                speed: 1,
+                                maxSpeed: 50,
                             },
                         },
                     },
@@ -60,39 +73,45 @@ const ParticlesContainer = () => {
                         },
                         links: {
                             color: "#f5d393",
-                            distance: 150,
+                            distance: 120, // Reduced from 150
                             enable: true,
-                            opacity: 0.5,
-                            width: 1,
+                            opacity: 0.3, // Reduced opacity
+                            width: 0.5, // Thinner lines
                         },
                         collisions: {
-                            enable: true,
+                            enable: false, // Disabled for better performance
                         },
                         move: {
                             direction: "none",
                             enable: true,
                             outModes: {
-                                default: "bounce",
+                                default: "out", // Changed from bounce for better performance
                             },
                             random: false,
-                            speed: 0.8,
+                            speed: 0.5, // Reduced speed
                             straight: false,
                         },
                         number: {
                             density: {
                                 enable: true,
-                                area: 800,
+                                area: 1000, // Increased area to reduce density
                             },
-                            value: 150,
+                            value: 80, // Reduced from 150 particles
                         },
                         opacity: {
-                            value: 0.5,
+                            value: 0.4, // Reduced opacity
+                            animation: {
+                                enable: false, // Disabled animation
+                            },
                         },
                         shape: {
                             type: "circle",
                         },
                         size: {
-                            value: { min: 1, max: 10 },
+                            value: { min: 1, max: 5 }, // Reduced max size
+                            animation: {
+                                enable: false, // Disabled size animation
+                            },
                         },
                     },
                     detectRetina: true,
@@ -103,4 +122,4 @@ const ParticlesContainer = () => {
     )
 }
 
-export default ParticlesContainer
+export default memo(ParticlesContainer)

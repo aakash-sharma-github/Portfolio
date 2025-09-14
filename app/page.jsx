@@ -1,4 +1,6 @@
 "use client";
+import { useState, useEffect, Suspense } from 'react';
+import dynamic from 'next/dynamic';
 import Photo from "@/components/Photo";
 import Socials from "@/components/Socials";
 import Stats from "@/components/Stats";
@@ -6,19 +8,50 @@ import { Button } from "@/components/ui/button";
 import { FiDownload } from "react-icons/fi";
 import { useContextApi } from '../context/contextApi';
 import { TypeAnimation } from 'react-type-animation';
-import ParticlesContainer from "@/components/ParticleContainer";
 import Link from "next/link";
 
-const Home = () => {
+// Lazy load heavy components
+const ParticlesContainer = dynamic(() => import("@/components/ParticleContainer"), {
+    ssr: false,
+    loading: () => null,
+});
 
-  const font = useContextApi((state) => state.font)
+const Home = () => {
+  const font = useContextApi((state) => state.font);
+  const [shouldLoadParticles, setShouldLoadParticles] = useState(false);
+  const [isHighPerformanceDevice, setIsHighPerformanceDevice] = useState(false);
+
+  useEffect(() => {
+    // Check device capabilities and user preferences
+    const checkDeviceCapabilities = () => {
+      const isHighEnd = window.navigator.hardwareConcurrency > 4 && 
+                       window.innerWidth > 1024 &&
+                       !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      setIsHighPerformanceDevice(isHighEnd);
+      
+      // Delay particles loading to improve initial load time
+      const timer = setTimeout(() => {
+        setShouldLoadParticles(isHighEnd);
+      }, 1000);
+      
+      return () => clearTimeout(timer);
+    };
+
+    if (typeof window !== 'undefined') {
+      checkDeviceCapabilities();
+    }
+  }, []);
 
   return (
     <>
-      {/* particles */}
-      <div className="w-[1300px] h-full absolute right-0 bottom-0 pointer-events-none particle-container">
-        <ParticlesContainer />
-      </div>
+      {/* particles - only load on high-performance devices */}
+      {shouldLoadParticles && (
+        <div className="w-[1300px] h-full absolute right-0 bottom-0 pointer-events-none particle-container">
+          <Suspense fallback={null}>
+            <ParticlesContainer />
+          </Suspense>
+        </div>
+      )}
       <section className="h-full">
         <div className=" container mx-auto h-full">
           <div className="flex flex-col xl:flex-row items-center justify-between xl:pt-8 xl:pb-24">

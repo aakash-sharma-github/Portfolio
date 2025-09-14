@@ -1,16 +1,9 @@
-"use client";
-import { useEffect } from 'react'
-import { usePathname } from 'next/navigation'
 import { JetBrains_Mono } from "next/font/google";
 import localFont from 'next/font/local';
 import "./globals.css";
-import Header from "@/components/Header";
-import PageTransition from "@/components/PageTransition";
-import StairTransation from "@/components/StairTransation";
-import { useContextApi } from '../context/contextApi';
+import ClientLayout from '@/components/ClientLayout';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import { Analytics } from '@vercel/analytics/react';
-import { GitHubProvider } from '../context/githubContext';
 
 
 const jetbrainsMono = JetBrains_Mono({
@@ -24,35 +17,18 @@ const myFont = localFont({
 });
 
 
+export const metadata = {
+  title: 'Aakash Sharma Portfolio',
+  description: 'Welcome to Aakash Sharma\'s Portfolio - a showcase of my skills, projects, and professional achievements. Built with Next.js, my portfolio highlights my expertise in web development, including JavaScript, React, and modern frontend technologies.',
+};
+
 export default function RootLayout({ children }) {
-  const setFont = useContextApi((state) => state.setFont);
-  const pathname = usePathname();
-  const isAdminRoute = pathname?.startsWith('/admin');
-
-  useEffect(() => {
-    setFont(myFont.className);
-  }, [setFont]);
-
   return (
     <html lang="en">
-      <head>
-        <meta charSet="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <meta name="description" content="Welcome to Aakash Sharma's Portfolio - a showcase of my skills, projects, and professional achievements. Built with Next.js, my portfolio highlights my expertise in web development, including JavaScript, React, and modern frontend technologies. Explore my latest projects, read about my experience, and get in touch for collaboration opportunities. Discover how I can bring value to your team or project with innovative solutions and cutting-edge web applications." />
-        <title>Aakash Sharma Portfolio</title>
-      </head>
       <body className={jetbrainsMono.variable}>
-        {!isAdminRoute && <Header myFont={myFont} />}
-        {!isAdminRoute && <StairTransation />}
-        {!isAdminRoute ? (
-          <PageTransition>
-            <GitHubProvider>
-              {children}
-            </GitHubProvider>
-          </PageTransition>
-        ) : (
-          children
-        )}
+        <ClientLayout myFont={myFont}>
+          {children}
+        </ClientLayout>
         <SpeedInsights />
         <Analytics />
       </body>

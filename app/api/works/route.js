@@ -6,16 +6,28 @@ import { uploadImage } from '@/lib/cloudinary';
 // GET handler to fetch all works
 export async function GET(request) {
     try {
+        console.log('Starting works API route GET request...');
+        
         // Connect to the database
-        await connectToDatabase();
+        try {
+            await connectToDatabase();
+            console.log('✓ Database connected successfully in works API route');
+        } catch (dbError) {
+            console.error('❌ Database connection failed:', dbError);
+            return NextResponse.json(
+                { error: 'Database connection failed', details: dbError.message },
+                { status: 500 }
+            );
+        }
 
         // Get query parameters
         const url = new URL(request.url);
         const category = url.searchParams.get('category');
-        const status = url.searchParams.get('status') || 'completed';
+        const status = url.searchParams.get('status');
         const featured = url.searchParams.get('featured');
         const limit = Math.min(parseInt(url.searchParams.get('limit') || '20'), 50);
         const page = Math.max(parseInt(url.searchParams.get('page') || '1'), 1);
+
 
         // Build query
         const filter = {};
@@ -29,33 +41,55 @@ export async function GET(request) {
             filter.featured = featured === 'true';
         }
 
+
         // Get total count for pagination
-        const total = await Work.countDocuments(filter);
+        let total;
+        try {
+            total = await Work.countDocuments(filter);
+        } catch (countError) {
+            console.error('❌ Error counting documents:', countError);
+            return NextResponse.json(
+                { error: 'Error counting works', details: countError.message },
+                { status: 500 }
+            );
+        }
 
         // Calculate pagination
         const totalPages = Math.ceil(total / limit);
-        const currentPage = Math.min(page, totalPages);
+        const currentPage = Math.min(page, totalPages || 1); // Avoid divide by zero
         const skip = (currentPage - 1) * limit;
 
         // Fetch works with pagination
-        const works = await Work.find(filter)
-            .sort({ featured: -1, order: 1, createdAt: -1 })
-            .skip(skip)
-            .limit(limit)
-            .select({
-                title: 1,
-                slug: 1,
-                description: 1,
-                category: 1,
-                technologies: 1,
-                coverImage: 1,
-                links: 1,
-                featured: 1,
-                status: 1,
-                createdAt: 1,
-                client: 1,
-                role: 1
-            });
+        let works;
+        try {
+            works = await Work.find(filter)
+                .sort({ featured: -1, createdAt: -1 })
+                .skip(skip)
+                .limit(limit)
+                .select({
+                    title: 1,
+                    slug: 1,
+                    description: 1,
+                    category: 1,
+                    technologies: 1,
+                    stack: 1,
+                    coverImage: 1,
+                    links: 1,
+                    live: 1,
+                    github: 1,
+                    featured: 1,
+                    status: 1,
+                    createdAt: 1,
+                    client: 1,
+                    role: 1
+                });
+        } catch (findError) {
+            console.error('❌ Error fetching works:', findError);
+            return NextResponse.json(
+                { error: 'Error fetching works', details: findError.message },
+                { status: 500 }
+            );
+        }
 
         const response = {
             works,
@@ -84,7 +118,6 @@ export async function POST(request) {
     try {
         // Check authentication
         const authHeader = request.headers.get('authorization');
-        console.log('Auth header:', authHeader);
         if (!authHeader || !authHeader.startsWith('Bearer ')) {
             console.log('Unauthorized: Missing or invalid Authorization header');
             return NextResponse.json(
@@ -95,7 +128,6 @@ export async function POST(request) {
         
         // Get token
         const token = authHeader.split(' ')[1];
-        console.log('Token received:', token ? 'Yes (length: ' + token.length + ')' : 'No');
 
         // Connect to the database
         await connectToDatabase();
@@ -121,7 +153,7 @@ export async function POST(request) {
         }
 
         let coverImageData = {
-            url: '/assets/works/default-work.jpg',
+            url: '/images/portfolio_01.png',
             publicId: 'default'
         };
 
@@ -175,9 +207,21 @@ export async function POST(request) {
             }
         }
 
+        // Format technologies - convert strings to objects with name property
+        const formattedTechnologies = data.technologies.map(tech => {
+            if (typeof tech === 'string') {
+                return { name: tech };
+            } else if (tech && tech.name) {
+                return tech;
+            } else {
+                return { name: String(tech) };
+            }
+        });
+
         // Create the work
         const work = await Work.create({
             ...data,
+            technologies: formattedTechnologies,
             coverImage: coverImageData,
             images: imagesData
         });

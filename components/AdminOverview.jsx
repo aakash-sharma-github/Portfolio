@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { FiMail, FiPackage, FiFileText, FiBell } from 'react-icons/fi';
 import Link from 'next/link';
+import { dashboardApi } from '@/lib/api';
 
 const AdminOverview = () => {
     const [stats, setStats] = useState({
@@ -16,24 +17,23 @@ const AdminOverview = () => {
     useEffect(() => {
         const fetchStats = async () => {
             try {
-                const response = await fetch('/api/dashboard');
-                const data = await response.json();
-                
+                // Use the API function which includes authorization handling
+                const data = await dashboardApi.getOverview();
+
                 // Extract data from the correct structure
                 const totalWorks = data.overview?.works?.total || 0;
                 const totalBlogs = data.overview?.blogs?.total || 0;
                 const totalContacts = data.overview?.contacts?.total || 0;
                 const unreadMessages = data.overview?.contacts?.unread || 0;
-                
+
                 setStats({
                     works: totalWorks,
                     blogs: totalBlogs,
                     contacts: totalContacts,
                     unreadMessages: unreadMessages,
-                    totalContent: totalWorks + totalBlogs
+                    totalContent: totalWorks + totalBlogs + totalContacts,
+                    totalMessages: totalContacts
                 });
-                
-                console.log('Dashboard data:', data);
             } catch (error) {
                 console.error('Failed to fetch dashboard stats:', error);
             }
@@ -79,6 +79,18 @@ const AdminOverview = () => {
                     </div>
                     <div className="bg-green-500/20 p-3 rounded-full">
                         <FiFileText className="text-green-500 text-xl" />
+                    </div>
+                </div>
+            </Link>
+            {/* Contacts Card */}
+            <Link href="/admin/dashboard/contacts" className="bg-[#1e1e24] p-6 rounded-lg shadow-lg hover:bg-[#2a2a35] transition-all">
+                <div className="flex items-center justify-between">
+                    <div>
+                        <p className="text-white/70 text-sm">Contacts</p>
+                        <h3 className="text-2xl font-bold text-white mt-1">{stats.contacts}</h3>
+                    </div>
+                    <div className="bg-red-500/20 p-3 rounded-full">
+                        <FiMail className="text-red-500 text-xl" />
                     </div>
                 </div>
             </Link>

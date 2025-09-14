@@ -23,6 +23,36 @@ const BlogPage = () => {
         pages: 0
     });
 
+    // Fetch posts from the API
+    useEffect(() => {
+        const fetchPosts = async () => {
+            try {
+                setIsLoading(true);
+                const response = await blogApi.getPosts({
+                    category: selectedCategory,
+                    search: debouncedSearchTerm,
+                    page: pagination.page,
+                    limit: pagination.limit
+                });
+                setPosts(response.blogs || []);
+                setPagination({
+                    ...pagination,
+                    total: response.pagination?.total || 0,
+                    pages: response.pagination?.pages || 0
+                });
+                setError(null);
+            } catch (error) {
+                console.error('Error fetching blog posts:', error);
+                setPosts([]);
+                setError(`Failed to fetch posts.`);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchPosts();
+    }, [selectedCategory, debouncedSearchTerm, pagination.page, pagination.limit]);
+
     // Debounce search term
     useEffect(() => {
         const timerId = setTimeout(() => {
@@ -116,7 +146,7 @@ const BlogPage = () => {
                     </div>
 
                     {/* Category Filter (hidden on mobile) */}
-                    <div className="flex flex-wrap justify-center gap-2 mb-12 hidden md:flex">
+                    <div className="hidden md:flex flex-wrap justify-center gap-2 mb-12">
                         {categories.map((category) => (
                             <button
                                 key={category}
