@@ -1,11 +1,11 @@
-import axios from 'axios';
-import { getFromCache, setInCache } from '../../../lib/cache';
-
-// Explicitly set Node.js runtime
+// Explicitly set Node.js runtime (never runs on client)
 export const runtime = 'nodejs';
 
-
 export async function GET() {
+  // ✅ Dynamically import axios + cache utilities only on server
+  const { default: axios } = await import('axios');
+  const { getFromCache, setInCache } = await import('@/lib/cache');
+
   const cacheKey = 'github-stats';
   const cachedData = getFromCache(cacheKey);
 
@@ -22,35 +22,22 @@ export async function GET() {
   // Return fallback values if GitHub credentials are not configured
   if (!token || !username) {
     console.warn('GitHub credentials not configured, using fallback values');
-    const fallbackData = {
-      repoCount: 25, // Fallback repository count
-      totalCommits: 500 // Fallback commit count
-    };
-    
-    // Cache the fallback data for 1 hour
-    setInCache(cacheKey, fallbackData, 60);
-    
-    return new Response(
-      JSON.stringify(fallbackData),
-      { 
-        status: 200,
-        headers: { 'Content-Type': 'application/json' }
-      }
-    );
+    const fallbackData = { repoCount: 25, totalCommits: 500 };
+    setInCache(cacheKey, fallbackData, 60); // cache 1h
+    return new Response(JSON.stringify(fallbackData), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' }
+    });
   }
 
+  // GraphQL queries
   const fetchReposQuery = `
     query ($login: String!, $after: String) {
       user(login: $login) {
         repositories(first: 100, after: $after, isFork: false) {
           totalCount
-          pageInfo {
-            hasNextPage
-            endCursor
-          }
-          nodes {
-            name
-          }
+          pageInfo { hasNextPage endCursor }
+          nodes { name }
         }
       }
     }
@@ -62,9 +49,7 @@ export async function GET() {
         defaultBranchRef {
           target {
             ... on Commit {
-              history {
-                totalCount
-              }
+              history { totalCount }
             }
           }
         }
@@ -72,6 +57,7 @@ export async function GET() {
     }
   `;
 
+  // Fetch repositories (paginated)
   const fetchRepositories = async () => {
     let repos = [];
     let hasNextPage = true;
@@ -101,6 +87,7 @@ export async function GET() {
     return repos;
   };
 
+  // Fetch commit count for a repo
   const fetchCommits = async (repoName) => {
     try {
       const response = await axios.post(
@@ -118,13 +105,11 @@ export async function GET() {
       );
 
       const defaultBranchRef = response.data.data.repository.defaultBranchRef;
-      if (defaultBranchRef && defaultBranchRef.target.history) {
-        return defaultBranchRef.target.history.totalCount;
-      }
+      return defaultBranchRef?.target?.history?.totalCount || 0;
     } catch (error) {
-      console.error(`Error fetching commits for repository ${repoName}:`, error.message);
+      console.error(`Error fetching commits for repo ${repoName}:`, error.message);
+      return 0;
     }
-    return 0;
   };
 
   try {
@@ -132,36 +117,27 @@ export async function GET() {
     const repoCount = repos.length;
 
     // Fetch commits in parallel
-    const commitPromises = repos.map(repo => fetchCommits(repo.name));
-    const commitCounts = await Promise.all(commitPromises);
-    const totalCommits = commitCounts.reduce((acc, count) => acc + count, 0);
+    const commitCounts = await Promise.all(repos.map(r => fetchCommits(r.name)));
+    const totalCommits = commitCounts.reduce((a, b) => a + b, 0);
 
     const result = { repoCount, totalCommits };
-    // Cache for 6 hours since GitHub stats don't change frequently
+
+    // Cache for 6 hours (GitHub stats don’t change too often)
     setInCache(cacheKey, result, 360);
 
-    return new Response(
-      JSON.stringify(result),
-      { status: 200 }
-    );
+    return new Response(JSON.stringify(result), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' }
+    });
   } catch (error) {
     console.error('Error fetching GitHub stats:', error.message);
-    
-    // Return fallback data instead of error to prevent UI breaks
-    const fallbackData = {
-      repoCount: 25,
-      totalCommits: 500
-    };
-    
-    // Cache the fallback data for 30 minutes (shorter cache for errors)
-    setInCache(cacheKey, fallbackData, 30);
-    
-    return new Response(
-      JSON.stringify(fallbackData),
-      { 
-        status: 200,
-        headers: { 'Content-Type': 'application/json' }
-      }
-    );
+
+    // Fallback response
+    const fallbackData = { repoCount: 25, totalCommits: 500 };
+    setInCache(cacheKey, fallbackData, 30); // cache 30m on error
+    return new Response(JSON.stringify(fallbackData), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' }
+    });
   }
 }

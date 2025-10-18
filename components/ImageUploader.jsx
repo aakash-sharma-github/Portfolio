@@ -3,12 +3,12 @@
 import { useState, useEffect } from 'react';
 import { FiUpload, FiX, FiImage } from 'react-icons/fi';
 
-const ImageUploader = ({ 
-  onImageUpload, 
-  currentImage = null, 
-  label = "Cover Image", 
+const ImageUploader = ({
+  onImageUpload,
+  currentImage = null,
+  label = "Cover Image",
   folder = "blog",
-  className = "" 
+  className = ""
 }) => {
   const [isUploading, setIsUploading] = useState(false);
   const [preview, setPreview] = useState(currentImage?.url || null);
@@ -52,7 +52,7 @@ const ImageUploader = ({
 
       // Convert to base64 for upload
       const base64 = await convertToBase64(file);
-      
+
       // Upload to Cloudinary via API
       const response = await fetch('/api/upload', {
         method: 'POST',
@@ -72,16 +72,16 @@ const ImageUploader = ({
       }
 
       const data = await response.json();
-      
+
       // Update preview with the actual uploaded image URL
       setPreview(data.url);
-      
+
       // Call the callback with image data
       onImageUpload({
         url: data.url,
         publicId: data.publicId
       });
-      
+
       setIsUploading(false);
     } catch (error) {
       console.error('Upload error:', error);
@@ -108,12 +108,12 @@ const ImageUploader = ({
   return (
     <div className={`mb-4 ${className}`}>
       <label className="block text-white mb-2">{label}</label>
-      
+
       {preview ? (
         <div className="relative">
-          <img 
-            src={preview} 
-            alt="Preview" 
+          <Image
+            src={preview}
+            alt="Preview"
             className="w-full h-48 object-cover rounded-lg"
           />
           <button
@@ -150,7 +150,7 @@ const ImageUploader = ({
           )}
         </div>
       )}
-      
+
       {error && <p className="text-red-500 mt-2 text-sm">{error}</p>}
     </div>
   );

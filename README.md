@@ -89,37 +89,54 @@ npm install
 yarn install
 ```
 
-### 3. Set Up Environment Variables
+### 3. Environment Setup Guide
 
-Create a `.env.local` file in the root directory based on the provided `.env.local.example`:
+This guide will help you set up the required environment variables for the Portfolio project.
 
-```env
-# Database connection
-MONGODB_URI=mongodb+srv://username:password@clustername.mongodb.net/Portfolio_DB?retryWrites=true&w=majority
+## 📋 Required Environment Variables
 
-# API URL
-NEXT_PUBLIC_API_URL=http://localhost:3000/api
+### 1. **Database Configuration**
+```bash
+MONGODB_URI=mongodb://localhost:27017/portfolio
+```
 
-# Cloudinary configuration
-CLOUDINARY_CLOUD_NAME=your_cloud_name
-CLOUDINARY_API_KEY=your_api_key
-CLOUDINARY_API_SECRET=your_api_secret
+### 2. **JWT Configuration**
+```bash
+JWT_SECRET=your_super_secret_jwt_key_here_make_it_long_and_secure
+```
 
-# Admin authentication
-ADMIN_PASSWORD_HASH=your_password_hash
+### 3. **Admin Authentication**
+```bash
+# Generate this hash using: node scripts/generatePassword.js your_password
+ADMIN_PASSWORD_HASH="your_base64_encoded_password_hash_here"
+```
 
-# Email configuration
-EMAIL_HOST=smtp.example.com
-EMAIL_PORT=587
-EMAIL_USER=your_email@example.com
-EMAIL_PASS=your_email_password
-EMAIL_FROM=your_email@example.com
-EMAIL_TO=your_email@example.com
+### 4. **Cloudinary Configuration (for image uploads)**
+```bash
+CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
+CLOUDINARY_API_KEY=your_cloudinary_api_key
+CLOUDINARY_API_SECRET=your_cloudinary_api_secret
+```
 
-# GitHub API
+### 5. **Email Configuration (for contact form)**
+```bash
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_EMAIL=your_email@gmail.com
+SMTP_PASSWORD=your_app_password
+```
+
+### 6. **GitHub API (for stats)**
+```bash
 GITHUB_TOKEN=your_github_personal_access_token
 GITHUB_USERNAME=your_github_username
 ```
+
+### 7. **API Configuration**
+```bash
+NEXT_PUBLIC_API_URL=http://localhost:3000
+```
+
 
 ### 4. Generate Admin Password Hash
 

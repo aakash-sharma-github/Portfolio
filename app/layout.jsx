@@ -4,6 +4,7 @@ import "./globals.css";
 import ClientLayout from '@/components/ClientLayout';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import { Analytics } from '@vercel/analytics/react';
+// import { usePathname } from 'next/navigation';
 
 
 const jetbrainsMono = JetBrains_Mono({
@@ -23,14 +24,17 @@ export const metadata = {
 };
 
 export default function RootLayout({ children }) {
+  // Only include Vercel analytics in production environment
+  const isProduction = process.env.NODE_ENV === 'production';
+
   return (
     <html lang="en">
       <body className={jetbrainsMono.variable}>
         <ClientLayout myFont={myFont}>
           {children}
         </ClientLayout>
-        <SpeedInsights />
-        <Analytics />
+        {isProduction && <SpeedInsights />}
+        {isProduction && <Analytics />}
       </body>
     </html>
   );

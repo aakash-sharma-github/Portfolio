@@ -1,4 +1,4 @@
-const bcrypt = require('bcryptjs');
+import bcrypt from 'bcryptjs';
 
 /**
  * Generate a hash for the given password
@@ -31,7 +31,4 @@ async function comparePassword(password, hash) {
     }
 }
 
-module.exports = {
-    generateHash,
-    comparePassword
-};
+export { generateHash, comparePassword };

@@ -37,7 +37,7 @@ const RichTextEditor = ({ value, onChange, height = 500 }) => {
 
     return (
         <Editor
-            apiKey={process.env.NEXT_PUBLIC_TINYMCE_API_KEY}
+            apiKey={process.env.NEXT_PUBLIC_TINYMCE}
             onInit={(evt, editor) => {
                 editorRef.current = editor;
             }}

@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { FiCalendar, FiClock, FiTag, FiSearch, FiChevronLeft, FiChevronRight } from 'react-icons/fi';
+import { FiCalendar, FiClock, FiTag, FiSearch } from 'react-icons/fi';
 import { blogApi } from '@/lib/api';
 import ClientOnly from '@/components/ClientOnly';
 import Pagination from '@/components/Pagination';

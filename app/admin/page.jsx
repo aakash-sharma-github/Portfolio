@@ -40,14 +40,19 @@ const AdminLogin = () => {
         setIsLoading(true);
 
         try {
+            console.log('Attempting login...');
             const result = await authApi.login(password);
 
             if (result.token) {
                 localStorage.setItem('adminToken', result.token);
+                console.log('Login successful, redirecting...');
                 router.push('/admin/dashboard');
+            } else {
+                setError('No token received from server.');
             }
         } catch (error) {
-            setError('Authentication failed. Please try again.');
+            console.error('Login error:', error);
+            setError(error.message || 'Authentication failed. Please try again.');
         } finally {
             setIsLoading(false);
         }
@@ -123,4 +128,4 @@ const AdminLogin = () => {
     );
 };
 
-export default AdminLogin; 
+export default AdminLogin;

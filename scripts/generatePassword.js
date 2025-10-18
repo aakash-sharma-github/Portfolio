@@ -1,4 +1,4 @@
-const { generateHash } = require('../controllers/adminController');
+import { generateHash } from '../controllers/adminController.js';
 
 // Check if password is provided as command line argument
 const password = process.argv[2];

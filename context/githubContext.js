@@ -12,15 +12,18 @@ export const GitHubProvider = ({ children }) => {
         const fetchData = async () => {
             try {
                 setIsLoading(true);
-                const response = await axios.get('/api/github-stats', {
-                    timeout: 10000 // 10 second timeout
-                });
-                setData(response.data);
-                setError(null);
-            } catch (error) {
-                console.warn('GitHub stats not available, using fallback values:', error.message);
-                setError(error.message);
-                // Keep the fallback values already set in initial state
+                // Try to fetch data with error handling
+                try {
+                    const response = await axios.get('/api/github-stats', {
+                        timeout: 5000 // 5 second timeout
+                    });
+                    setData(response.data);
+                    setError(null);
+                } catch (fetchError) {
+                    console.warn('GitHub stats not available, using fallback values:', fetchError.message);
+                    // Keep using the fallback values already set in initial state
+                    setError(fetchError.message);
+                }
             } finally {
                 setIsLoading(false);
             }

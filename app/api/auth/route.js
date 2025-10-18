@@ -11,6 +11,15 @@ const JWT_SECRET = process.env.JWT_SECRET;
 // POST handler for login
 export async function POST(request) {
     try {
+        // Check if JWT_SECRET is configured
+        if (!JWT_SECRET) {
+            console.error('JWT_SECRET not found in environment variables');
+            return NextResponse.json(
+                { error: 'Server configuration error: JWT_SECRET not set' },
+                { status: 500 }
+            );
+        }
+
         // Parse the request body
         const { password } = await request.json();
 
@@ -22,13 +31,29 @@ export async function POST(request) {
             );
         }
 
-        // Check if password is correct using hashed comparison
-        const adminPasswordHash = Buffer.from(process.env.ADMIN_PASSWORD_HASH, 'base64').toString('utf-8');
-
-        if (!adminPasswordHash) {
+        // Check if ADMIN_PASSWORD_HASH is configured
+        if (!process.env.ADMIN_PASSWORD_HASH) {
             console.error('ADMIN_PASSWORD_HASH not found in environment variables');
             return NextResponse.json(
-                { error: 'Server configuration error' },
+                { 
+                    error: 'Server configuration error: ADMIN_PASSWORD_HASH not set',
+                    details: 'Please run: node scripts/generatePassword.js your_password'
+                },
+                { status: 500 }
+            );
+        }
+
+        // Decode the base64 encoded hash
+        let adminPasswordHash;
+        try {
+            adminPasswordHash = Buffer.from(process.env.ADMIN_PASSWORD_HASH, 'base64').toString('utf-8');
+        } catch (error) {
+            console.error('Error decoding ADMIN_PASSWORD_HASH:', error);
+            return NextResponse.json(
+                { 
+                    error: 'Server configuration error: Invalid ADMIN_PASSWORD_HASH format',
+                    details: 'Please regenerate the hash: node scripts/generatePassword.js your_password'
+                },
                 { status: 500 }
             );
         }
@@ -37,7 +62,10 @@ export async function POST(request) {
         if (adminPasswordHash.length !== 60) {
             console.error(`Invalid hash length: ${adminPasswordHash.length}, expected 60`);
             return NextResponse.json(
-                { error: 'Server configuration error - invalid hash format' },
+                { 
+                    error: 'Server configuration error: Invalid hash format',
+                    details: 'Please regenerate the hash: node scripts/generatePassword.js your_password'
+                },
                 { status: 500 }
             );
         }
@@ -72,6 +100,15 @@ export async function POST(request) {
 // GET handler to verify token
 export async function GET(request) {
     try {
+        // Check if JWT_SECRET is configured
+        if (!JWT_SECRET) {
+            console.error('JWT_SECRET not found in environment variables');
+            return NextResponse.json(
+                { error: 'Server configuration error: JWT_SECRET not set' },
+                { status: 500 }
+            );
+        }
+
         // Get token from authorization header
         const authHeader = request.headers.get('authorization');
 
@@ -85,6 +122,14 @@ export async function GET(request) {
 
         // Extract token
         const token = authHeader.split(' ')[1];
+
+        if (!token) {
+            console.error('Unauthorized: No token provided');
+            return NextResponse.json(
+                { error: 'Unauthorized' },
+                { status: 401 }
+            );
+        }
 
         // Verify token
         try {

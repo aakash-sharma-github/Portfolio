@@ -12,8 +12,8 @@ import Link from "next/link";
 
 // Lazy load heavy components
 const ParticlesContainer = dynamic(() => import("@/components/ParticleContainer"), {
-    ssr: false,
-    loading: () => null,
+  ssr: false,
+  loading: () => null,
 });
 
 const Home = () => {
@@ -24,16 +24,16 @@ const Home = () => {
   useEffect(() => {
     // Check device capabilities and user preferences
     const checkDeviceCapabilities = () => {
-      const isHighEnd = window.navigator.hardwareConcurrency > 4 && 
-                       window.innerWidth > 1024 &&
-                       !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const isHighEnd = window.navigator.hardwareConcurrency > 4 &&
+        window.innerWidth > 1024 &&
+        !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       setIsHighPerformanceDevice(isHighEnd);
-      
+
       // Delay particles loading to improve initial load time
       const timer = setTimeout(() => {
         setShouldLoadParticles(isHighEnd);
       }, 1000);
-      
+
       return () => clearTimeout(timer);
     };
 

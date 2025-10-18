@@ -44,7 +44,7 @@ const MobileNav = () => {
             </SheetTrigger>
             <SheetContent className="flex flex-col">
                 {/* logo */}
-                <div className="mt-32 mb-40 text-center text-2xl">
+                <div className="mt-32 mb-16 text-center text-2xl">
                     <Link href="/">
                         <h1 className={`${font} text-4xl font-semibold`}>
                             Aakash Sharma<span className="text-accent">.</span>
@@ -57,7 +57,7 @@ const MobileNav = () => {
                 <SheetDescription className="sr-only">A menu to navigate through different sections of the portfolio.</SheetDescription>
 
                 {/* Nav */}
-                <nav className="flex flex-col justify-center items-center gap-8">
+                <nav className="flex flex-col justify-center items-center gap-6">
                     {links.map((link, index) => {
                         return (
                             <Link
