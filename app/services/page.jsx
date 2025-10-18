@@ -6,14 +6,11 @@ import {
   FaMobile, 
   FaPython, 
   FaDocker, 
-  FaCloud, 
   FaDatabase, 
   FaShieldAlt,
   FaRocket,
-  FaCogs,
-  FaChartLine,
-  FaLock
 } from "react-icons/fa";
+import { useRouter } from 'next/navigation';
 
 const servicesList = [
   {
@@ -91,6 +88,7 @@ const servicesList = [
 ]
 
 const Services = () => {
+  const router = useRouter();
   return (
     <section className="min-h-screen py-20 bg-gradient-to-br from-primary via-primary to-primary/90">
       <div className="container mx-auto px-4">
@@ -178,6 +176,7 @@ const Services = () => {
               Let's discuss how I can help bring your ideas to life with cutting-edge technology solutions.
             </p>
             <motion.button
+              onClick={() => router.push('/contact')}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               className="bg-gradient-to-r from-accent to-accent/80 text-primary font-semibold px-8 py-3 rounded-full hover:shadow-lg hover:shadow-accent/25 transition-all duration-300"
