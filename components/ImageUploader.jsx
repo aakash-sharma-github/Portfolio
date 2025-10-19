@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { FiUpload, FiX, FiImage } from 'react-icons/fi';
+import Image from 'next/image';
 
 const ImageUploader = ({
   onImageUpload,
@@ -114,6 +115,8 @@ const ImageUploader = ({
           <Image
             src={preview}
             alt="Preview"
+            width={400}
+            height={192}
             className="w-full h-48 object-cover rounded-lg"
           />
           <button

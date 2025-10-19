@@ -10,6 +10,8 @@ const JWT_SECRET = process.env.JWT_SECRET;
 
 // Explicitly set Node.js runtime instead of Edge
 export const runtime = 'nodejs';
+// Force dynamic rendering since we use request headers
+export const dynamic = 'force-dynamic';
 
 // GET handler to fetch dashboard statistics
 export async function GET(request) {

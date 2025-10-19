@@ -5,6 +5,8 @@ import { uploadImage, deleteImage } from '@/lib/cloudinary';
 
 // Explicitly set Node.js runtime
 export const runtime = 'nodejs';
+// Force dynamic rendering since we use request headers
+export const dynamic = 'force-dynamic';
 
 
 // GET handler to fetch a specific work by slug

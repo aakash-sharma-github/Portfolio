@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { FiPlus, FiEdit2, FiTrash2, FiEye } from 'react-icons/fi';
 import Link from 'next/link';
+import Image from 'next/image';
 import AdminLayout from '@/components/AdminLayout';
 import StatusBadge from '@/components/StatusBadge';
 import { Toaster, toast } from 'sonner';
@@ -139,9 +140,11 @@ const WorksManagement = () => {
                                 <tr key={work._id} className="hover:bg-[#2a2a35]/50">
                                     <td className="px-6 py-4">
                                         <div className="flex items-center">
-                                            <img 
+                                            <Image 
                                                 src={work.coverImage.url} 
                                                 alt={work.title}
+                                                width={40}
+                                                height={40}
                                                 className="h-10 w-10 rounded object-cover mr-3"
                                             />
                                             <div className="text-white">{work.title}</div>

@@ -4,6 +4,8 @@ import Contact from '@/lib/models/Contact';
 
 // Explicitly set Node.js runtime
 export const runtime = 'nodejs';
+// Force dynamic rendering since we use request headers
+export const dynamic = 'force-dynamic';
 
 
 // GET handler to fetch a specific contact message by ID

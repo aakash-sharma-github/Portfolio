@@ -4,6 +4,8 @@ import { comparePassword } from '../../../controllers/adminController';
 
 // Explicitly set Node.js runtime
 export const runtime = 'nodejs';
+// Force dynamic rendering since we use request headers
+export const dynamic = 'force-dynamic';
 
 // Secret key for JWT
 const JWT_SECRET = process.env.JWT_SECRET;

@@ -35,11 +35,11 @@ const BlogPage = () => {
                     limit: pagination.limit
                 });
                 setPosts(response.blogs || []);
-                setPagination({
-                    ...pagination,
+                setPagination(prev => ({
+                    ...prev,
                     total: response.pagination?.total || 0,
                     pages: response.pagination?.pages || 0
-                });
+                }));
                 setError(null);
             } catch (error) {
                 console.error('Error fetching blog posts:', error);
@@ -83,11 +83,11 @@ const BlogPage = () => {
                 });
 
                 setPosts(response.blogs || []);  // Ensure it's always an array
-                setPagination({
-                    ...pagination,
+                setPagination(prev => ({
+                    ...prev,
                     total: response.pagination?.total || 0,
                     pages: response.pagination?.pages || 0
-                });
+                }));
                 setError(null); // Clear any previous errors
             } catch (error) {
                 setPosts([]);  // Empty the posts array on error
@@ -103,13 +103,13 @@ const BlogPage = () => {
     // Handle category change
     const handleCategoryChange = (category) => {
         setSelectedCategory(category);
-        setPagination({ ...pagination, page: 1 }); // Reset to first page on category change
+        setPagination(prev => ({ ...prev, page: 1 })); // Reset to first page on category change
     };
 
     // Handle page change
     const handlePageChange = (newPage) => {
         if (newPage >= 1 && newPage <= pagination.pages) {
-            setPagination({ ...pagination, page: newPage });
+            setPagination(prev => ({ ...prev, page: newPage }));
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
     };
@@ -117,7 +117,7 @@ const BlogPage = () => {
     // Handle search input change
     const handleSearchChange = (e) => {
         setSearchTerm(e.target.value);
-        setPagination({ ...pagination, page: 1 }); // Reset to first page on search
+        setPagination(prev => ({ ...prev, page: 1 })); // Reset to first page on search
     };
 
     return (

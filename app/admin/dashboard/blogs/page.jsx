@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { FiPlus, FiEdit2, FiTrash2, FiEye, FiFilter } from 'react-icons/fi';
 import Link from 'next/link';
+import Image from 'next/image';
 import AdminLayout from '@/components/AdminLayout';
 import { Toaster, toast } from 'sonner';
 
@@ -17,12 +18,7 @@ const BlogsManagement = () => {
         limit: 12
     });
 
-    useEffect(() => {
-        fetchBlogs();
-        fetchCategories();
-    }, [selectedCategory]);
-
-    const fetchCategories = async () => {
+    const fetchCategories = useCallback(async () => {
         try {
             const response = await fetch('/api/categories');
             const data = await response.json();
@@ -30,9 +26,9 @@ const BlogsManagement = () => {
         } catch (error) {
             console.error('Failed to fetch categories:', error);
         }
-    };
+    }, []);
 
-    const fetchBlogs = async (page = 1) => {
+    const fetchBlogs = useCallback(async (page = 1) => {
         try {
             setIsLoading(true);
             const limit = pagination.limit;
@@ -61,7 +57,12 @@ const BlogsManagement = () => {
             toast.error('Failed to fetch blogs');
             setIsLoading(false);
         }
-    };
+    }, [selectedCategory, pagination.limit]);
+
+    useEffect(() => {
+        fetchBlogs();
+        fetchCategories();
+    }, [fetchBlogs, fetchCategories]);
 
     const handleDeleteBlog = async (slug) => {
         toast.custom((t) => (
@@ -152,9 +153,11 @@ const BlogsManagement = () => {
                                 <tr key={blog._id} className="hover:bg-[#2a2a35]/50">
                                     <td className="px-6 py-4">
                                         <div className="flex items-center">
-                                            <img 
+                                            <Image 
                                                 src={blog.coverImage.url}
                                                 alt={blog.title}
+                                                width={40}
+                                                height={40}
                                                 className="h-10 w-10 rounded object-cover mr-3"
                                             />
                                             <div className="text-white">{blog.title}</div>

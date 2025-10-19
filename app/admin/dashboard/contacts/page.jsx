@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { FiMail, FiTrash } from 'react-icons/fi';
 import AdminLayout from '@/components/AdminLayout';
 import { Toaster, toast } from 'sonner';
@@ -11,11 +11,7 @@ const ContactsManagement = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [filter, setFilter] = useState('all');
 
-    useEffect(() => {
-        fetchContacts();
-    }, [filter]);
-
-    const fetchContacts = async () => {
+    const fetchContacts = useCallback(async () => {
         try {
             setIsLoading(true);
             // Use the API function with proper auth token handling
@@ -27,7 +23,11 @@ const ContactsManagement = () => {
             toast.error('Failed to fetch contacts');
             setIsLoading(false);
         }
-    };
+    }, [filter]);
+
+    useEffect(() => {
+        fetchContacts();
+    }, [fetchContacts]);
 
     const handleMarkAsRead = async (id) => {
         try {
