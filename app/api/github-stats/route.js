@@ -22,7 +22,7 @@ export async function GET() {
   // Return fallback values if GitHub credentials are not configured
   if (!token || !username) {
     console.warn('GitHub credentials not configured, using fallback values');
-    const fallbackData = { repoCount: 25, totalCommits: 500 };
+    const fallbackData = { repoCount: 29, totalCommits: 134 };
     setInCache(cacheKey, fallbackData, 60); // cache 1h
     return new Response(JSON.stringify(fallbackData), {
       status: 200,
@@ -133,7 +133,7 @@ export async function GET() {
     console.error('Error fetching GitHub stats:', error.message);
 
     // Fallback response
-    const fallbackData = { repoCount: 25, totalCommits: 500 };
+    const fallbackData = { repoCount: 29, totalCommits: 142 };
     setInCache(cacheKey, fallbackData, 30); // cache 30m on error
     return new Response(JSON.stringify(fallbackData), {
       status: 200,

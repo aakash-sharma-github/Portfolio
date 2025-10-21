@@ -8,7 +8,7 @@ import { motion } from 'framer-motion'
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
-import { emailApi } from '@/lib/emailApi';
+import { contactApi } from '@/lib/api';
 import { Toaster, toast } from 'sonner';
 import {
   Form,
@@ -113,29 +113,29 @@ const ContactForm = () => {
   const onSubmit = async (values) => {
     setIsLoading(true)
 
-    if (!form.formState.isValid) {
-      toast.warning('Please fill in all required fields.');
+    // Debug logging
+    console.log('Form values being submitted:', values);
+
+    // Additional validation check
+    const trimmedValues = {
+      fullname: values.fullname.trim(),
+      email: values.email.trim(),
+      subject: values.subject.trim(),
+      message: values.message.trim(),
+    };
+    
+    try {
+      // sends the email to the server.
+      await contactApi.submitContact(trimmedValues);
+      form.reset();
+      toast.success('Email sent successfully!');
+    } catch (error) {
+      const message = error?.response?.data?.message || error.message || 'Failed to send email';
+      console.error('Error:', error);
+      toast.error(message);
+    } finally {
       setIsLoading(false);
-      return;
     }
-
-    const emailPromise = emailApi(values)
-      .then(response => {
-        form.reset();
-        return response;
-      });
-
-    toast.promise(emailPromise, {
-      loading: 'Sending email...',
-      success: () => 'Email sent successfully!',
-      error: (error) => {
-        const message = error?.response?.data?.message || error.message || 'Failed to send email';
-        console.error('Error:', error);
-        return message;
-      }
-    });
-
-    emailPromise.finally(() => setIsLoading(false));
   }
 
   return (
@@ -155,7 +155,13 @@ const ContactForm = () => {
       </div>
 
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 md:space-y-6">
+        <form 
+          onSubmit={form.handleSubmit(onSubmit, (errors) => {
+            console.log('Form validation errors:', errors);
+            toast.error('Please fix the form errors before submitting.');
+          })} 
+          className="space-y-4 md:space-y-6"
+        >
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
             <FormField
               control={form.control}
