@@ -32,15 +32,15 @@ const Stats = () => {
 
     const stats = [
         {
-            num: 2,
+            num: new Date().getFullYear() - 2021,
             text: "Years of experience.",
         },
         {
-            num: 6,
+            num: 8,
             text: "Projects completed.",
         },
         {
-            num: 10,
+            num: 12,
             text: "Technologies Learned.",
         },
         {
