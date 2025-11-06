@@ -138,17 +138,17 @@ const experience = {
     {
       company: "Telcovate Communication Network Solutions",
       position: "Telecommunication Engineer",
-      duration: "nov-2024 - present"
+      duration: "Nov-2024 - Present"
     },
     {
       company: "BlueEra Softech Pvt. Ltd.",
       position: "Software Engineer Intern",
-      duration: "jan-2024 - apr-2024"
+      duration: "Jan-2024 - Apr-2024"
     },
     {
       company: "CodeClause",
       position: "Web Developer Intern",
-      duration: "july-2023 - august-2023"
+      duration: "July-2023 - August-2023"
     }
   ]
 };
