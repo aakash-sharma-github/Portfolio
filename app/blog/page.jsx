@@ -123,7 +123,7 @@ const BlogPage = () => {
     return (
         <ClientOnly>
             <div className="min-h-screen bg-primary">
-                <div className="container mx-auto py-16 px-4">
+                <div className="container mx-auto py-4 px-4">
                     <div className="text-center mb-8">
                         <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">Blogs</h1>
                         <p className="text-xl text-white/70 max-w-2xl mx-auto">
@@ -146,7 +146,7 @@ const BlogPage = () => {
                     </div>
 
                     {/* Category Filter (hidden on mobile) */}
-                    <div className="hidden md:flex flex-wrap justify-center gap-2 mb-12">
+                    <div className="hidden md:flex flex-wrap justify-center gap-2 mb-4">
                         {categories.map((category) => (
                             <button
                                 key={category}
@@ -161,7 +161,7 @@ const BlogPage = () => {
                         ))}
                     </div>
 
-                    <div className="container mx-auto px-4 py-12">
+                    <div className="container mx-auto px-4 py-4">
                         {/* Loading state */}
                         {isLoading && <div className="flex justify-center items-center py-12">
                             <div className="loader"></div>

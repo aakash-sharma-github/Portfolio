@@ -90,7 +90,7 @@ const servicesList = [
 const Services = () => {
   const router = useRouter();
   return (
-    <section className="min-h-screen py-20 bg-gradient-to-br from-primary via-primary to-primary/90">
+    <section className="min-h-screen py-4 bg-gradient-to-br from-primary via-primary to-primary/90">
       <div className="container mx-auto px-4">
         {/* Header */}
         <motion.div

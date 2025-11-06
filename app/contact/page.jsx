@@ -52,7 +52,7 @@ const ContactInfo = () => {
     {
       icon: MapPin,
       title: "Location",
-      value: "Kathmandu, Nepal",
+      value: "Dubai, UAE",
       description: "Available for local meetings",
       color: "from-purple-500 to-pink-500"
     }
@@ -276,7 +276,7 @@ const Contact = () => {
           ease: "easeIn"
         }
       }}
-      className="min-h-screen py-12 md:py-16 lg:py-20 bg-gradient-to-br from-primary via-primary to-primary/90"
+      className="min-h-screen py-4 md:py-4 lg:py-4 bg-gradient-to-br from-primary via-primary to-primary/90"
     >
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}

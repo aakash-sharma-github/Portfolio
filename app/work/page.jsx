@@ -1,8 +1,8 @@
 'use client'
 import { motion, AnimatePresence } from 'framer-motion'
 import React, { useState, useEffect } from 'react'
-import { BsArrowUpRight, BsGithub, BsEye, BsCode, BsGrid3X3Gap, BsList } from 'react-icons/bs'
-import { FiExternalLink, FiGithub, FiCalendar, FiTag, FiLayers } from 'react-icons/fi'
+import { BsEye, BsCode, BsGrid3X3Gap, BsList } from 'react-icons/bs'
+import { FiExternalLink, FiGithub, FiTag } from 'react-icons/fi'
 import {
     Tooltip,
     TooltipContent,
@@ -401,7 +401,7 @@ const Work = () => {
                     ease: "easeOut"
                 }
             }}
-            className="min-h-screen py-20"
+            className="min-h-screen py-4"
         >
             <div className="container mx-auto px-4">
                 {/* Header */}

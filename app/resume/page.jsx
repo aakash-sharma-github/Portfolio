@@ -133,8 +133,13 @@ const about = {
 
 const experience = {
   title: "My Experience",
-  desctiption: "My internships at BlueEra Softech and CodeClause have been incredibly rewarding. At BlueEra Softech, I worked on diverse software projects, learning the value of teamwork and problem-solving. At CodeClause, I honed my web development skills, tackling creative and challenging projects. These experiences have sharpened my technical abilities and prepared me to excel in dynamic environments.",
+  desctiption: "I’m a software developer with experience in telecommunication and IoT systems. At Telcovate, I work on automation and network projects that make life smarter. My time at BlueEra Softech and CodeClause helped me grow as a developer, building real projects with React, Node.js, and teamwork at the core.",
   info: [
+    {
+      company: "Telcovate Communication Network Solutions",
+      position: "Telecommunication Engineer",
+      duration: "nov-2024 - present"
+    },
     {
       company: "BlueEra Softech Pvt. Ltd.",
       position: "Software Engineer Intern",
@@ -203,20 +208,20 @@ const Resume = () => {
           ease: "easeIn"
         }
       }}
-      className="min-h-[80vh] flex items-center justify-center py-12 xl:py-0"
+      className="min-h-[80vh] flex items-center justify-center py-4 xl:py-0"
     >
       <div className="container mx-auto">
         {/* why hire me? */}
         <Tabs
-          defaultValue="education"
+          defaultValue="experience"
           className="flex flex-col xl:flex-row gap-[60px]"
         >
           <TabsList className="flex flex-col w-full max-w-[380px] mx-auto xl:mx-0 gap-6">
             <div className="text-center xl:mb-24 ">
             </div>
-            <TabsTrigger value="education">Education</TabsTrigger>
-            <TabsTrigger value="skils">Skils</TabsTrigger>
             <TabsTrigger value="experience">Experience</TabsTrigger>
+            <TabsTrigger value="skils">Skils</TabsTrigger>
+            <TabsTrigger value="education">Education</TabsTrigger>
             <TabsTrigger value="about">About Me</TabsTrigger>
             <TabsTrigger value="certifications">Certifications</TabsTrigger>
           </TabsList>
@@ -224,31 +229,29 @@ const Resume = () => {
           {/* content */}
           <div className="min-h-[70vh] w-full">
 
-            {/* education */}
-            <TabsContent value="education" className="w-full">
+            {/* experience */}
+            <TabsContent value="experience" className="w-full">
               <div className="flex flex-col gap-[30px] text-center xl:text-left">
-                <h3 className="text-4xl font-bold">{education.title}</h3>
+                <h3 className="text-4xl font-bold">{experience.title}</h3>
                 <p className="max-w-[1200px] text-white/60 mx-auto xl:mx-0">
-                  {education.desctiption}
+                  {experience.desctiption}
                 </p>
                 <ScrollArea className="h-[400px]">
                   <ul className="grid grid-cols-1 lg:grid-cols-2 gap-[30px]">
-                    {education.info.map((item, index) => {
+                    {experience.info.map((item, index) => {
                       return (
                         <li
                           key={index}
-                          className="bg-[#232329] h-[190px] py-6 px-10 rounded-xl flex flex-col justify-center items-center lg:items-start gap-1"
+                          className="bg-[#232329] h-[184px] py-6 px-10 rounded-xl flex flex-col justify-center items-center lg:items-start gap-1"
                         >
                           <span className="text-accent">{item.duration}</span>
                           <h3 className="text-xl xl:max-w-[420px] lg:max-w-[300px] min-h-[70px] text-center lg:text-left">
-                            {item.degree}
+                            {item.position}
                           </h3>
                           <div className="flex items-center gap-3">
                             {/* dot */}
                             <span className="w-[10px] h-[10px] rounded-full bg-accent"></span>
-                            <p className="text-white/60">
-                              {item.orgzanization}
-                            </p>
+                            <p className="text-white/60">{item.company}</p>
                           </div>
                         </li>
                       );
@@ -294,29 +297,31 @@ const Resume = () => {
 
             </TabsContent>
 
-            {/* experience */}
-            <TabsContent value="experience" className="w-full">
+            {/* education */}
+            <TabsContent value="education" className="w-full">
               <div className="flex flex-col gap-[30px] text-center xl:text-left">
-                <h3 className="text-4xl font-bold">{experience.title}</h3>
+                <h3 className="text-4xl font-bold">{education.title}</h3>
                 <p className="max-w-[1200px] text-white/60 mx-auto xl:mx-0">
-                  {experience.desctiption}
+                  {education.desctiption}
                 </p>
                 <ScrollArea className="h-[400px]">
                   <ul className="grid grid-cols-1 lg:grid-cols-2 gap-[30px]">
-                    {experience.info.map((item, index) => {
+                    {education.info.map((item, index) => {
                       return (
                         <li
                           key={index}
-                          className="bg-[#232329] h-[184px] py-6 px-10 rounded-xl flex flex-col justify-center items-center lg:items-start gap-1"
+                          className="bg-[#232329] h-[190px] py-6 px-10 rounded-xl flex flex-col justify-center items-center lg:items-start gap-1"
                         >
                           <span className="text-accent">{item.duration}</span>
                           <h3 className="text-xl xl:max-w-[420px] lg:max-w-[300px] min-h-[70px] text-center lg:text-left">
-                            {item.position}
+                            {item.degree}
                           </h3>
                           <div className="flex items-center gap-3">
                             {/* dot */}
                             <span className="w-[10px] h-[10px] rounded-full bg-accent"></span>
-                            <p className="text-white/60">{item.company}</p>
+                            <p className="text-white/60">
+                              {item.orgzanization}
+                            </p>
                           </div>
                         </li>
                       );
