@@ -212,6 +212,12 @@ const Work = () => {
         return matchCat && matchSearch;
     });
 
+    // view modes for toggle buttons
+    const viewModes = [
+        { mode: "grid", Icon: BsGrid3X3Gap },
+        { mode: "list", Icon: BsList }
+    ];
+
     return (
         <motion.section
             initial={{ opacity: 0 }}
@@ -277,15 +283,19 @@ const Work = () => {
                     <div className="flex items-center gap-3">
                         <span className="text-white/25 text-xs">{filtered.length} project{filtered.length !== 1 ? "s" : ""}</span>
                         <div className="flex items-center gap-1 p-1 bg-[#181820] border border-white/8 rounded-xl">
-                            {[["grid", <BsGrid3X3Gap size={14} />], ["list", <BsList size={14} />]].map(([mode, icon]) => (
+
+                            {viewModes.map(({ mode, Icon }) => (
                                 <button
                                     key={mode}
                                     onClick={() => setViewMode(mode)}
-                                    className={`p-1.5 rounded-lg transition-all ${viewMode === mode ? "bg-accent text-white" : "text-white/35 hover:text-white"}`}
+                                    className={`p-1.5 rounded-lg transition-all ${viewMode === mode
+                                        ? "bg-accent text-white"
+                                        : "text-white/35 hover:text-white"
+                                        }`}
                                 >
-                                    {icon}
+                                    <Icon size={14} />
                                 </button>
-                            ))}
+                            ))};
                         </div>
                     </div>
                 </motion.div>
