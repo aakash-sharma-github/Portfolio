@@ -3,11 +3,10 @@
 import { useState, useEffect } from 'react';
 import { FiSave, FiX } from 'react-icons/fi';
 import Link from 'next/link';
-import { blogApi } from '@/lib/api';
 import RichTextEditor from './RichTextEditor';
 import ImageUpload from './ImageUpload';
 import ClientOnly from './ClientOnly';
-import blogCategories from '@/lib/blogCategories';
+import { blogCategories } from '@/lib/essentials';
 import { Toaster, toast } from 'sonner';
 import { NextResponse } from 'next/server';
 
