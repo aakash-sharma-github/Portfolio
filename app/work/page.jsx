@@ -3,27 +3,53 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
 import { FiExternalLink, FiGithub, FiTag, FiSearch, FiX } from "react-icons/fi";
 import { BsGrid3X3Gap, BsList } from "react-icons/bs";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from "@/components/ui/tooltip";
 import Link from "next/link";
 import Image from "next/image";
 import StatusBadge from "@/components/StatusBadge";
 import axios from "axios";
+import PageHeader from "@/components/PageHeader";
 
 /* ── fallback data ──────────────────────────────────── */
 const fallbackProjects = [
     {
-        id: "1", num: "01", category: "Web Development", title: "Personal Portfolio",
-        description: "A personal portfolio website built with Next.js, Tailwind CSS, and Framer Motion.",
+        id: "1",
+        num: "01",
+        category: "Web Development",
+        title: "Personal Portfolio",
+        description:
+            "A personal portfolio website built with Next.js, Tailwind CSS, and Framer Motion.",
         status: "completed",
-        stack: [{ name: "Next.js" }, { name: "Tailwind CSS" }, { name: "Framer Motion" }],
-        image: "/images/portfolio_01.png", live: "", github: "",
+        stack: [
+            { name: "Next.js" },
+            { name: "Tailwind CSS" },
+            { name: "Framer Motion" },
+        ],
+        image: "/images/portfolio_01.png",
+        live: "",
+        github: "",
     },
     {
-        id: "2", num: "02", category: "Web Development", title: "Portfolio v2",
-        description: "Second iteration of the portfolio with improved design and animations.",
+        id: "2",
+        num: "02",
+        category: "Web Development",
+        title: "Portfolio v2",
+        description:
+            "Second iteration of the portfolio with improved design and animations.",
         status: "completed",
-        stack: [{ name: "Next.js" }, { name: "Tailwind CSS" }, { name: "Framer Motion" }],
-        image: "/images/portfolio_02.png", live: "https://aakash-sharma-github.netlify.app/", github: "https://github.com/aakash-sharma-github/Portfolio_Website.git",
+        stack: [
+            { name: "Next.js" },
+            { name: "Tailwind CSS" },
+            { name: "Framer Motion" },
+        ],
+        image: "/images/portfolio_02.png",
+        live: "https://aakash-sharma-github.netlify.app/",
+        github: "https://github.com/aakash-sharma-github/Portfolio_Website.git",
     },
 ];
 
@@ -46,7 +72,9 @@ const GridCard = ({ project, index }) => (
             />
             <div className="absolute inset-0 bg-gradient-to-t from-[#181820]/90 via-transparent to-transparent" />
             <div className="absolute top-3 left-3">
-                <span className="px-2.5 py-0.5 rounded-lg bg-black/50 text-white/70 text-[10px] font-bold">#{project.num}</span>
+                <span className="px-2.5 py-0.5 rounded-lg bg-black/50 text-white/70 text-[10px] font-bold">
+                    #{project.num}
+                </span>
             </div>
             <div className="absolute top-3 right-3">
                 <StatusBadge status={project.status || "completed"} size="sm" />
@@ -54,12 +82,20 @@ const GridCard = ({ project, index }) => (
             {/* hover overlay with links */}
             <div className="absolute inset-0 flex items-center justify-center gap-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/30">
                 {project.live && (
-                    <Link href={project.live} target="_blank" className="w-10 h-10 rounded-full bg-accent flex items-center justify-center hover:bg-accent/80 transition-colors">
+                    <Link
+                        href={project.live}
+                        target="_blank"
+                        className="w-10 h-10 rounded-full bg-accent flex items-center justify-center hover:bg-accent/80 transition-colors"
+                    >
                         <FiExternalLink className="text-white" size={15} />
                     </Link>
                 )}
                 {project.github && (
-                    <Link href={project.github} target="_blank" className="w-10 h-10 rounded-full bg-white/15 flex items-center justify-center hover:bg-white/25 transition-colors">
+                    <Link
+                        href={project.github}
+                        target="_blank"
+                        className="w-10 h-10 rounded-full bg-white/15 flex items-center justify-center hover:bg-white/25 transition-colors"
+                    >
                         <FiGithub className="text-white" size={15} />
                     </Link>
                 )}
@@ -70,20 +106,29 @@ const GridCard = ({ project, index }) => (
         <div className="p-5 space-y-3">
             <div className="flex items-center gap-1.5 text-accent/70">
                 <FiTag size={11} />
-                <span className="text-[10px] font-bold uppercase tracking-widest">{project.category}</span>
+                <span className="text-[10px] font-bold uppercase tracking-widest">
+                    {project.category}
+                </span>
             </div>
             <h3 className="text-white font-bold text-base leading-snug group-hover:text-accent transition-colors duration-250">
                 {project.title}
             </h3>
-            <p className="text-white/45 text-xs leading-relaxed line-clamp-3">{project.description}</p>
+            <p className="text-white/45 text-xs leading-relaxed line-clamp-3">
+                {project.description}
+            </p>
             <div className="flex flex-wrap gap-1.5 pt-2 border-t border-white/5">
                 {project.stack.slice(0, 4).map((t, i) => (
-                    <span key={i} className="px-2 py-0.5 rounded-md bg-accent/8 text-accent text-[9px] font-semibold border border-accent/15">
+                    <span
+                        key={i}
+                        className="px-2 py-0.5 rounded-md bg-accent/8 text-accent text-[9px] font-semibold border border-accent/15"
+                    >
                         {t.name}
                     </span>
                 ))}
                 {project.stack.length > 4 && (
-                    <span className="px-2 py-0.5 rounded-md bg-white/5 text-white/40 text-[9px]">+{project.stack.length - 4}</span>
+                    <span className="px-2 py-0.5 rounded-md bg-white/5 text-white/40 text-[9px]">
+                        +{project.stack.length - 4}
+                    </span>
                 )}
             </div>
         </div>
@@ -112,31 +157,48 @@ const ListCard = ({ project, index }) => (
             <div className="space-y-2">
                 <div className="flex items-center justify-between gap-2">
                     <span className="flex items-center gap-1.5 text-accent/70 text-[10px] font-bold uppercase tracking-widest">
-                        <FiTag size={10} />{project.category}
+                        <FiTag size={10} />
+                        {project.category}
                     </span>
                     <StatusBadge status={project.status || "completed"} size="xs" />
                 </div>
                 <h3 className="text-white font-bold text-base md:text-lg leading-snug group-hover:text-accent transition-colors duration-250">
                     {project.title}
                 </h3>
-                <p className="text-white/45 text-xs leading-relaxed line-clamp-2">{project.description}</p>
+                <p className="text-white/45 text-xs leading-relaxed line-clamp-2">
+                    {project.description}
+                </p>
             </div>
             <div className="flex items-center justify-between mt-4 pt-3 border-t border-white/5">
                 <div className="flex flex-wrap gap-1.5">
                     {project.stack.slice(0, 3).map((t, i) => (
-                        <span key={i} className="px-2 py-0.5 rounded-md bg-accent/8 text-accent text-[9px] font-semibold border border-accent/15">
+                        <span
+                            key={i}
+                            className="px-2 py-0.5 rounded-md bg-accent/8 text-accent text-[9px] font-semibold border border-accent/15"
+                        >
                             {t.name}
                         </span>
                     ))}
                 </div>
                 <div className="flex gap-2 flex-shrink-0">
                     {project.live && (
-                        <Link href={project.live} target="_blank" className="w-7 h-7 rounded-lg bg-accent/10 border border-accent/20 flex items-center justify-center hover:bg-accent hover:border-accent transition-colors">
-                            <FiExternalLink className="text-accent hover:text-white" size={12} />
+                        <Link
+                            href={project.live}
+                            target="_blank"
+                            className="w-7 h-7 rounded-lg bg-accent/10 border border-accent/20 flex items-center justify-center hover:bg-accent hover:border-accent transition-colors"
+                        >
+                            <FiExternalLink
+                                className="text-accent hover:text-white"
+                                size={12}
+                            />
                         </Link>
                     )}
                     {project.github && (
-                        <Link href={project.github} target="_blank" className="w-7 h-7 rounded-lg bg-white/5 border border-white/8 flex items-center justify-center hover:bg-white/15 transition-colors">
+                        <Link
+                            href={project.github}
+                            target="_blank"
+                            className="w-7 h-7 rounded-lg bg-white/5 border border-white/8 flex items-center justify-center hover:bg-white/15 transition-colors"
+                        >
                             <FiGithub className="text-white/60" size={12} />
                         </Link>
                     )}
@@ -185,7 +247,7 @@ const Work = () => {
                             image: w.coverImage?.url || "/images/portfolio_01.png",
                             live: w.links?.live || w.live || "",
                             github: w.links?.github || w.github || "",
-                        }))
+                        })),
                     );
                 } else {
                     setProjects(fallbackProjects);
@@ -204,7 +266,8 @@ const Work = () => {
     const categories = ["All", ...new Set(projects.map((p) => p.category))];
 
     const filtered = projects.filter((p) => {
-        const matchCat = selectedCategory === "All" || p.category === selectedCategory;
+        const matchCat =
+            selectedCategory === "All" || p.category === selectedCategory;
         const matchSearch =
             !searchTerm ||
             p.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -215,8 +278,22 @@ const Work = () => {
     // view modes for toggle buttons
     const viewModes = [
         { mode: "grid", Icon: BsGrid3X3Gap },
-        { mode: "list", Icon: BsList }
+        { mode: "list", Icon: BsList },
     ];
+
+    // responsive: switch to grid view on small screens
+    useEffect(() => {
+        const handleResize = () => {
+            if (window.innerWidth < 768) {
+                setViewMode("list");
+            }
+        };
+
+        handleResize(); // run on load
+        window.addEventListener("resize", handleResize);
+
+        return () => window.removeEventListener("resize", handleResize);
+    }, []);
 
     return (
         <motion.section
@@ -225,65 +302,30 @@ const Work = () => {
             className="min-h-screen bg-primary pb-20"
         >
             <div className="container mx-auto px-4">
-
                 {/* HEADER */}
-                <div className="relative pt-4 pb-4 text-center overflow-hidden">
-                    {/* <div className="absolute left-1/2 -translate-x-1/2 top-0 w-px h-12 bg-gradient-to-b from-transparent to-accent/40" /> */}
-                    <motion.div initial={{ opacity: 0, y: -12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.44 }}>
-                        <span className="inline-block px-4 py-1 rounded-full border border-accent/30 text-accent text-[10px] uppercase tracking-[0.22em] mb-4">
-                            Portfolio
-                        </span>
-                        <h1 className="text-5xl md:text-6xl font-bold text-white mb-3 tracking-tight">My Projects</h1>
-                        <p className="text-white/40 text-sm max-w-sm mx-auto">
-                            A curated collection of apps, sites, and experiments I've shipped.
-                        </p>
-                    </motion.div>
-                </div>
+                <PageHeader
+                    badge="Portfolio"
+                    header="My"
+                    subheader="Projects"
+                    desc="A curated collection of apps, sites, and experiments I've shipped."
+                />
 
                 {/* FILTER BAR */}
                 <motion.div
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.18, duration: 0.38 }}
-                    className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-9"
+                    className="hidden md:flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-9"
                 >
                     {/* left: category pills + search */}
-                    <div className="flex flex-wrap items-center gap-2">
-                        {/* {categories.map((cat) => (
-                            <button
-                                key={cat}
-                                onClick={() => setSelectedCategory(cat)}
-                                className={`px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-widest border transition-all duration-200 ${selectedCategory === cat
-                                    ? "bg-accent/15 text-accent border-accent/30"
-                                    : "text-white/40 border-white/8 hover:text-white hover:border-white/15"
-                                    }`}
-                            >
-                                {cat}
-                            </button>
-                        ))} */}
-                        {/* search */}
-                        {/* <div className="relative">
-                            <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-white/25" size={13} />
-                            <input
-                                type="text"
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                                placeholder="Search…"
-                                className="pl-9 pr-8 py-2 bg-[#181820] border border-white/8 rounded-xl text-white text-xs placeholder:text-white/22 focus:outline-none focus:border-accent/40 transition-colors w-36"
-                            />
-                            {searchTerm && (
-                                <button onClick={() => setSearchTerm("")} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-white/25 hover:text-white/60">
-                                    <FiX size={11} />
-                                </button>
-                            )}
-                        </div> */}
-                    </div>
+                    <div className="flex flex-wrap items-center gap-2" />
 
                     {/* right: view toggle + count */}
-                    <div className="flex items-center gap-3">
-                        <span className="text-white/25 text-xs">{filtered.length} project{filtered.length !== 1 ? "s" : ""}</span>
-                        <div className="flex items-center gap-1 p-1 bg-[#181820] border border-white/8 rounded-xl">
-
+                    <div className="flex justify-end items-center gap-3">
+                        <span className="text-white/25 text-xs">
+                            {filtered.length} project{filtered.length !== 1 ? "s" : ""}
+                        </span>
+                        <div className="flex items-center gap-1 p-1 bg-[#181820] rounded-xl">
                             {viewModes.map(({ mode, Icon }) => (
                                 <button
                                     key={mode}
@@ -295,7 +337,7 @@ const Work = () => {
                                 >
                                     <Icon size={14} />
                                 </button>
-                            ))};
+                            ))}
                         </div>
                     </div>
                 </motion.div>
@@ -310,13 +352,19 @@ const Work = () => {
                 {/* CONTENT */}
                 {isLoading ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {Array.from({ length: 6 }).map((_, i) => <GridSkeleton key={i} />)}
+                        {Array.from({ length: 6 }).map((_, i) => (
+                            <GridSkeleton key={i} />
+                        ))}
                     </div>
                 ) : filtered.length === 0 ? (
                     <div className="text-center py-24">
                         <div className="text-4xl mb-4 opacity-15">🔍</div>
-                        <h3 className="text-white/45 text-base font-medium">No projects found</h3>
-                        <p className="text-white/25 text-sm mt-1">Try a different category or search term.</p>
+                        <h3 className="text-white/45 text-base font-medium">
+                            No projects found
+                        </h3>
+                        <p className="text-white/25 text-sm mt-1">
+                            Try a different category or search term.
+                        </p>
                     </div>
                 ) : (
                     <AnimatePresence mode="wait">
@@ -326,17 +374,22 @@ const Work = () => {
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, y: -8 }}
                             transition={{ duration: 0.28 }}
-                            className={viewMode === "grid" ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" : "flex flex-col gap-4"}
+                            className={
+                                viewMode === "grid"
+                                    ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+                                    : "flex flex-col gap-4"
+                            }
                         >
                             {filtered.map((project, i) =>
-                                viewMode === "grid"
-                                    ? <GridCard key={project.id} project={project} index={i} />
-                                    : <ListCard key={project.id} project={project} index={i} />
+                                viewMode === "grid" ? (
+                                    <GridCard key={project.id} project={project} index={i} />
+                                ) : (
+                                    <ListCard key={project.id} project={project} index={i} />
+                                ),
                             )}
                         </motion.div>
                     </AnimatePresence>
                 )}
-
             </div>
         </motion.section>
     );

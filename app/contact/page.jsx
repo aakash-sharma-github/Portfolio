@@ -16,6 +16,8 @@ import {
   FiArrowUpRight, FiCheckCircle,
 } from "react-icons/fi";
 import { FaXTwitter } from "react-icons/fa6";
+import { SocialsContact } from "@/components/Socials";
+import PageHeader from "@/components/PageHeader";
 
 /* ── schema ─────────────────────────────────────────── */
 const formSchema = z.object({
@@ -39,12 +41,6 @@ const contactInfo = [
     value: "Dubai, UAE",
     href: null,
   },
-];
-
-const socials = [
-  { icon: FiGithub, href: "https://github.com/aakash-sharma-github", label: "GitHub" },
-  { icon: FiLinkedin, href: "https://www.linkedin.com/in/aakash-sharma-918447178/", label: "LinkedIn" },
-  { icon: FaXTwitter, href: "https://x.com/mrsky__56", label: "X" },
 ];
 
 /* ── availability dots ─────────────────────────────── */
@@ -101,21 +97,14 @@ const Contact = () => {
       animate={{ opacity: 1, transition: { duration: 0.5 } }}
       className="min-h-screen bg-primary"
     >
-      <div className="container mx-auto px-4">
-
+      <div className="container mx-auto px-4 pb-4">
         {/* HEADER */}
-        <div className="relative pt-4 pb-4 text-center overflow-hidden">
-          {/* <div className="absolute left-1/2 -translate-x-1/2 top-0 w-px h-12 bg-gradient-to-b from-transparent to-accent/40" /> */}
-          <motion.div initial={{ opacity: 0, y: -12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.44 }}>
-            <span className="inline-block px-4 py-1 rounded-full border border-accent/30 text-accent text-[10px] uppercase tracking-[0.22em] mb-4">
-              Let's connect
-            </span>
-            <h1 className="text-5xl md:text-6xl font-bold text-white mb-3 tracking-tight">Get In Touch</h1>
-            <p className="text-white/40 text-sm max-w-sm mx-auto">
-              Have a project in mind or want to say hello? I'd love to hear from you.
-            </p>
-          </motion.div>
-        </div>
+        <PageHeader
+          badge="Let's connect"
+          header="Get In"
+          subheader="Touch"
+          desc="Have a project in mind or want to say hello? I'd love to hear from you."
+        />
 
         {/* TWO COLUMN */}
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 xl:gap-12 max-w-6xl mx-auto">
@@ -152,7 +141,7 @@ const Contact = () => {
             </motion.div>
 
             {/* availability */}
-            <motion.div variants={fadeUp} className="bg-[#181820] border border-white/6 rounded-2xl p-6">
+            <motion.div variants={fadeUp} className="bg-[#181820] border border-white/6 rounded-2xl p-6 hidden sm:block">
               <p className="text-white/30 text-[9px] uppercase tracking-[0.2em] mb-5 flex items-center gap-2">
                 <span className="h-px flex-1 bg-white/8" />Availability<span className="h-px flex-1 bg-white/8" />
               </p>
@@ -176,7 +165,7 @@ const Contact = () => {
               <p className="text-white/30 text-[9px] uppercase tracking-[0.2em] mb-5 flex items-center gap-2">
                 <span className="h-px flex-1 bg-white/8" />Socials<span className="h-px flex-1 bg-white/8" />
               </p>
-              <div className="flex gap-3">
+              {/* <div className="flex gap-3">
                 {socials.map(({ icon: Icon, href, label }) => (
                   <a
                     key={label}
@@ -189,7 +178,8 @@ const Contact = () => {
                     <span className="text-white/30 text-[9px] uppercase tracking-widest group-hover:text-accent/70 transition-colors">{label}</span>
                   </a>
                 ))}
-              </div>
+              </div> */}
+              <SocialsContact />
             </motion.div>
           </motion.div>
 

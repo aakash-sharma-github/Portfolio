@@ -7,6 +7,7 @@ import {
   FaDocker, FaDatabase, FaShieldAlt, FaRocket,
 } from "react-icons/fa";
 import { FiArrowRight, FiArrowUpRight } from "react-icons/fi";
+import PageHeader from "@/components/PageHeader";
 
 const servicesList = [
   {
@@ -33,7 +34,7 @@ const servicesList = [
     title: "Mobile App Development",
     description:
       "Feature-rich mobile applications using React Native. Cross-platform solutions with native performance across iOS and Android.",
-    features: ["React Native", "TypeScript", "iOS & Android", "App Store Deployment"],
+    features: ["React Native", "TypeScript", "iOS & Android", "App Store Deployment", "Play Store Deployment"],
     accent: "#3F88C5",
   },
   {
@@ -134,20 +135,12 @@ const Services = () => {
       <div className="container mx-auto px-4">
 
         {/* HEADER */}
-        <div className="relative pt-4 pb-4 text-center overflow-hidden">
-          {/* <div className="absolute left-1/2 -translate-x-1/2 top-0 w-px h-12 bg-gradient-to-b from-transparent to-accent/40" /> */}
-          <motion.div initial={{ opacity: 0, y: -14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.45 }}>
-            <span className="inline-block px-4 py-1 rounded-full border border-accent/30 text-accent text-[10px] uppercase tracking-[0.22em] mb-5">
-              What I offer
-            </span>
-            <h1 className="text-5xl md:text-6xl font-bold text-white mb-4 tracking-tight">
-              My Services
-            </h1>
-            <p className="text-white/40 text-base max-w-lg mx-auto leading-relaxed">
-              Comprehensive technology solutions tailored to your needs — from concept to production.
-            </p>
-          </motion.div>
-        </div>
+        <PageHeader
+          badge="What I Offer"
+          header="My"
+          subheader="Services"
+          desc="Comprehensive technology solutions tailored to your needs — from concept to production."
+        />
 
         {/* SERVICES GRID */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">

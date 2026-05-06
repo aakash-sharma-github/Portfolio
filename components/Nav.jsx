@@ -1,47 +1,39 @@
 "use client";
-
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-
-const links = [
-    {
-        name: "home",
-        path: "/"
-    },
-    {
-        name: "services",
-        path: "/services"
-    },
-    {
-        name: "resume",
-        path: "/resume"
-    },
-    {
-        name: "projects",
-        path: "/work"
-    },
-    {
-        name: "blogs",
-        path: "/blog"
-    },
-    {
-        name: "contact",
-        path: "/contact"
-    }
-];
+import { navLinks } from "@/lib/essentials";
 
 const Nav = () => {
     const pathname = usePathname();
+
     return (
-        <nav className="flex gap-8">
-            {links.map((link, index) => {
+        <nav className="flex items-center gap-1" aria-label="Main navigation">
+            {navLinks.map((link) => {
+                const isActive = pathname === link.path;
                 return (
                     <Link
+                        key={link.path}
                         href={link.path}
-                        key={index}
-                        className={`${link.path === pathname && "text-accent border-b-2 border-accent"} capitalize font-medium hover:text-accent transition-all`}
+                        className={`
+                            relative px-3 py-2 rounded-lg text-sm font-medium capitalize
+                            transition-all duration-200
+                            ${isActive
+                                ? "text-accent"
+                                : "text-white/60 hover:text-white"
+                            }
+                        `}
                     >
-                        {link.name}
+                        {/* Animated background pill on hover/active */}
+                        {isActive && (
+                            <span className="absolute inset-0 bg-accent/10 rounded-lg" />
+                        )}
+                        <span className="relative">{link.name}</span>
+
+                        {/* Active dot indicator */}
+                        {isActive && (
+                            <span className="absolute bottom-0.5 left-1/2 -translate-x-1/2
+                                             w-1 h-1 rounded-full bg-accent" />
+                        )}
                     </Link>
                 );
             })}
