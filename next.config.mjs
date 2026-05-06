@@ -15,12 +15,6 @@ const nextConfig = {
                 hostname: 'res.cloudinary.com',
                 pathname: '/**',
             },
-            // {
-            //     protocol: "http",
-            //     hostname: "localhost",
-            //     port: "3000",
-            //     pathname: "/**",
-            // },
         ],
         formats: ['image/webp', 'image/avif'],
         deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
@@ -90,6 +84,7 @@ const nextConfig = {
                             "default-src 'self'",
                             "script-src 'self' 'unsafe-inline' 'unsafe-eval'", // unsafe-eval needed for Next.js dev; tighten in prod
                             "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+                            "'self' 'unsafe-inline' 'unsafe-eval' https://vercel.live",
                             "font-src 'self' https://fonts.gstatic.com",
                             "img-src 'self' data: blob: https://res.cloudinary.com https://avatars.githubusercontent.com",
                             "connect-src 'self' https://api.github.com https://res.cloudinary.com",

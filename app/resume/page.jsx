@@ -309,6 +309,19 @@ function ExperiencePanel() {
 
 // ─── Skills ───────────────────────────────────────────────────────────────────
 function SkillsPanel() {
+  const [activeTooltip, setActiveTooltip] = useState(null);
+
+  // auto hide after 2s (mobile behavior)
+  useEffect(() => {
+    if (!activeTooltip) return;
+
+    const timer = setTimeout(() => {
+      setActiveTooltip(null);
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, [activeTooltip]);
+
   return (
     <div>
       <SectionHeader title="My Skills" description={skillsData.description} />
@@ -326,6 +339,7 @@ function SkillsPanel() {
               {cat.items.map((skill, si) => {
                 // Destructure Icon component reference — render it safely below
                 const { Icon: SkillIcon, name, color } = skill;
+                const isActive = activeTooltip === name;
                 return (
                   <motion.div
                     key={name}
@@ -350,8 +364,20 @@ function SkillsPanel() {
                                 style={{ color }}
                               />
                             )}
+
+                            {/* Mobile popup label */}
+                            {isActive && (
+                              <span
+                                className="absolute -top-7 left-1/2 -translate-x-1/2
+                                         text-[10px] bg-black/80 text-white px-2 py-1
+                                         rounded-md whitespace-nowrap"
+                              >
+                                {name}
+                              </span>
+                            )}
                           </div>
                         </TooltipTrigger>
+                        {/* Desktop tooltip */}
                         <TooltipContent
                           side="top"
                           className="bg-[#232329] border-accent/30 text-white text-xs px-2 py-1"
