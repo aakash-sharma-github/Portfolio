@@ -1,316 +1,352 @@
 "use client";
-import React, { useState } from 'react'
-import { Loader2, Mail, MapPin, Send } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
-import { motion } from 'framer-motion'
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import { z } from "zod"
-import { contactApi } from '@/lib/api';
-import { Toaster, toast } from 'sonner';
+import { useState } from "react";
+import { motion } from "framer-motion";
+import { Loader2, Send } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { contactApi } from "@/lib/api";
+import { Toaster, toast } from "sonner";
 import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form"
+  FiMail, FiMapPin, FiGithub, FiLinkedin,
+  FiArrowUpRight, FiCheckCircle,
+} from "react-icons/fi";
+import { FaXTwitter } from "react-icons/fa6";
 
+/* ── schema ─────────────────────────────────────────── */
 const formSchema = z.object({
-  fullname: z.string().min(2, {
-    message: "Please enter your full name.",
-  }),
-  email: z
-    .string()
-    .min(1, {
-      message: "Please enter your email address.",
-    })
-    .email({
-      message: "Please enter a valid email address.",
-    }),
-  subject: z.string().min(1, {
-    message: "Please enter a subject.",
-  }),
-  message: z.string().min(1, {
-    message: "Please enter a message.",
-  }),
-})
+  fullname: z.string().min(2, "Please enter your full name."),
+  email: z.string().min(1, "Please enter your email.").email("Enter a valid email."),
+  subject: z.string().min(1, "Please enter a subject."),
+  message: z.string().min(10, "Message must be at least 10 characters."),
+});
 
-// Contact Information Component
-const ContactInfo = () => {
-  const contactDetails = [
-    {
-      icon: Mail,
-      title: "Email",
-      value: "aakashsharma9855@gmail.com",
-      description: "Send me an email anytime",
-      color: "from-blue-500 to-cyan-500"
-    },
-    {
-      icon: MapPin,
-      title: "Location",
-      value: "Dubai, UAE",
-      description: "Available for local meetings",
-      color: "from-purple-500 to-pink-500"
-    }
-  ]
+/* ── info items ─────────────────────────────────────── */
+const contactInfo = [
+  {
+    icon: FiMail,
+    label: "Email",
+    value: "aakashsharma9855@gmail.com",
+    href: "mailto:aakashsharma9855@gmail.com",
+  },
+  {
+    icon: FiMapPin,
+    label: "Location",
+    value: "Dubai, UAE",
+    href: null,
+  },
+];
 
-  return (
-    <div className="space-y-6">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2, duration: 0.6 }}
-        className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6"
-      >
-        <h3 className="text-2xl font-bold text-white mb-6">Contact Information</h3>
-        <div className="space-y-4">
-          {contactDetails.map((contact, index) => {
-            const IconComponent = contact.icon;
-            return (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.3 + index * 0.1, duration: 0.5 }}
-                whileHover={{ x: 5 }}
-                className="flex items-center space-x-4 p-3 rounded-lg hover:bg-white/5 transition-all duration-300 group"
-              >
-                <div className={`w-10 h-10 rounded-lg bg-gradient-to-r ${contact.color} flex items-center justify-center group-hover:scale-110 transition-transform duration-300`}>
-                  <IconComponent className="text-lg text-white" />
-                </div>
-                <div className="flex-1">
-                  <h4 className="text-white font-semibold">{contact.title}</h4>
-                  <p className="text-accent font-medium text-sm">{contact.value}</p>
-                  <p className="text-white/60 text-xs">{contact.description}</p>
-                </div>
-              </motion.div>
-            );
-          })}
-        </div>
-      </motion.div>
-    </div>
-  )
-}
+const socials = [
+  { icon: FiGithub, href: "https://github.com/aakash-sharma-github", label: "GitHub" },
+  { icon: FiLinkedin, href: "https://www.linkedin.com/in/aakash-sharma-918447178/", label: "LinkedIn" },
+  { icon: FaXTwitter, href: "https://x.com/mrsky__56", label: "X" },
+];
 
-// Contact Form Module
-const ContactForm = () => {
-  const [isLoading, setIsLoading] = useState(false)
+/* ── availability dots ─────────────────────────────── */
+const availability = [
+  { label: "Freelance projects", available: true },
+  { label: "Full-time roles", available: true },
+  { label: "Open source", available: true },
+  { label: "Consulting", available: true },
+];
+
+/* ── stagger ────────────────────────────────────────── */
+const stagger = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.08 } },
+};
+const fadeUp = {
+  hidden: { opacity: 0, y: 14 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.38 } },
+};
+
+/* ── Contact Page ───────────────────────────────────── */
+const Contact = () => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [sent, setSent] = useState(false);
 
   const form = useForm({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      fullname: "",
-      email: "",
-      subject: "",
-      message: "",
-    },
-  })
+    defaultValues: { fullname: "", email: "", subject: "", message: "" },
+  });
 
   const onSubmit = async (values) => {
-    setIsLoading(true)
-
-    // Debug logging
-    console.log('Form values being submitted:', values);
-
-    // Additional validation check
-    const trimmedValues = {
-      fullname: values.fullname.trim(),
-      email: values.email.trim(),
-      subject: values.subject.trim(),
-      message: values.message.trim(),
-    };
-    
+    setIsLoading(true);
     try {
-      // sends the email to the server.
-      await contactApi.submitContact(trimmedValues);
+      await contactApi.submitContact({
+        fullname: values.fullname.trim(),
+        email: values.email.trim(),
+        subject: values.subject.trim(),
+        message: values.message.trim(),
+      });
+      setSent(true);
       form.reset();
-      toast.success('Email sent successfully!');
-    } catch (error) {
-      const message = error?.response?.data?.message || error.message || 'Failed to send email';
-      console.error('Error:', error);
-      toast.error(message);
+      toast.success("Message sent! I'll get back to you soon.");
+    } catch (err) {
+      const msg = err?.response?.data?.message || err.message || "Failed to send message.";
+      toast.error(msg);
     } finally {
       setIsLoading(false);
     }
-  }
+  };
 
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6 }}
-      className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6 md:p-8"
-    >
-      <div className="mb-6 md:mb-8">
-        <h3 className="text-2xl md:text-3xl font-bold text-white mb-3 md:mb-4">
-          Let's <span className="text-accent">Work Together</span>
-        </h3>
-        <p className="text-white/70 text-base md:text-lg">
-          I'm always open to discussing new projects, creative ideas, or opportunities to be part of your vision.
-        </p>
-      </div>
-
-      <Form {...form}>
-        <form 
-          onSubmit={form.handleSubmit(onSubmit, (errors) => {
-            console.log('Form validation errors:', errors);
-            toast.error('Please fix the form errors before submitting.');
-          })} 
-          className="space-y-4 md:space-y-6"
-        >
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
-            <FormField
-              control={form.control}
-              name="fullname"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-white font-medium text-sm md:text-base">Full Name</FormLabel>
-                  <FormControl>
-                    <Input 
-                      {...field} 
-                      className="bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:border-accent h-10 md:h-11"
-                      placeholder="Enter your full name"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-white font-medium text-sm md:text-base">Email Address</FormLabel>
-                  <FormControl>
-                    <Input 
-                      {...field} 
-                      type="email"
-                      className="bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:border-accent h-10 md:h-11"
-                      placeholder="Enter your email"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-
-          <FormField
-            control={form.control}
-            name="subject"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-white font-medium text-sm md:text-base">Subject</FormLabel>
-                <FormControl>
-                  <Input 
-                    {...field} 
-                    className="bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:border-accent h-10 md:h-11"
-                    placeholder="What's this about?"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="message"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-white font-medium text-sm md:text-base">Message</FormLabel>
-                <FormControl>
-                  <Textarea 
-                    {...field} 
-                    className="bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:border-accent min-h-[120px] md:min-h-[150px] resize-none"
-                    placeholder="Tell me about your project or idea..."
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <motion.div
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            className="pt-2"
-          >
-            <Button 
-              type="submit" 
-              disabled={isLoading}
-              className="w-full bg-gradient-to-r from-accent to-accent/80 hover:from-accent/90 hover:to-accent/70 text-primary font-semibold py-3 md:py-4 rounded-xl transition-all duration-300 hover:shadow-lg hover:shadow-accent/25 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {isLoading ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 md:h-5 md:w-5 animate-spin" />
-                  <span className="text-sm md:text-base">Sending Message...</span>
-                </>
-              ) : (
-                <>
-                  <Send className="mr-2 h-4 w-4 md:h-5 md:w-5" />
-                  <span className="text-sm md:text-base">Send Message</span>
-                </>
-              )}
-            </Button>
-          </motion.div>
-        </form>
-      </Form>
-    </motion.div>
-  )
-}
-
-const Contact = () => {
   return (
     <motion.section
       initial={{ opacity: 0 }}
-      animate={{
-        opacity: 1,
-        transition: {
-          duration: 0.6,
-          ease: "easeIn"
-        }
-      }}
-      className="min-h-screen py-4 md:py-4 lg:py-4 bg-gradient-to-br from-primary via-primary to-primary/90"
+      animate={{ opacity: 1, transition: { duration: 0.5 } }}
+      className="min-h-screen bg-primary"
     >
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 50 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-12 md:mb-16"
-        >
-          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-4 md:mb-6">
-            Get In <span className="text-accent">Touch</span>
-          </h1>
-          <p className="text-lg md:text-xl text-white/70 max-w-4xl mx-auto leading-relaxed">
-            Ready to start your next project? Let's discuss how I can help bring your ideas to life.
-          </p>
-        </motion.div>
+      <div className="container mx-auto px-4">
 
-        {/* Main Content Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
-          {/* Contact Form - Takes 2 columns on large screens */}
-          <div className="lg:col-span-2">
-            <ContactForm />
-          </div>
+        {/* HEADER */}
+        <div className="relative pt-4 pb-4 text-center overflow-hidden">
+          {/* <div className="absolute left-1/2 -translate-x-1/2 top-0 w-px h-12 bg-gradient-to-b from-transparent to-accent/40" /> */}
+          <motion.div initial={{ opacity: 0, y: -12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.44 }}>
+            <span className="inline-block px-4 py-1 rounded-full border border-accent/30 text-accent text-[10px] uppercase tracking-[0.22em] mb-4">
+              Let's connect
+            </span>
+            <h1 className="text-5xl md:text-6xl font-bold text-white mb-3 tracking-tight">Get In Touch</h1>
+            <p className="text-white/40 text-sm max-w-sm mx-auto">
+              Have a project in mind or want to say hello? I'd love to hear from you.
+            </p>
+          </motion.div>
+        </div>
 
-          {/* Contact Information - Takes 1 column on large screens */}
-          <div className="lg:col-span-1">
-            <ContactInfo />
-          </div>
+        {/* TWO COLUMN */}
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 xl:gap-12 max-w-6xl mx-auto">
+
+          {/* ═══ LEFT: Info panel ═══ */}
+          <motion.div
+            variants={stagger}
+            initial="hidden"
+            animate="show"
+            className="lg:col-span-2 flex flex-col gap-6"
+          >
+            {/* contact info cards */}
+            <motion.div variants={fadeUp} className="bg-[#181820] border border-white/6 rounded-2xl p-6 space-y-4">
+              <p className="text-white/30 text-[9px] uppercase tracking-[0.2em] mb-5 flex items-center gap-2">
+                <span className="h-px flex-1 bg-white/8" />Contact Info<span className="h-px flex-1 bg-white/8" />
+              </p>
+              {contactInfo.map(({ icon: Icon, label, value, href }) => (
+                <div key={label} className="flex items-start gap-4 group">
+                  <div className="w-10 h-10 rounded-xl bg-accent/10 border border-accent/15 flex items-center justify-center flex-shrink-0 group-hover:bg-accent/20 transition-colors">
+                    <Icon className="text-accent" size={15} />
+                  </div>
+                  <div>
+                    <p className="text-white/35 text-[10px] uppercase tracking-widest">{label}</p>
+                    {href ? (
+                      <a href={href} className="text-white text-sm font-medium hover:text-accent transition-colors">
+                        {value}
+                      </a>
+                    ) : (
+                      <p className="text-white text-sm font-medium">{value}</p>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </motion.div>
+
+            {/* availability */}
+            <motion.div variants={fadeUp} className="bg-[#181820] border border-white/6 rounded-2xl p-6">
+              <p className="text-white/30 text-[9px] uppercase tracking-[0.2em] mb-5 flex items-center gap-2">
+                <span className="h-px flex-1 bg-white/8" />Availability<span className="h-px flex-1 bg-white/8" />
+              </p>
+              <div className="space-y-3">
+                {availability.map(({ label, available }) => (
+                  <div key={label} className="flex items-center justify-between">
+                    <span className="text-white/55 text-sm">{label}</span>
+                    <div className="flex items-center gap-1.5">
+                      <span className={`w-1.5 h-1.5 rounded-full ${available ? "bg-green-400 animate-pulse" : "bg-white/20"}`} />
+                      <span className={`text-[10px] font-semibold ${available ? "text-green-400" : "text-white/30"}`}>
+                        {available ? "Open" : "Closed"}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+
+            {/* socials */}
+            <motion.div variants={fadeUp} className="bg-[#181820] border border-white/6 rounded-2xl p-6">
+              <p className="text-white/30 text-[9px] uppercase tracking-[0.2em] mb-5 flex items-center gap-2">
+                <span className="h-px flex-1 bg-white/8" />Socials<span className="h-px flex-1 bg-white/8" />
+              </p>
+              <div className="flex gap-3">
+                {socials.map(({ icon: Icon, href, label }) => (
+                  <a
+                    key={label}
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex-1 flex flex-col items-center gap-2 py-3 rounded-xl bg-white/4 border border-white/6 hover:border-accent/30 hover:bg-accent/8 transition-all duration-250 group"
+                  >
+                    <Icon className="text-white/45 group-hover:text-accent transition-colors" size={18} />
+                    <span className="text-white/30 text-[9px] uppercase tracking-widest group-hover:text-accent/70 transition-colors">{label}</span>
+                  </a>
+                ))}
+              </div>
+            </motion.div>
+          </motion.div>
+
+          {/* ═══ RIGHT: Form ═══ */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2, duration: 0.45 }}
+            className="lg:col-span-3"
+          >
+            <div className="bg-[#181820] border border-white/6 rounded-2xl p-7 md:p-9 h-full">
+
+              {/* success state */}
+              {sent ? (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="flex flex-col items-center justify-center h-full py-16 text-center gap-4"
+                >
+                  <div className="w-16 h-16 rounded-full bg-green-400/10 border border-green-400/20 flex items-center justify-center">
+                    <FiCheckCircle className="text-green-400" size={28} />
+                  </div>
+                  <h3 className="text-white text-xl font-bold">Message sent!</h3>
+                  <p className="text-white/45 text-sm max-w-xs">
+                    Thanks for reaching out. I'll get back to you as soon as possible.
+                  </p>
+                  <button
+                    onClick={() => setSent(false)}
+                    className="mt-2 px-5 py-2 rounded-xl border border-accent/30 text-accent text-sm hover:bg-accent/10 transition-colors"
+                  >
+                    Send another
+                  </button>
+                </motion.div>
+              ) : (
+                <>
+                  <div className="mb-7">
+                    <h2 className="text-2xl md:text-3xl font-bold text-white mb-2">
+                      Let's <span className="text-accent">work together</span>
+                    </h2>
+                    <p className="text-white/40 text-sm">
+                      Fill out the form and I'll reply within 24 hours.
+                    </p>
+                  </div>
+
+                  <Form {...form}>
+                    <form
+                      onSubmit={form.handleSubmit(onSubmit, () => toast.error("Please fix the errors above."))}
+                      className="space-y-5"
+                    >
+                      {/* name + email */}
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <FormField
+                          control={form.control}
+                          name="fullname"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel className="text-white/55 text-xs uppercase tracking-widest">Full Name</FormLabel>
+                              <FormControl>
+                                <Input
+                                  {...field}
+                                  className="bg-[#13131a] border-white/8 text-white placeholder:text-white/20 focus:border-accent/50 h-11 rounded-xl"
+                                  placeholder="Your name"
+                                />
+                              </FormControl>
+                              <FormMessage className="text-red-400/80 text-xs" />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={form.control}
+                          name="email"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel className="text-white/55 text-xs uppercase tracking-widest">Email</FormLabel>
+                              <FormControl>
+                                <Input
+                                  {...field}
+                                  type="email"
+                                  className="bg-[#13131a] border-white/8 text-white placeholder:text-white/20 focus:border-accent/50 h-11 rounded-xl"
+                                  placeholder="your@email.com"
+                                />
+                              </FormControl>
+                              <FormMessage className="text-red-400/80 text-xs" />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+
+                      {/* subject */}
+                      <FormField
+                        control={form.control}
+                        name="subject"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="text-white/55 text-xs uppercase tracking-widest">Subject</FormLabel>
+                            <FormControl>
+                              <Input
+                                {...field}
+                                className="bg-[#13131a] border-white/8 text-white placeholder:text-white/20 focus:border-accent/50 h-11 rounded-xl"
+                                placeholder="What's this about?"
+                              />
+                            </FormControl>
+                            <FormMessage className="text-red-400/80 text-xs" />
+                          </FormItem>
+                        )}
+                      />
+
+                      {/* message */}
+                      <FormField
+                        control={form.control}
+                        name="message"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="text-white/55 text-xs uppercase tracking-widest">Message</FormLabel>
+                            <FormControl>
+                              <Textarea
+                                {...field}
+                                className="bg-[#13131a] border-white/8 text-white placeholder:text-white/20 focus:border-accent/50 min-h-[140px] resize-none rounded-xl"
+                                placeholder="Tell me about your project…"
+                              />
+                            </FormControl>
+                            <FormMessage className="text-red-400/80 text-xs" />
+                          </FormItem>
+                        )}
+                      />
+
+                      {/* submit */}
+                      <Button
+                        type="submit"
+                        disabled={isLoading}
+                        className="w-full bg-accent hover:bg-accent/85 text-white font-semibold py-5 rounded-xl transition-all duration-250 disabled:opacity-50 flex items-center justify-center gap-2 group"
+                      >
+                        {isLoading ? (
+                          <>
+                            <Loader2 className="animate-spin" size={16} />
+                            <span>Sending…</span>
+                          </>
+                        ) : (
+                          <>
+                            <Send size={15} />
+                            <span>Send Message</span>
+                            <FiArrowUpRight size={15} className="opacity-60 group-hover:opacity-100 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all duration-200" />
+                          </>
+                        )}
+                      </Button>
+                    </form>
+                  </Form>
+                </>
+              )}
+            </div>
+          </motion.div>
+
         </div>
       </div>
-
       <Toaster richColors />
     </motion.section>
-  )
-}
+  );
+};
 
-export default Contact
+export default Contact;

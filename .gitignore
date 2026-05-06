@@ -21,6 +21,9 @@
 /.idea
 /.vscode
 
+# development
+Portfolio_API.postman_collection.json
+
 # misc
 .DS_Store
 *.pem

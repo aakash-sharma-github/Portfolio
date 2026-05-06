@@ -1,388 +1,351 @@
 "use client";
 import {
-  FaHtml5,
-  FaCss3,
-  FaJs,
-  FaPython,
-  FaJava,
-  FaReact,
-  FaNodeJs,
-  FaGithub,
-  FaGit,
+  FaHtml5, FaCss3, FaJs, FaPython, FaJava,
+  FaReact, FaNodeJs, FaGithub, FaGit,
 } from "react-icons/fa6";
-import { TbBrandReactNative } from 'react-icons/tb'
-import { PiMicrosoftExcelLogoDuotone } from 'react-icons/pi'
+import { TbBrandReactNative } from "react-icons/tb";
+import { PiMicrosoftExcelLogoDuotone } from "react-icons/pi";
 import {
-  SiC,
-  SiCplusplus,
-  SiNextdotjs,
-  SiTailwindcss,
-  SiMongodb,
-  SiMysql,
-  SiVisualstudiocode,
-  SiIntellijidea,
-  SiExpress,
-  SiDjango,
-  SiPostman,
-  SiDocker
+  SiTypescript, SiNextdotjs, SiTailwindcss, SiMongodb,
+  SiMysql, SiIntellijidea, SiExpress,
+  SiDjango, SiPostman, SiDocker, SiSupabase, SiN8N,
+  SiClaude,
+  SiShadcnui
 } from "react-icons/si";
-import { AiOutlineKubernetes } from "react-icons/ai";
+import { VscVscode } from "react-icons/vsc";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { motion, AnimatePresence } from "framer-motion";
+import { useState } from "react";
 import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger
-} from "@/components/ui/tabs";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger
-} from "@/components/ui/tooltip";
-import { motion } from "framer-motion";
-import { ScrollArea } from "@/components/ui/scroll-area";
+  FiBriefcase, FiBook, FiAward, FiUser, FiCpu, FiDownload,
+} from "react-icons/fi";
+import { Sintony } from "next/font/google";
 
-
-const education = {
-  title: "My Education",
-  desctiption: "My schooling has been from Nepal, and thereafter from India, in the field of Computer Science and Engineering. These experiences have prepared me technically together with giving me an admiration of culture and creativity. It is the basis of my professional activities in the field of technology, combining multiple experiences with novelty. ",
-  info: [
-    {
-      orgzanization: "Parul University Gujarat, India",
-      degree: "Bachelor of Technology, Computer Science and Engineering",
-      duration: "2020 - 2024"
-    },
-    {
-      orgzanization: "Model Multiple College Janakpur, Nepal",
-      degree: "12th (National Examination Board - NEB)",
-      duration: "2018 - 2019"
-    },
-    {
-      orgzanization: "Saraswati English Boarding School Mahendranagar, Nepal",
-      degree: "10th (Secondary Education Examination - SEE)",
-      duration: "2017"
-    }
-  ]
+/* ── DATA ───────────────────────────────────────────── */
+const experience = {
+  icon: <FiBriefcase />,
+  title: "Experience",
+  description: "I'm a software developer with experience in telecommunication and IoT systems. At Telcovate, I work on automation and network projects. My time at BlueEra Softech and CodeClause helped me grow as a developer.",
+  items: [
+    { duration: "Sept 2024 – Present", title: "Telecommunication Assistant", subtitle: "Telcovate Communication Network Solutions" },
+    { duration: "Jan 2024 – May 2024", title: "Software Engineer Intern", subtitle: "BlueEra Softech Pvt. Ltd." },
+    { duration: "Jul 2023 – Aug 2023", title: "Web Developer Intern", subtitle: "CodeClause" },
+  ],
 };
 
-const skils = {
-  title: "My Skils",
-  desctiption: "I have a diverse skill set that spans web development, from creating engaging user interfaces with React and Next.js to building backend solutions with Node.js and Express. I’m also experienced with databases like MySQL and MongoDB, and use tools such as Git and VS Code to enhance my workflow. My broad technical expertise helps me tackle projects efficiently and creatively.",
-  skilsList: {
-    Languages: [
-      { icon: <FaHtml5 />, name: "HTML5" },
-      { icon: <FaCss3 />, name: "CSS3" },
-      { icon: <FaJs />, name: "JavaScript" },
-      { icon: <FaPython />, name: "Python" },
-      { icon: <SiC />, name: "C" },
-      { icon: <SiCplusplus />, name: "C++" },
-      { icon: <FaJava />, name: "Java" }
-    ],
-    Frameworks: [
-      { icon: <FaReact />, name: "React.js" },
-      { icon: <SiNextdotjs />, name: "Next.js" },
-      { icon: <FaNodeJs />, name: "Node.js" },
-      { icon: <SiExpress />, name: "Express" },
-      { icon: <SiTailwindcss />, name: "Tailwind CSS" },
-      { icon: <SiDjango />, name: "Django" },
-      { icon: <TbBrandReactNative />, name: "React Native" },
-    ],
-    Tools: [
-      { icon: <FaGithub />, name: "Github" },
-      { icon: <FaGit />, name: "Git" },
-      { icon: <SiVisualstudiocode />, name: "VS Code" },
-      { icon: <SiIntellijidea />, name: "IntelliJ IDEA" },
-      { icon: <SiPostman />, name: "Postman" },
-      { icon: <PiMicrosoftExcelLogoDuotone />, name: "Microsoft Excel" },
-      { icon: <SiDocker />, name: "Docker" },
-      { icon: <AiOutlineKubernetes />, name: "Kubernetes" }
-    ],
-    Database: [
-      { icon: <SiMysql />, name: "MySQL" },
-      { icon: <SiMongodb />, name: "MongoDB" },
-    ]
-  }
+const education = {
+  icon: <FiBook />,
+  title: "Education",
+  description: "My schooling has been from Nepal, and thereafter from India in Computer Science and Engineering, combining multiple experiences with novelty.",
+  items: [
+    { duration: "2020 – 2024", title: "B.Tech, Computer Science and Engineering", subtitle: "Parul University Gujarat, India" },
+    { duration: "2018 – 2019", title: "12th — National Examination Board (NEB)", subtitle: "Model Multiple College Janakpur, Nepal" },
+    { duration: "2017", title: "10th — Secondary Education Examination (SEE)", subtitle: "Saraswati English Boarding School, Nepal" },
+  ],
+};
+
+const certifications = {
+  icon: <FiAward />,
+  title: "Certifications",
+  description: "Certifications that enhance my skills across web development, cloud tooling, and productivity software.",
+  items: [
+    { duration: "Online", title: "Meta Front-End Developer Professional Certificate", subtitle: "Coursera" },
+    { duration: "Offline", title: "Front End Web Development using Angular", subtitle: "Parul University" },
+    { duration: "Offline", title: "Zero To Prototype With NODE.JS", subtitle: "Parul University" },
+    { duration: "Online", title: "Zero To Hero in Microsoft Excel", subtitle: "Udemy" },
+    { duration: "Online", title: "Web Development Intern", subtitle: "CodeClause" },
+    { duration: "Offline", title: "Software Engineering Internship", subtitle: "BlueEra Softech Pvt. Ltd." },
+  ],
 };
 
 const about = {
-  title: "About Me",
-  desctiption: "I’m a tech enthusiast with a strong background in software development and web technologies. I love tackling challenges and am always eager to learn and grow in the tech field.",
-  info: [
-    {
-      fieldName: "Name",
-      fieldValue: "Aakash Sharma"
-    },
-    {
-      fieldName: "Email",
-      fieldValue: "aakashsharma9855@gmail.com"
-    },
-    {
-      fieldName: "Nationality",
-      fieldValue: "Nepali"
-    },
-    {
-      fieldName: "Languages",
-      fieldValue: "English, Hindi, Nepali"
-    },
-    {
-      fieldName: "Freelance",
-      fieldValue: "Available"
-    }
-  ]
+  icon: <FiUser />,
+  fields: [
+    { label: "Name", value: "Aakash Sharma" },
+    { label: "Email", value: "aakashsharma9855@gmail.com" },
+    { label: "Nationality", value: "Nepali" },
+    { label: "Languages", value: "English, Hindi, Nepali" },
+    { label: "Freelance", value: "Available" },
+    { label: "Availability", value: "Dubai, UAE | Full-time" },
+  ],
+  bio: "I'm a tech enthusiast with a strong background in software development and web technologies. I love tackling challenges and am always eager to learn and grow in the tech field.",
 };
 
-const experience = {
-  title: "My Experience",
-  desctiption: "I’m a software developer with experience in telecommunication and IoT systems. At Telcovate, I work on automation and network projects that make life smarter. My time at BlueEra Softech and CodeClause helped me grow as a developer, building real projects with React, Node.js, and teamwork at the core.",
-  info: [
+const skills = {
+  icon: <FiCpu />,
+  categories: [
     {
-      company: "Telcovate Communication Network Solutions",
-      position: "Telecommunication Engineer",
-      duration: "Nov-2024 - Present"
+      name: "Languages",
+      items: [
+        { icon: <FaHtml5 />, name: "HTML5" },
+        { icon: <FaCss3 />, name: "CSS3" },
+        { icon: <FaJs />, name: "JavaScript" },
+        { icon: <SiTypescript />, name: "TypeScript" },
+        { icon: <FaPython />, name: "Python" },
+        { icon: <FaJava />, name: "Java" },
+      ],
     },
     {
-      company: "BlueEra Softech Pvt. Ltd.",
-      position: "Software Engineer Intern",
-      duration: "Jan-2024 - Apr-2024"
+      name: "Frameworks",
+      items: [
+        { icon: <FaReact />, name: "React.js" },
+        { icon: <SiNextdotjs />, name: "Next.js" },
+        { icon: <FaNodeJs />, name: "Node.js" },
+        { icon: <SiExpress />, name: "Express" },
+        { icon: <SiTailwindcss />, name: "Tailwind CSS" },
+        { icon: <SiShadcnui />, name: "Shadcn UI" },
+        { icon: <SiDjango />, name: "Django" },
+        { icon: <TbBrandReactNative />, name: "React Native" },
+      ],
     },
     {
-      company: "CodeClause",
-      position: "Web Developer Intern",
-      duration: "July-2023 - August-2023"
-    }
-  ]
+      name: "Tools",
+      items: [
+        { icon: <FaGithub />, name: "GitHub" },
+        { icon: <FaGit />, name: "Git" },
+        { icon: <VscVscode />, name: "VS Code" },
+        { icon: <SiIntellijidea />, name: "IntelliJ IDEA" },
+        { icon: <SiPostman />, name: "Postman" },
+        { icon: <PiMicrosoftExcelLogoDuotone />, name: "Excel" },
+        { icon: <SiDocker />, name: "Docker" },
+        { icon: <SiN8N />, name: "N8N" },
+        { icon: <SiClaude />, name: "Claude" },
+      ],
+    },
+    {
+      name: "Databases",
+      items: [
+        { icon: <SiMysql />, name: "MySQL" },
+        { icon: <SiMongodb />, name: "MongoDB" },
+        { icon: <SiSupabase />, name: "Supabase" },
+      ],
+    },
+  ],
 };
 
-const certificate = {
-  title: "Certifications",
-  desctiption: "I’ve earned certifications that enhance my skills and knowledge across various areas of tech. These include hands-on training in front-end and back-end development, as well as expertise in tools like Microsoft Excel. Each certification has equipped me with valuable insights and practical skills, helping me stay at the forefront of the tech industry.",
-  info: [
-    {
-      course: "Front End Web Development using Angular",
-      place: "Parul University",
-      mode: "Offline",
-    },
+const TABS = [
+  { key: "experience", label: "Experience", icon: <FiBriefcase size={15} /> },
+  { key: "skills", label: "Skills", icon: <FiCpu size={15} /> },
+  { key: "education", label: "Education", icon: <FiBook size={15} /> },
+  { key: "about", label: "About", icon: <FiUser size={15} /> },
+  { key: "certifications", label: "Certifications", icon: <FiAward size={15} /> },
+];
 
-    {
-      course: "Zero To Prototype With NODE.JS",
-      place: "Parul University",
-      mode: "Offline",
-    },
+/* ── Timeline Item ──────────────────────────────────── */
+const TimelineItem = ({ item, index }) => (
+  <motion.div
+    initial={{ opacity: 0, x: -16 }}
+    animate={{ opacity: 1, x: 0 }}
+    transition={{ delay: index * 0.07, duration: 0.38 }}
+    className="relative pl-8 group"
+  >
+    {/* connector */}
+    <span className="absolute left-0 top-2 w-3 h-3 rounded-full border-2 border-accent bg-primary z-10 transition-colors group-hover:bg-accent" />
+    {index !== -1 && (
+      <span className="absolute left-[5px] top-5 w-px h-full bg-white/8 group-last:hidden" />
+    )}
+    <div className="bg-[#1a1a21] border border-white/5 rounded-xl p-5 hover:border-accent/25 transition-all duration-300">
+      <span className="text-accent text-xs font-semibold uppercase tracking-widest">{item.duration}</span>
+      <h4 className="text-white font-semibold text-base mt-1 leading-snug">{item.title}</h4>
+      <p className="text-white/50 text-sm mt-1">{item.subtitle}</p>
+    </div>
+  </motion.div>
+);
 
-    {
-      course: "Zero To Hero in MicroSoft Excel",
-      place: "Udemy",
-      mode: "Online",
-    },
+/* ── Skill Icon ─────────────────────────────────────── */
+const SkillIcon = ({ skill }) => (
+  <TooltipProvider delayDuration={80}>
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <motion.div
+          whileHover={{ y: -4, scale: 1.1 }}
+          transition={{ type: "spring", stiffness: 400, damping: 20 }}
+          className="relative w-14 h-14 flex items-center justify-center rounded-xl bg-[#1a1a21] border border-white/5 hover:border-accent/30 cursor-pointer transition-colors duration-200"
+        >
+          <span className="text-2xl" style={{ color: skill.color }}>{skill.icon}</span>
+        </motion.div>
+      </TooltipTrigger>
+      <TooltipContent>
+        <p className="text-xs font-medium">{skill.name}</p>
+      </TooltipContent>
+    </Tooltip>
+  </TooltipProvider>
+);
 
-    {
-      course: "Web Development Intern",
-      place: "CodeClause",
-      mode: "Online",
-    },
+/* ── Panel content per tab ──────────────────────────── */
+const panelVariants = {
+  hidden: { opacity: 0, y: 12 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.35, ease: "easeOut" } },
+  exit: { opacity: 0, y: -8, transition: { duration: 0.2 } },
+};
 
-    {
-      course: "Meta Front-End Developer Professional Certificate",
-      place: "Coursera",
-      mode: "Offline",
-    },
+const Panel = ({ active }) => {
+  if (active === "experience")
+    return (
+      <motion.div key="experience" variants={panelVariants} initial="hidden" animate="show" exit="exit">
+        <SectionHeader data={experience} />
+        <div className="flex flex-col gap-4 mt-6">
+          {experience.items.map((item, i) => <TimelineItem key={i} item={item} index={i} />)}
+        </div>
+      </motion.div>
+    );
 
-    {
-      course: "Software Engineering Internship",
-      place: "BlueEra Softech Pvt. Ltd.",
-      mode: "Offline",
-    },
-  ]
-}
+  if (active === "education")
+    return (
+      <motion.div key="education" variants={panelVariants} initial="hidden" animate="show" exit="exit">
+        <SectionHeader data={education} />
+        <div className="flex flex-col gap-4 mt-6">
+          {education.items.map((item, i) => <TimelineItem key={i} item={item} index={i} />)}
+        </div>
+      </motion.div>
+    );
 
+  if (active === "certifications")
+    return (
+      <motion.div key="certifications" variants={panelVariants} initial="hidden" animate="show" exit="exit">
+        <SectionHeader data={certifications} />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+          {certifications.items.map((item, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.06, duration: 0.35 }}
+              className="bg-[#1a1a21] border border-white/5 rounded-xl p-5 hover:border-accent/25 transition-all duration-300"
+            >
+              <span className={`inline-block px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-widest mb-2 ${item.duration === "Online" ? "bg-accent/15 text-accent" : "bg-white/8 text-white/60"}`}>
+                {item.duration}
+              </span>
+              <h4 className="text-white text-sm font-semibold leading-snug">{item.title}</h4>
+              <p className="text-white/45 text-xs mt-1">{item.subtitle}</p>
+            </motion.div>
+          ))}
+        </div>
+      </motion.div>
+    );
 
+  if (active === "skills")
+    return (
+      <motion.div key="skills" variants={panelVariants} initial="hidden" animate="show" exit="exit">
+        <div className="space-y-8">
+          {skills.categories.map((cat, ci) => (
+            <motion.div key={cat.name} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: ci * 0.08, duration: 0.35 }}>
+              <h4 className="text-white/40 text-xs font-semibold uppercase tracking-[0.18em] mb-4 gap-3">
+                <span className="h-px flex-1 bg-white/8" />
+                {cat.name}
+                <span className="h-px flex-1 bg-white/8" />
+              </h4>
+              <div className="flex flex-wrap gap-3 justify-start">
+                {cat.items.map((skill, si) => (
+                  <SkillIcon key={si} skill={skill} />
+                ))}
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </motion.div>
+    );
+
+  if (active === "about")
+    return (
+      <motion.div key="about" variants={panelVariants} initial="hidden" animate="show" exit="exit">
+        <p className="text-white/55 text-sm leading-relaxed mb-8 max-w-2xl">{about.bio}</p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {about.fields.map((f, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.07, duration: 0.3 }}
+              className="flex items-center gap-4 p-4 bg-[#1a1a21] border border-white/5 rounded-xl"
+            >
+              <span className="text-white/35 text-xs uppercase tracking-widest min-w-[80px]">{f.label}</span>
+              <span className="text-white text-sm font-medium">{f.value}</span>
+            </motion.div>
+          ))}
+        </div>
+      </motion.div>
+    );
+
+  return null;
+};
+
+const SectionHeader = ({ data }) => (
+  <div className="mb-2">
+    <p className="text-white/50 text-sm leading-relaxed max-w-2xl">{data.description}</p>
+  </div>
+);
+
+/* ── Main component ─────────────────────────────────── */
 const Resume = () => {
+  const [active, setActive] = useState("experience");
+  const activeTab = TABS.find((t) => t.key === active);
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
-      animate={{
-        opacity: 1,
-        transition: {
-          delay: 1,
-          duration: 0.4,
-          ease: "easeIn"
-        }
-      }}
-      className="min-h-[80vh] flex items-center justify-center py-4 xl:py-0"
+      animate={{ opacity: 1, transition: { delay: 0.3, duration: 0.5 } }}
+      className="min-h-screen py-4 md:py-4"
     >
-      <div className="container mx-auto">
-        {/* why hire me? */}
-        <Tabs
-          defaultValue="experience"
-          className="flex flex-col xl:flex-row gap-[60px]"
-        >
-          <TabsList className="flex flex-col w-full max-w-[380px] mx-auto xl:mx-0 gap-6">
-            <div className="text-center xl:mb-24 ">
-            </div>
-            <TabsTrigger value="experience">Experience</TabsTrigger>
-            <TabsTrigger value="skils">Skils</TabsTrigger>
-            <TabsTrigger value="education">Education</TabsTrigger>
-            <TabsTrigger value="about">About Me</TabsTrigger>
-            <TabsTrigger value="certifications">Certifications</TabsTrigger>
-          </TabsList>
+      <div className="container mx-auto px-4">
+        {/* Page title */}
+        <div className="mb-4 text-center">
+          <span className="inline-block px-4 py-1 rounded-full border border-accent/30 text-accent text-xs uppercase tracking-[0.2em] mb-4">
+            Career &amp; Skills
+          </span>
+          <h1 className="text-4xl md:text-5xl font-bold text-white mb-3">My Resume</h1>
+          <p className="text-white/40 text-base max-w-md mx-auto">
+            A snapshot of my professional journey, education and technical toolkit.
+          </p>
+          {/* <a
+            href="/assets/Aakash_Sharma_CV.pdf"
+            download
+            className="inline-flex items-center gap-2 mt-5 px-5 py-2.5 rounded-xl bg-accent/10 border border-accent/30 text-accent text-sm font-medium hover:bg-accent hover:text-white transition-all duration-250"
+          >
+            <FiDownload size={14} /> Download CV
+          </a> */}
+        </div>
 
-          {/* content */}
-          <div className="min-h-[70vh] w-full">
-
-            {/* experience */}
-            <TabsContent value="experience" className="w-full">
-              <div className="flex flex-col gap-[30px] text-center xl:text-left">
-                <h3 className="text-4xl font-bold">{experience.title}</h3>
-                <p className="max-w-[1200px] text-white/60 mx-auto xl:mx-0">
-                  {experience.desctiption}
-                </p>
-                <ScrollArea className="h-[400px]">
-                  <ul className="grid grid-cols-1 lg:grid-cols-2 gap-[30px]">
-                    {experience.info.map((item, index) => {
-                      return (
-                        <li
-                          key={index}
-                          className="bg-[#232329] h-[184px] py-6 px-10 rounded-xl flex flex-col justify-center items-center lg:items-start gap-1"
-                        >
-                          <span className="text-accent">{item.duration}</span>
-                          <h3 className="text-xl xl:max-w-[420px] lg:max-w-[300px] min-h-[70px] text-center lg:text-left">
-                            {item.position}
-                          </h3>
-                          <div className="flex items-center gap-3">
-                            {/* dot */}
-                            <span className="w-[10px] h-[10px] rounded-full bg-accent"></span>
-                            <p className="text-white/60">{item.company}</p>
-                          </div>
-                        </li>
-                      );
-                    })}
-                  </ul>
-                </ScrollArea>
-              </div>
-            </TabsContent>
-
-            {/* skils */}
-            <TabsContent value="skils" className="w-full">
-              <div className="flex flex-col gap-[30px] text-center xl:text-left">
-                <h3 className="text-4xl font-bold">{skils.title}</h3>
-                <p className="max-w-[1200px] text-white/60 mx-auto xl:mx-0">
-                  {skils.desctiption}
-                </p>
-              </div>
-
-              {Object.entries(skils.skilsList).map(([category, skills]) => (
-                <div key={category} className="mb-4">
-                  <h3 className="text-2xl font-semibold text-white mb-4">{category}</h3>
-                  <ul className="flex flex-wrap gap-4">
-                    {skills.map((skill, index) => (
-                      <li key={index} className="w-[50px] h-[50px]">
-                        <TooltipProvider delayDuration={100}>
-                          <Tooltip>
-                            <TooltipTrigger className="w-full h-full bg-[#232329] rounded-xl flex justify-center items-center group">
-                              <div className="text-3xl group-hover:text-accent transition-all duration-300">
-                                {skill.icon}
-                              </div>
-                            </TooltipTrigger>
-                            <TooltipContent>
-                              <p className="capitalize">{skill.name}</p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+        <div className="flex flex-col xl:flex-row gap-8 xl:gap-12">
+          {/* ── SIDEBAR TABS ── */}
+          <div className="xl:w-56 flex-shrink-0">
+            <nav className="flex xl:flex-col gap-2 flex-wrap xl:flex-nowrap sticky xl:top-8">
+              {TABS.map((tab) => (
+                <button
+                  key={tab.key}
+                  onClick={() => setActive(tab.key)}
+                  className={`relative flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 text-left ${active === tab.key
+                    ? "bg-accent/15 text-accent border border-accent/30"
+                    : "text-white/50 hover:text-white hover:bg-white/5 border border-transparent"
+                    }`}
+                >
+                  <span className="shrink-0">{tab.icon}</span>
+                  <span>{tab.label}</span>
+                  {active === tab.key && (
+                    <motion.span
+                      layoutId="tab-indicator"
+                      className="absolute inset-0 rounded-xl border border-accent/30"
+                    />
+                  )}
+                </button>
               ))}
-
-
-            </TabsContent>
-
-            {/* education */}
-            <TabsContent value="education" className="w-full">
-              <div className="flex flex-col gap-[30px] text-center xl:text-left">
-                <h3 className="text-4xl font-bold">{education.title}</h3>
-                <p className="max-w-[1200px] text-white/60 mx-auto xl:mx-0">
-                  {education.desctiption}
-                </p>
-                <ScrollArea className="h-[400px]">
-                  <ul className="grid grid-cols-1 lg:grid-cols-2 gap-[30px]">
-                    {education.info.map((item, index) => {
-                      return (
-                        <li
-                          key={index}
-                          className="bg-[#232329] h-[190px] py-6 px-10 rounded-xl flex flex-col justify-center items-center lg:items-start gap-1"
-                        >
-                          <span className="text-accent">{item.duration}</span>
-                          <h3 className="text-xl xl:max-w-[420px] lg:max-w-[300px] min-h-[70px] text-center lg:text-left">
-                            {item.degree}
-                          </h3>
-                          <div className="flex items-center gap-3">
-                            {/* dot */}
-                            <span className="w-[10px] h-[10px] rounded-full bg-accent"></span>
-                            <p className="text-white/60">
-                              {item.orgzanization}
-                            </p>
-                          </div>
-                        </li>
-                      );
-                    })}
-                  </ul>
-                </ScrollArea>
-              </div>
-            </TabsContent>
-
-            {/* about me */}
-            <TabsContent value="about" className="w-full text-center xl:text-left"
-            >
-              <div className="flex flex-col gap-[30px]">
-                <h3 className="text-4xl font-bold">{about.title}</h3>
-                <p className="max-w-[1200px] text-white/60 mx-auto xl:mx-0">{about.desctiption}</p>
-                <ul className="grid grid-cols-1 xl:grid-cols-2 gap-y-6 max-w-[620px] mx-auto xl:mx-0">
-                  {about.info.map((item, index) => {
-                    return (
-                      <li key={index} className="flex items-center justify-center xl:justify-start gap-4">
-                        <span className="text-white/60">{item.fieldName}:</span>
-                        <span className='text-xl'>{item.fieldValue}</span>
-                      </li>
-                    );
-                  })}
-                </ul>
-              </div>
-            </TabsContent>
-
-            {/* certifications */}
-            <TabsContent value="certifications" className="w-full">
-              <div className="flex flex-col gap-[30px] text-center xl:text-left">
-                <h3 className="text-4xl font-bold">{certificate.title}</h3>
-                <p className="max-w-[1200px] text-white/60 mx-auto xl:mx-0">
-                  {certificate.desctiption}
-                </p>
-                <ScrollArea className="h-[400px]">
-                  <ul className="grid grid-cols-1 lg:grid-cols-2 gap-[30px]">
-                    {certificate.info.map((item, index) => {
-                      return (
-                        <li
-                          key={index}
-                          className="bg-[#232329] h-[184px] py-6 px-10 rounded-xl flex flex-col justify-center items-center lg:items-start gap-1"
-                        >
-                          <span className="text-accent">{item.mode}</span>
-                          <h3 className="text-xl xl:max-w-[420px] lg:max-w-[300px] min-h-[70px] text-center lg:text-left">
-                            {item.course}
-                          </h3>
-                          <div className="flex items-center gap-3">
-                            {/* dot */}
-                            <span className="w-[10px] h-[10px] rounded-full bg-accent"></span>
-                            <p className="text-white/60">{item.place}</p>
-                          </div>
-                        </li>
-                      );
-                    })}
-                  </ul>
-                </ScrollArea>
-              </div>
-            </TabsContent>
+            </nav>
           </div>
-        </Tabs>
+
+          {/* ── CONTENT PANEL ── */}
+          <div className="flex-1 min-w-0">
+            {/* Section heading */}
+            <div className="flex items-center gap-3 mb-6">
+              <span className="text-accent text-lg">{activeTab?.icon}</span>
+              <h2 className="text-2xl font-bold text-white">{activeTab?.label}</h2>
+              <span className="flex-1 h-px bg-gradient-to-r from-accent/20 to-transparent" />
+            </div>
+
+            <AnimatePresence mode="wait">
+              <Panel active={active} />
+            </AnimatePresence>
+          </div>
+        </div>
       </div>
     </motion.div>
   );

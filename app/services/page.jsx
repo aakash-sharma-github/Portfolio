@@ -1,193 +1,191 @@
 "use client";
 import { motion } from "framer-motion";
-import { 
-  FaCode, 
-  FaServer, 
-  FaMobile, 
-  FaPython, 
-  FaDocker, 
-  FaDatabase, 
-  FaShieldAlt,
-  FaRocket,
+import { useState } from "react";
+import Link from "next/link";
+import {
+  FaCode, FaServer, FaMobile, FaPython,
+  FaDocker, FaDatabase, FaShieldAlt, FaRocket,
 } from "react-icons/fa";
-import { useRouter } from 'next/navigation';
+import { FiArrowRight, FiArrowUpRight } from "react-icons/fi";
 
 const servicesList = [
   {
-    id: 1,
+    num: "01",
     icon: FaCode,
-    title: 'Frontend Development',
-    description: 'Modern, responsive web applications with cutting-edge technologies',
-    features: ['React & Next.js', 'Tailwind CSS', 'TypeScript', 'Framer Motion'],
-    color: 'from-blue-500 to-cyan-500',
-    text: 'Creating stunning, interactive user interfaces with React, Next.js, and modern CSS frameworks. I specialize in building responsive, accessible, and performant web applications that deliver exceptional user experiences across all devices.'
+    title: "Frontend Development",
+    description:
+      "Creating stunning, interactive user interfaces with React, Next.js, and modern CSS frameworks. Responsive, accessible, and performant across all devices.",
+    features: ["React & Next.js", "Tailwind CSS", "TypeScript", "Framer Motion"],
+    accent: "#3F88C5",
   },
   {
-    id: 2,
+    num: "02",
     icon: FaServer,
-    title: 'Backend Development',
-    description: 'Scalable server-side solutions and API development',
-    features: ['Node.js & Express', 'RESTful APIs', 'GraphQL', 'Microservices'],
-    color: 'from-green-500 to-emerald-500',
-    text: 'Building robust, scalable backend systems using Node.js, Express.js, and MongoDB. I develop secure APIs, implement authentication systems, and create efficient database architectures that power modern web applications.'
+    title: "Backend Development",
+    description:
+      "Building robust, scalable backend systems using Node.js, Express.js, and MongoDB. Secure APIs, authentication, and efficient database architectures.",
+    features: ["Node.js & Express", "RESTful APIs", "GraphQL", "Microservices"],
+    accent: "#3F88C5",
   },
   {
-    id: 3,
+    num: "03",
     icon: FaMobile,
-    title: 'Mobile App Development',
-    description: 'Cross-platform mobile applications for iOS and Android',
-    features: ['React Native', 'Flutter', 'iOS & Android', 'App Store Deployment'],
-    color: 'from-purple-500 to-pink-500',
-    text: 'Developing feature-rich mobile applications using React Native and Flutter. I create cross-platform solutions that provide native performance while maintaining code reusability across iOS and Android platforms.'
+    title: "Mobile App Development",
+    description:
+      "Feature-rich mobile applications using React Native. Cross-platform solutions with native performance across iOS and Android.",
+    features: ["React Native", "TypeScript", "iOS & Android", "App Store Deployment"],
+    accent: "#3F88C5",
   },
   {
-    id: 4,
+    num: "04",
     icon: FaPython,
-    title: 'Python Development',
-    description: 'Powerful Python applications and data solutions',
-    features: ['Django & Flask', 'Data Analysis', 'Machine Learning', 'Automation'],
-    color: 'from-yellow-500 to-orange-500',
-    text: 'Building efficient Python applications using Django and Flask frameworks. I specialize in data analysis, automation scripts, and machine learning implementations that solve complex business problems.'
+    title: "Python Development",
+    description:
+      "Efficient Python applications with Django and Flask. Data analysis, automation scripts, and machine learning for complex business problems.",
+    features: ["Django & Flask", "Data Analysis", "Machine Learning", "Automation"],
+    accent: "#3F88C5",
   },
   {
-    id: 5,
+    num: "05",
     icon: FaDocker,
-    title: 'DevOps & Cloud',
-    description: 'Infrastructure automation and cloud deployment solutions',
-    features: ['Docker & Kubernetes', 'AWS & Azure', 'CI/CD Pipelines', 'Monitoring'],
-    color: 'from-indigo-500 to-blue-500',
-    text: 'Implementing DevOps practices with Docker, Kubernetes, and cloud platforms. I automate deployment pipelines, set up monitoring systems, and ensure high availability and scalability of applications in production environments.'
+    title: "DevOps & Cloud",
+    description:
+      "Implementing DevOps with Docker, Kubernetes, and cloud platforms. Automated pipelines, monitoring, and high-availability production environments.",
+    features: ["Docker & Kubernetes", "AWS & Azure", "CI/CD Pipelines", "Monitoring"],
+    accent: "#3F88C5",
   },
   {
-    id: 6,
+    num: "06",
     icon: FaDatabase,
-    title: 'Database Solutions',
-    description: 'Database design, optimization, and management',
-    features: ['MongoDB & PostgreSQL', 'Database Design', 'Query Optimization', 'Data Migration'],
-    color: 'from-teal-500 to-cyan-500',
-    text: 'Designing and optimizing database architectures for both SQL and NoSQL systems. I ensure data integrity, performance optimization, and implement efficient data management strategies for scalable applications.'
+    title: "Database Solutions",
+    description:
+      "Designing and optimizing SQL and NoSQL architectures. Data integrity, query performance, and scalable data management strategies.",
+    features: ["MongoDB & PostgreSQL", "Database Design", "Query Optimization", "Data Migration"],
+    accent: "#3F88C5",
   },
   {
-    id: 7,
+    num: "07",
     icon: FaShieldAlt,
-    title: 'Security & Compliance',
-    description: 'Application security and compliance implementation',
-    features: ['Security Audits', 'Data Protection', 'GDPR Compliance', 'Penetration Testing'],
-    color: 'from-red-500 to-pink-500',
-    text: 'Implementing comprehensive security measures to protect applications and data. I conduct security audits, implement authentication systems, and ensure compliance with industry standards and regulations.'
+    title: "Security & Compliance",
+    description:
+      "Comprehensive security measures to protect applications and data. Audits, authentication systems, and regulatory compliance.",
+    features: ["Security Audits", "Data Protection", "GDPR Compliance", "Penetration Testing"],
+    accent: "#3F88C5",
   },
   {
-    id: 8,
+    num: "08",
     icon: FaRocket,
-    title: 'Performance Optimization',
-    description: 'Application performance tuning and optimization',
-    features: ['Speed Optimization', 'Caching Strategies', 'CDN Implementation', 'Load Testing'],
-    color: 'from-emerald-500 to-green-500',
-    text: 'Optimizing application performance through code optimization, caching strategies, and infrastructure improvements. I ensure applications load quickly and handle high traffic efficiently.'
-  }
-]
+    title: "Performance Optimization",
+    description:
+      "Tuning applications through code optimization, caching, and infrastructure improvements for fast load times and high-traffic resilience.",
+    features: ["Speed Optimization", "Caching Strategies", "CDN Implementation", "Load Testing"],
+    accent: "#3F88C5",
+  },
+];
 
-const Services = () => {
-  const router = useRouter();
+/* ── Service card ───────────────────────────────────── */
+const ServiceCard = ({ service, index }) => {
+  const [hovered, setHovered] = useState(false);
+  const Icon = service.icon;
+
   return (
-    <section className="min-h-screen py-4 bg-gradient-to-br from-primary via-primary to-primary/90">
+    <motion.div
+      initial={{ opacity: 0, y: 24 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: index * 0.06, duration: 0.4, ease: "easeOut" }}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      className="group relative bg-[#181820] border border-white/6 rounded-2xl p-6 flex flex-col gap-5 hover:border-accent/30 transition-all duration-350 hover:-translate-y-1 hover:shadow-xl hover:shadow-accent/5 cursor-default"
+    >
+      {/* number + icon row */}
+      <div className="flex items-start justify-between">
+        <span className="text-white/10 text-4xl font-bold leading-none select-none group-hover:text-accent/15 transition-colors duration-300">
+          {service.num}
+        </span>
+        <div className="w-11 h-11 rounded-xl bg-accent/10 border border-accent/15 flex items-center justify-center group-hover:bg-accent/20 transition-colors duration-300">
+          <Icon className="text-accent text-lg" />
+        </div>
+      </div>
+
+      {/* title */}
+      <h3 className="text-white text-lg font-bold leading-snug group-hover:text-accent transition-colors duration-250">
+        {service.title}
+      </h3>
+
+      {/* description */}
+      <p className="text-white/45 text-sm leading-relaxed flex-1">{service.description}</p>
+
+      {/* feature pills */}
+      <div className="flex flex-wrap gap-2 pt-1 border-t border-white/5">
+        {service.features.map((f) => (
+          <span key={f} className="px-2.5 py-1 rounded-lg bg-white/4 text-white/50 text-[10px] font-medium border border-white/5 group-hover:border-accent/15 group-hover:text-white/65 transition-all duration-250">
+            {f}
+          </span>
+        ))}
+      </div>
+    </motion.div>
+  );
+};
+
+/* ── Page ───────────────────────────────────────────── */
+const Services = () => {
+  return (
+    <section className="min-h-screen bg-primary pb-20">
       <div className="container mx-auto px-4">
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 50 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-16"
-        >
-          <h1 className="text-5xl md:text-6xl font-bold text-white mb-6">
-            My <span className="text-accent">Services</span>
-          </h1>
-          <p className="text-xl text-white/70 max-w-3xl mx-auto">
-            Comprehensive technology solutions tailored to your business needs. 
-            From concept to deployment, I deliver exceptional results.
-          </p>
-        </motion.div>
 
-        {/* Services Grid */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.3, duration: 0.6 }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8"
-        >
-          {servicesList.map((service, index) => {
-            const IconComponent = service.icon;
-            return (
-              <motion.div
-                key={service.id}
-                initial={{ opacity: 0, y: 50 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1, duration: 0.6 }}
-                whileHover={{ y: -10, scale: 1.02 }}
-                className="group relative"
-              >
-                <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6 h-full hover:bg-white/10 transition-all duration-300 hover:border-accent/50">
-                  {/* Icon */}
-                  <div className={`w-16 h-16 rounded-xl bg-gradient-to-r ${service.color} flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300`}>
-                    <IconComponent className="text-2xl text-white" />
-                  </div>
-
-                  {/* Content */}
-                  <div className="space-y-4">
-                    <h3 className="text-xl font-bold text-white group-hover:text-accent transition-colors duration-300">
-                      {service.title}
-                    </h3>
-                    
-                    <p className="text-white/70 text-sm leading-relaxed">
-                      {service.description}
-                    </p>
-
-                    {/* Features */}
-                    <div className="space-y-2">
-                      {service.features.map((feature, featureIndex) => (
-                        <div key={featureIndex} className="flex items-center space-x-2">
-                          <div className="w-2 h-2 bg-accent rounded-full"></div>
-                          <span className="text-white/60 text-sm">{feature}</span>
-                        </div>
-                      ))}
-                    </div>
-
-                    {/* Hover Effect */}
-                    <div className="absolute inset-0 bg-gradient-to-r from-accent/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl"></div>
-                  </div>
-                </div>
-              </motion.div>
-            );
-          })}
-        </motion.div>
-
-        {/* Call to Action */}
-        <motion.div
-          initial={{ opacity: 0, y: 50 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.8, duration: 0.6 }}
-          className="text-center mt-16"
-        >
-          <div className="bg-gradient-to-r from-accent/20 to-accent/10 rounded-2xl p-8 border border-accent/20">
-            <h3 className="text-2xl font-bold text-white mb-4">
-              Ready to Start Your Project?
-            </h3>
-            <p className="text-white/70 mb-6 max-w-2xl mx-auto">
-              Let's discuss how I can help bring your ideas to life with cutting-edge technology solutions.
+        {/* HEADER */}
+        <div className="relative pt-4 pb-4 text-center overflow-hidden">
+          {/* <div className="absolute left-1/2 -translate-x-1/2 top-0 w-px h-12 bg-gradient-to-b from-transparent to-accent/40" /> */}
+          <motion.div initial={{ opacity: 0, y: -14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.45 }}>
+            <span className="inline-block px-4 py-1 rounded-full border border-accent/30 text-accent text-[10px] uppercase tracking-[0.22em] mb-5">
+              What I offer
+            </span>
+            <h1 className="text-5xl md:text-6xl font-bold text-white mb-4 tracking-tight">
+              My Services
+            </h1>
+            <p className="text-white/40 text-base max-w-lg mx-auto leading-relaxed">
+              Comprehensive technology solutions tailored to your needs — from concept to production.
             </p>
-            <motion.button
-              onClick={() => router.push('/contact')}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="bg-gradient-to-r from-accent to-accent/80 text-primary font-semibold px-8 py-3 rounded-full hover:shadow-lg hover:shadow-accent/25 transition-all duration-300"
+          </motion.div>
+        </div>
+
+        {/* SERVICES GRID */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+          {servicesList.map((service, i) => (
+            <ServiceCard key={service.num} service={service} index={i} />
+          ))}
+        </div>
+
+        {/* CTA BANNER */}
+        <motion.div
+          initial={{ opacity: 0, y: 28 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.7, duration: 0.5 }}
+          className="mt-16 relative overflow-hidden rounded-2xl border border-accent/20 bg-[#181820] p-8 md:p-12"
+        >
+          {/* subtle background glow */}
+          <div className="absolute -top-16 -right-16 w-64 h-64 bg-accent/5 rounded-full blur-3xl pointer-events-none" />
+          <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
+            <div>
+              <p className="text-accent text-[10px] uppercase tracking-[0.22em] font-semibold mb-2">Let's collaborate</p>
+              <h3 className="text-2xl md:text-3xl font-bold text-white mb-2">Ready to start your project?</h3>
+              <p className="text-white/45 text-sm max-w-md">
+                Let's discuss how I can help bring your ideas to life with modern technology.
+              </p>
+            </div>
+            <Link
+              href="/contact"
+              className="flex-shrink-0 flex items-center gap-2.5 px-6 py-3 rounded-xl bg-accent text-white font-semibold text-sm hover:bg-accent/85 transition-colors duration-250 group"
             >
-              Get In Touch
-            </motion.button>
+              Get in touch
+              <FiArrowUpRight size={16} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-200" />
+            </Link>
           </div>
         </motion.div>
+
       </div>
     </section>
-  )
-}
+  );
+};
 
 export default Services;

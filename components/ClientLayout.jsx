@@ -7,8 +7,8 @@ import { GitHubProvider } from '../context/githubContext';
 
 // Lazy load components to improve initial load time
 const Header = dynamic(() => import('@/components/Header'), { ssr: false });
-const PageTransition = dynamic(() => import('@/components/PageTransition'), { ssr: false });
-const StairTransation = dynamic(() => import('@/components/StairTransation'), { ssr: false });
+// const PageTransition = dynamic(() => import('@/components/PageTransition'), { ssr: false });
+// const StairTransation = dynamic(() => import('@/components/StairTransation'), { ssr: false });
 
 export default function ClientLayout({ children, myFont }) {
     const setFont = useContextApi((state) => state.setFont);
@@ -28,15 +28,15 @@ export default function ClientLayout({ children, myFont }) {
             <Suspense fallback={<div />}>
                 <Header myFont={myFont} />
             </Suspense>
-            <Suspense fallback={<div />}>
+            {/* <Suspense fallback={<div />}>
                 <StairTransation />
-            </Suspense>
+            </Suspense> */}
             <Suspense fallback={<div>Loading...</div>}>
-                <PageTransition>
+                {/* <PageTransition>
+                </PageTransition> */}
                     <GitHubProvider>
                         {children}
                     </GitHubProvider>
-                </PageTransition>
             </Suspense>
         </>
     );

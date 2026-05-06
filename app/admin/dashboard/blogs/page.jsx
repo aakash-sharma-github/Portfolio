@@ -120,21 +120,17 @@ const BlogsManagement = () => {
 
     return (
         <AdminLayout title="Blogs">
-
-            {/* Category Filter and Add New Button */}
-            <div className="flex justify-end items-center mb-6">
-                <Link
-                    href="/admin/dashboard/blogs/create"
-                    className="bg-accent hover:bg-accent/80 text-white px-4 py-2 rounded-lg flex items-center gap-2"
-                >
-                    <FiPlus /> New Post
-                </Link>
-            </div>
-
             {/* Blog Posts Table */}
             <div className="bg-[#1e1e24] rounded-lg shadow-lg overflow-hidden">
                 <div className="flex flex-col sm:flex-row justify-between items-center gap-4 p-6 bg-[#2a2a35]">
                     <h2 className="text-lg sm:text-xl font-semibold text-white">Blog Posts</h2>
+
+                    <Link
+                        href="/admin/dashboard/blogs/create"
+                        className="bg-accent hover:bg-accent/80 text-white px-4 py-2 rounded-lg flex items-center gap-2"
+                    >
+                        <FiPlus /> New Post
+                    </Link>
                 </div>
 
                 <div className="overflow-x-auto">
@@ -153,7 +149,7 @@ const BlogsManagement = () => {
                                 <tr key={blog._id} className="hover:bg-[#2a2a35]/50">
                                     <td className="px-6 py-4">
                                         <div className="flex items-center">
-                                            <Image 
+                                            <Image
                                                 src={blog.coverImage.url}
                                                 alt={blog.title}
                                                 width={40}
