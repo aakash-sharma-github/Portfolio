@@ -5,9 +5,9 @@ import { FiSave, FiX, FiUpload, FiImage, FiZap } from 'react-icons/fi';
 import Link from 'next/link';
 import Image from 'next/image';
 import { blogApi } from '@/lib/api';
-import blogCategories from '@/lib/blogCategories';
 import { toast } from 'sonner';
 import dynamic from 'next/dynamic';
+import { blogCategories } from '@/lib/essentials';
 
 // Lazy-load TinyMCE to avoid SSR issues
 const RichTextEditor = dynamic(() => import('./RichTextEditor'), {
