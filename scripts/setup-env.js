@@ -29,10 +29,10 @@ function generateJWTSecret() {
 }
 
 function createEnvFile() {
-    const envPath = path.join(__dirname, '..', '.env.local');
+    const envPath = path.join(__dirname, '..', '.env.dev');
     
     if (fs.existsSync(envPath)) {
-        log('⚠️  .env.local already exists!', 'yellow');
+        log('⚠️  .env.dev already exists!', 'yellow');
         const readline = import('readline');
         const rl = readline.createInterface({
             input: process.stdin,
@@ -66,31 +66,12 @@ MONGODB_URI=mongodb://localhost:27017/portfolio
 # JWT Configuration
 JWT_SECRET=${jwtSecret}
 
-# Admin Authentication
-# Generate this hash using: node scripts/generatePassword.js your_password
-ADMIN_PASSWORD_HASH=""
-
-# Cloudinary Configuration (for image uploads)
-CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
-CLOUDINARY_API_KEY=your_cloudinary_api_key
-CLOUDINARY_API_SECRET=your_cloudinary_api_secret
-
-# Email Configuration (for contact form)
-SMTP_HOST=smtp.gmail.com
-SMTP_PORT=587
-SMTP_EMAIL=your_email@gmail.com
-SMTP_PASSWORD=your_app_password
-
-# GitHub API (for stats)
-GITHUB_TOKEN=your_github_personal_access_token
-GITHUB_USERNAME=your_github_username
-
 # API Configuration
 NEXT_PUBLIC_API_URL=http://localhost:3000
 `;
 
     fs.writeFileSync(envPath, envContent);
-    log('✅ Created .env.local file', 'green');
+    log('✅ Created .env.dev file', 'green');
 }
 
 async function main() {
@@ -104,12 +85,12 @@ async function main() {
             log('\n📋 Next Steps:', 'blue');
             log('1. Set your admin password:', 'yellow');
             log('   node scripts/generatePassword.js your_secure_password', 'bright');
-            log('2. Copy the generated hash to ADMIN_PASSWORD_HASH in .env.local', 'yellow');
+            log('2. Copy the generated hash to ADMIN_PASSWORD_HASH in .env.dev', 'yellow');
             log('3. Configure other services (Cloudinary, Email, GitHub) as needed', 'yellow');
             log('4. Start your development server: npm run dev', 'yellow');
             
             log('\n🔒 Security Notes:', 'red');
-            log('• Never commit .env.local to version control', 'red');
+            log('• Never commit .env.dev to version control', 'red');
             log('• Use strong, unique passwords', 'red');
             log('• Rotate secrets regularly in production', 'red');
             

@@ -212,7 +212,7 @@ function BlogCard({ post, index }) {
                                             ring-1 ring-accent/30 flex-shrink-0"
                             >
                                 <Image
-                                    src={post.author?.avatar || "/assets/avatar.jpg"}
+                                    src={post.author?.avatar || "/assets/avatar.png"}
                                     alt={post.author?.name || "Author"}
                                     fill
                                     sizes="24px"
@@ -316,7 +316,8 @@ export default function BlogPage() {
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const [pagination, setPagination] = useState({
         page: 1,
-        limit: 7,
+        firstLimit: 10,
+        limit: 9,
         total: 0,
         pages: 0,
     });

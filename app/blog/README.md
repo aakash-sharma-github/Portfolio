@@ -30,7 +30,7 @@ This is a modern, attractive blog section for your portfolio website built with 
    - You can customize colors, fonts, and other styles in your Tailwind config
 
 4. **Add Your Avatar**:
-   - Place your avatar image at `/public/assets/avatar.jpg` or update the path in the blog data
+   - Place your avatar image at `/public/assets/avatar.png` or update the path in the blog data
 
 ## Adding New Blog Posts
 

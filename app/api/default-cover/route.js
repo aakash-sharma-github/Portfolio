@@ -1,95 +1,58 @@
-import { createCanvas } from 'canvas';
+// app/api/default-cover/route.js
+// Serves a Design-B generated cover image as a PNG stream.
+// Used by next/image for previews. The real persisted URL should always
+// be a Cloudinary URL — this route is a fallback / preview endpoint.
 import { NextResponse } from 'next/server';
+import { generateCoverImage } from '@/lib/generateCoverImage';
 
-// Explicitly set Node.js runtime
 export const runtime = 'nodejs';
 
-
 export async function GET(request) {
+    const { searchParams } = new URL(request.url);
+    const title = (searchParams.get('title') || 'Blog Post').slice(0, 120);
+    const category = (searchParams.get('category') || 'Development').slice(0, 60);
+    const author = (searchParams.get('author') || 'Aakash Sharma').slice(0, 60);
+
     try {
-        // Get title from query params or use default
-        const { searchParams } = new URL(request.url);
-        const title = searchParams.get('title') || 'Blog Post';
-        const truncatedTitle = title.length > 30 ? title.substring(0, 30) + '...' : title;
+        const buffer = generateCoverImage(title, category, author);
 
-        // Create canvas with dimensions
-        const width = 1200;
-        const height = 630;
-        const canvas = createCanvas(width, height);
-        const ctx = canvas.getContext('2d');
+        // Cache key based on inputs — same title+category always gives same image
+        const cacheKey = Buffer.from(`${title}:${category}`).toString('base64').replace(/[/+=]/g, '');
 
-        // Generate unique colors based on title for visual differentiation
-        const titleCharSum = title.split('').reduce((sum, char) => sum + char.charCodeAt(0), 0);
-        const hue1 = (titleCharSum * 13) % 360; // Primary hue
-        const hue2 = (hue1 + 60) % 360; // Secondary hue (60 degrees apart)
-        
-        // Create gradient background with unique colors
-        const gradient = ctx.createLinearGradient(0, 0, width, height);
-        gradient.addColorStop(0, `hsl(${hue1}, 70%, 55%)`);
-        gradient.addColorStop(1, `hsl(${hue2}, 70%, 45%)`);
-        ctx.fillStyle = gradient;
-        ctx.fillRect(0, 0, width, height);
+        return new NextResponse(buffer, {
+            status: 200,
+            headers: {
+                'Content-Type': 'image/png',
+                // Cache for 7 days on CDN, 1 day in browser
+                'Cache-Control': 'public, s-maxage=604800, max-age=86400, stale-while-revalidate=3600',
+                'ETag': `"${cacheKey}"`,
+                'Vary': 'Accept-Encoding',
+            },
+        });
+    } catch (err) {
+        console.error('[default-cover] generation failed:', err.message);
 
-        // Add unique design elements based on title
-        const elementCount = (titleCharSum % 3) + 2; // 2-4 elements
-        const elementOpacity = 0.1;
-        
-        for (let i = 0; i < elementCount; i++) {
-            const angle = (titleCharSum * (i + 1) * 47) % 360;
-            const x = width * (0.3 + 0.4 * Math.cos(angle * Math.PI / 180));
-            const y = height * (0.3 + 0.4 * Math.sin(angle * Math.PI / 180));
-            const radius = 50 + (titleCharSum * (i + 1) % 100);
-            
-            ctx.beginPath();
-            ctx.arc(x, y, radius, 0, Math.PI * 2);
-            ctx.fillStyle = `rgba(255, 255, 255, ${elementOpacity})`;
-            ctx.fill();
+        // Minimal fallback — solid accent rectangle
+        try {
+            const { createCanvas } = await import('canvas');
+            const canvas = createCanvas(1200, 630);
+            const ctx = canvas.getContext('2d');
+            const g = ctx.createLinearGradient(0, 0, 0, 630);
+            g.addColorStop(0, '#0d1f3d');
+            g.addColorStop(1, '#070e1f');
+            ctx.fillStyle = g;
+            ctx.fillRect(0, 0, 1200, 630);
+            ctx.font = 'bold 52px Arial';
+            ctx.fillStyle = '#ffffff';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText((title || 'Blog Post').slice(0, 40), 600, 315);
+            return new NextResponse(canvas.toBuffer('image/png'), {
+                status: 200,
+                headers: { 'Content-Type': 'image/png', 'Cache-Control': 'public, max-age=3600' },
+            });
+        } catch {
+            return new NextResponse(null, { status: 500 });
         }
-
-        // Add text
-        ctx.font = 'bold 60px Arial, sans-serif';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillStyle = '#ffffff';
-        ctx.fillText(truncatedTitle, width / 2, height / 2);
-
-        // Add subtle border
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
-        ctx.lineWidth = 10;
-        ctx.strokeRect(20, 20, width - 40, height - 40);
-
-        // Convert canvas to buffer
-        const buffer = canvas.toBuffer('image/jpeg', { quality: 0.9 });
-
-        // Generate cache key based on title for unique caching
-        const titleHash = Buffer.from(title).toString('base64').replace(/[/+=]/g, '');
-        
-        // Return the image with title-specific caching
-        return new NextResponse(buffer, {
-            headers: {
-                'Content-Type': 'image/jpeg',
-                'Cache-Control': `public, max-age=3600`, // Reduce to 1 hour
-                'ETag': `"${titleHash}"`, // Add ETag for proper cache validation
-                'Vary': 'Accept-Encoding', // Vary header for proper caching
-            },
-        });
-    } catch (error) {
-        // Create a simple fallback colored rectangle
-        const width = 1200;
-        const height = 630;
-        const canvas = createCanvas(width, height);
-        const ctx = canvas.getContext('2d');
-
-        ctx.fillStyle = '#3b82f6';
-        ctx.fillRect(0, 0, width, height);
-
-        const buffer = canvas.toBuffer('image/jpeg');
-
-        return new NextResponse(buffer, {
-            headers: {
-                'Content-Type': 'image/jpeg',
-                'Cache-Control': 'public, max-age=86400',
-            },
-        });
     }
-} 
+}

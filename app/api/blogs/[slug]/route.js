@@ -1,31 +1,30 @@
 import { NextResponse } from 'next/server';
-import jwt from 'jsonwebtoken';
 import connectToDatabase from '@/lib/mongodb';
 import Blog from '@/lib/models/Blog';
 import { uploadImage, deleteImage } from '@/lib/cloudinary';
+import { verifyAuth } from '@/lib/authMiddleware';
 
 // Explicitly set Node.js runtime
 export const runtime = 'nodejs';
 // Force dynamic rendering since we use request headers
 export const dynamic = 'force-dynamic';
 
-const JWT_SECRET = process.env.JWT_SECRET;
 
 // Helper: verify JWT from request
-function verifyAuth(request) {
-    if (!JWT_SECRET) return null;
-    const authHeader = request.headers.get('authorization');
-    if (!authHeader || !authHeader.startsWith('Bearer ')) return null;
+// function verifyAuth(request) {
+//     if (!JWT_SECRET) return null;
+//     const authHeader = request.headers.get('authorization');
+//     if (!authHeader || !authHeader.startsWith('Bearer ')) return null;
 
-    const token = authHeader.split(' ')[1];
-    if (!token) return null;
+//     const token = authHeader.split(' ')[1];
+//     if (!token) return null;
 
-    try {
-        return jwt.verify(token, JWT_SECRET);
-    } catch {
-        return null;
-    }
-}
+//     try {
+//         return jwt.verify(token, JWT_SECRET);
+//     } catch {
+//         return null;
+//     }
+// }
 
 // GET handler to fetch a specific blog by slug (public)
 export async function GET(request, { params }) {

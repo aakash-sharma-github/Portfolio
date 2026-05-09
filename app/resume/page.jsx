@@ -22,7 +22,6 @@ import {
   SiTailwindcss,
   SiMongodb,
   SiMysql,
-  SiVscode,
   SiIntellijidea,
   SiExpress,
   SiDjango,
@@ -39,7 +38,7 @@ import {
 import { VscVscode } from "react-icons/vsc";
 import { FiBriefcase, FiBook, FiUser, FiAward, FiCode } from "react-icons/fi";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
@@ -352,6 +351,7 @@ function SkillsPanel() {
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <div
+                            onClick={() => setActiveTooltip(name)}
                             className="w-14 h-14 bg-[#232329] border border-white/6
                                           hover:border-accent/40 rounded-2xl flex items-center
                                           justify-center cursor-default transition-all duration-200
@@ -369,7 +369,7 @@ function SkillsPanel() {
                             {isActive && (
                               <span
                                 className="absolute -top-7 left-1/2 -translate-x-1/2
-                                         text-[10px] bg-black/80 text-white px-2 py-1
+                                         text-[10px] bg-[#232329] border-accent/30 text-white px-2 py-1
                                          rounded-md whitespace-nowrap"
                               >
                                 {name}
