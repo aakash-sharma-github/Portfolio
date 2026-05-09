@@ -102,24 +102,32 @@ const CoverImageSection = ({ useGenerated, onToggle, uploadedImage, onImageUploa
             {useGenerated && (
                 <div className="rounded-xl overflow-hidden border border-accent/30 bg-[#2a2a35]">
                     {generatedPreviewUrl ? (
-                        <div className="relative">
+                        <div className="relative w-full h-48">
                             <Image
                                 src={generatedPreviewUrl}
                                 alt="Generated cover preview"
-                                className="w-full h-48 object-cover"
-                                onError={(e) => { e.target.style.display = 'none'; }}
+                                fill
+                                sizes="100vw"
+                                className="object-cover"
+                                onError={() => setImageError(true)}
+                                unoptimized
                             />
-                            <div className="absolute bottom-3 left-3 flex items-center gap-1.5
-                                            bg-accent/90 text-white text-[10px] font-bold
-                                            px-2.5 py-1 rounded-full uppercase tracking-wider">
-                                <FiZap className="text-[10px]" /> Auto-generated
+
+                            <div
+                                className="absolute bottom-3 left-3 flex items-center gap-1.5
+                               bg-accent/90 text-white text-[10px] font-bold
+                               px-2.5 py-1 rounded-full uppercase tracking-wider"
+                            >
+                                <FiZap className="text-[10px]" />
+                                Auto-generated
                             </div>
                         </div>
                     ) : (
-                        <div className="h-32 flex items-center justify-center text-white/30 text-sm">
-                            Enter a title to preview
+                        <div className="h-48 flex items-center justify-center text-white/30 text-sm">
+                            Enter a valid title to preview
                         </div>
                     )}
+
                     <p className="px-4 py-3 text-white/40 text-xs">
                         Final image is generated and uploaded to Cloudinary when you save.
                     </p>

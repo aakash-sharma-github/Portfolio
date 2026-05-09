@@ -1,13 +1,13 @@
 "use client";
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useRef } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import AdminLayout from '@/components/AdminLayout';
 import { Toaster, toast } from 'sonner';
 import { FiUpload, FiX, FiImage, FiZap, FiRefreshCw } from 'react-icons/fi';
 import { blogApi } from '@/lib/api';
-import { blogCategories } from '@/lib/essentials';
+import blogCategories from '@/lib/blogCategories';
 
 // ─── Small toggle component ───────────────────────────────────────────────────
 const Toggle = ({ checked, onChange, label, sublabel }) => (
@@ -35,7 +35,9 @@ const Toggle = ({ checked, onChange, label, sublabel }) => (
 const CoverImageSection = ({ useGenerated, onToggle, uploadedImage, onImageUpload, title, category }) => {
     const [isUploading, setIsUploading] = useState(false);
     const [uploadError, setUploadError] = useState('');
-    const [previewGenerated, setPreviewGenerated] = useState(false);
+    // ✅ Use a number counter, not boolean — so the cache-buster is always a
+    //    valid integer (&t=0, &t=1 …) and never the string "false"/"true"
+    const [previewCounter, setPreviewCounter] = useState(0);
     const fileInputRef = useRef(null);
 
     const generatedPreviewUrl = title
@@ -99,11 +101,23 @@ const CoverImageSection = ({ useGenerated, onToggle, uploadedImage, onImageUploa
                 <div className="rounded-xl overflow-hidden border border-accent/30 bg-[#2a2a35]">
                     {generatedPreviewUrl ? (
                         <div className="relative">
+                            {/*
+                              ✅ Use a plain <img> tag here, NOT next/image <Image>.
+                              Reasons:
+                              1. next/image requires width + height props (or fill + a sized parent)
+                                 for any image that isn't fill-mode — our /api/default-cover endpoint
+                                 returns a dynamic image so we don't know the display size ahead of time.
+                              2. This is a LOCAL API route (/api/default-cover), not an external URL,
+                                 so next/image's CDN optimisation adds no benefit.
+                              3. Using a plain <img> avoids the "Cannot update a component while
+                                 rendering a different component" warning from next/image's internal
+                                 state updates during the onError callback.
+                            */}
                             <Image
-                                src={`${generatedPreviewUrl}&t=${previewGenerated}`}
+                                src={`${generatedPreviewUrl}&t=${previewCounter}`}
                                 alt="Generated cover preview"
                                 className="w-full h-52 object-cover"
-                                onError={(e) => { e.target.style.display = 'none'; }}
+                                onError={(e) => { e.currentTarget.style.display = 'none'; }}
                             />
                             <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent pointer-events-none" />
                             <div className="absolute bottom-3 left-3 flex items-center gap-1.5
@@ -114,7 +128,7 @@ const CoverImageSection = ({ useGenerated, onToggle, uploadedImage, onImageUploa
                             </div>
                             <button
                                 type="button"
-                                onClick={() => setPreviewGenerated(p => !p)}
+                                onClick={() => setPreviewCounter(c => c + 1)}
                                 className="absolute top-3 right-3 bg-black/60 text-white/80
                                            hover:text-white p-2 rounded-lg text-xs flex items-center
                                            gap-1 transition-colors backdrop-blur-sm"
