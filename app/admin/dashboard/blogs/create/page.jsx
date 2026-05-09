@@ -7,7 +7,7 @@ import AdminLayout from '@/components/AdminLayout';
 import { Toaster, toast } from 'sonner';
 import { FiUpload, FiX, FiImage, FiZap, FiRefreshCw } from 'react-icons/fi';
 import { blogApi } from '@/lib/api';
-import blogCategories from '@/lib/blogCategories';
+import { blogCategories } from '@/lib/essentials';
 
 // ─── Small toggle component ───────────────────────────────────────────────────
 const Toggle = ({ checked, onChange, label, sublabel }) => (
