@@ -1,0 +1,15 @@
+{
+  "name": "Aakash Sharma — Full-Stack Developer Dubai",
+  "short_name": "Aakash Sharma",
+  "description": "Portfolio of Aakash Sharma, full-stack software developer in Dubai, UAE",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#1c1c22",
+  "theme_color": "#3F88C5",
+  "lang": "en",
+  "icons": [
+    { "src": "/favicon.ico",    "sizes": "any",       "type": "image/x-icon" },
+    { "src": "/icon-192.png",   "sizes": "192x192",   "type": "image/png",  "purpose": "any maskable" },
+    { "src": "/icon-512.png",   "sizes": "512x512",   "type": "image/png",  "purpose": "any maskable" }
+  ]
+}
