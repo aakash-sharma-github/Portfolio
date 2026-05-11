@@ -1,5 +1,5 @@
 // app/resume/metadata.js
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://aakashsharma.vercel.app';
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL;
 
 export const metadata = {
     title: 'Resume | Aakash Sharma — Software Developer Dubai, UAE',

@@ -17,7 +17,7 @@ const myFont = localFont({
   display: 'swap',
 });
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://aakashsharma.vercel.app';
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL;
 
 // ─── Root metadata ────────────────────────────────────────────────────────────
 // Strategy: target UAE software developer job market (Dubai, Abu Dhabi, Sharjah)

@@ -3,7 +3,7 @@
 // Does not render any visible HTML — purely for search engine consumption.
 // Usage: <SeoStructuredData type="resume" /> or <SeoStructuredData type="services" />
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://aakashsharma.vercel.app';
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL;
 
 const schemas = {
     // ── Resume / About page schema ────────────────────────────────────────────

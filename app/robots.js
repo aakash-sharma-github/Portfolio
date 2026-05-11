@@ -1,5 +1,5 @@
 // app/robots.js — generates /robots.txt
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://aakashsharma.vercel.app';
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL;
 
 export default function robots() {
     return {

@@ -127,7 +127,7 @@ export async function POST(request) {
                 // Generation or upload failed — use the /api/default-cover preview URL
                 // but with the real site domain (never localhost).
                 console.error('[POST /api/blogs] auto-generate failed, using preview URL:', genErr.message);
-                const base = process.env.NEXT_PUBLIC_SITE_URL || 'https://aakashsharma.vercel.app';
+                const base = process.env.NEXT_PUBLIC_SITE_URL;
                 coverImageData = {
                     url: `${base}/api/default-cover?title=${encodeURIComponent(data.title)}&category=${encodeURIComponent(data.category)}`,
                     publicId: 'generated-fallback',

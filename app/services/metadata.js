@@ -1,7 +1,7 @@
 // app/services/metadata.js
 // Drop this file into app/services/ — Next.js exports metadata from it automatically.
 // Zero changes to app/services/page.jsx required.
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://aakashsharma.vercel.app';
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL;
 
 export const metadata = {
     title: 'Services | Web & Mobile Development in Dubai, UAE',

@@ -5,8 +5,8 @@
 //   /blog and /contact get medium priority — supporting content
 //   Individual blog posts get 0.6 — good for long-tail keyword traffic
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://aakashsharma.vercel.app';
-const API_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://aakashsharma.vercel.app';
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL;
+const API_URL = process.env.NEXT_PUBLIC_SITE_URL;
 
 export const revalidate = 3600; // regenerate hourly
 

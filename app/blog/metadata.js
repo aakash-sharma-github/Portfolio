@@ -1,5 +1,5 @@
 // app/blog/metadata.js
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://aakashsharma.vercel.app';
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL;
 
 export const metadata = {
     title: 'Blog | Tech Articles by Aakash Sharma — Dubai Developer',
