@@ -140,9 +140,9 @@ export const metadata = {
   },
 
   // ── Google Search Console verification ───────────────────────────────────
-  verification: {
-    google: process.env.GOOGLE_SITE_VERIFICATION || '',
-  },
+  // verification: {
+  //   google: process.env.GOOGLE_SITE_VERIFICATION || '',
+  // },
 
   applicationName: 'Aakash Sharma Portfolio',
   referrer: 'origin-when-cross-origin',
