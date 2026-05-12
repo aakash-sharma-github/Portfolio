@@ -29,6 +29,11 @@ const nextConfig = {
             },
             {
                 protocol: 'https',
+                hostname: 'www.aakashsharma.com.np',
+                pathname: '/**',
+            },
+            {
+                protocol: 'https',
                 hostname: 'aakashsharma.com.np',
                 pathname: '/**',
             },

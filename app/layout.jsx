@@ -162,7 +162,7 @@ export const metadata = {
     // LinkedIn / professional discovery tags
     'profile:first_name': 'Aakash',
     'profile:last_name': 'Sharma',
-    'profile:username': 'aakash-sharma',
+    'profile:username': 'aakash-sharma-918447178',
   },
 };
 
@@ -213,7 +213,7 @@ const jsonLd = [
     },
     sameAs: [
       'https://github.com/aakash-sharma-github',
-      'https://linkedin.com/in/aakash-sharma',
+      'https://www.linkedin.com/in/aakash-sharma-918447178/',
       SITE_URL,
     ],
     knowsAbout: [
