@@ -1,250 +1,158 @@
+// app/api/works/[slug]/route.js
 import { NextResponse } from 'next/server';
 import connectToDatabase from '@/lib/mongodb';
 import Work from '@/lib/models/Work';
 import { uploadImage, deleteImage } from '@/lib/cloudinary';
+import { verifyAuth } from '@/lib/authMiddleware';
+import { getFromCache, setInCache, clearCache, clearCacheByPattern, TTL } from '@/lib/cache';
 
-// Explicitly set Node.js runtime
 export const runtime = 'nodejs';
-// Force dynamic rendering since we use request headers
 export const dynamic = 'force-dynamic';
 
+const SAFE_IDS = ['default', 'external'];
 
-// GET handler to fetch a specific work by slug
+// ── GET /api/works/:slug ──────────────────────────────────────────────────────
 export async function GET(request, { params }) {
+    const { slug } = await params;
+    const cacheKey = `works:post:${slug}`;
+
+    const cached = await getFromCache(cacheKey);
+    if (cached) {
+        return NextResponse.json(cached, { headers: { 'X-Cache': 'HIT' } });
+    }
+
     try {
-        // Connect to the database
         await connectToDatabase();
+        const work = await Work.findOne({ slug }).lean();
+        if (!work) return NextResponse.json({ error: 'Work not found' }, { status: 404 });
 
-        // Get the slug from the URL
-        const { slug } = params;
-
-        // Find the work
-        const work = await Work.findOne({ slug });
-
-        // If work not found
-        if (!work) {
-            return NextResponse.json(
-                { error: 'Work not found' },
-                { status: 404 }
-            );
-        }
-
-        return NextResponse.json(work);
+        await setInCache(cacheKey, work, TTL.WORKS_POST);
+        return NextResponse.json(work, { headers: { 'X-Cache': 'MISS' } });
     } catch (error) {
-        console.error('Error fetching work:', error);
-        return NextResponse.json(
-            { error: 'Failed to fetch work', details: error.message },
-            { status: 500 }
-        );
+        console.error('[GET /api/works/slug]', error);
+        return NextResponse.json({ error: 'Failed to fetch work' }, { status: 500 });
     }
 }
 
-// PUT handler to update a work
+// ── PUT /api/works/:slug ──────────────────────────────────────────────────────
 export async function PUT(request, { params }) {
+    const auth = verifyAuth(request);
+    if (!auth.valid) return auth.response;
+
     try {
-        // Check authentication
-        const authHeader = request.headers.get('authorization');
-        if (!authHeader || !authHeader.startsWith('Bearer ')) {
-            return NextResponse.json(
-                { error: 'Unauthorized' },
-                { status: 401 }
-            );
-        }
-
-        // Connect to the database
         await connectToDatabase();
+        const { slug } = await params;
 
-        // Get the slug from the URL
-        const { slug } = params;
-
-        // Find the work
         const existingWork = await Work.findOne({ slug });
+        if (!existingWork) return NextResponse.json({ error: 'Work not found' }, { status: 404 });
 
-        // If work not found
-        if (!existingWork) {
-            return NextResponse.json(
-                { error: 'Work not found' },
-                { status: 404 }
-            );
-        }
-
-        // Parse the request body
         const data = await request.json();
 
-        // Handle cover image update if provided
+        // Cover image
         let coverImageData = existingWork.coverImage;
 
         if (data.coverImage) {
-            // Check if the coverImage is a string (data URL) or object
-            if (typeof data.coverImage === 'string') {
-                // Handle data URL string
-                if (data.coverImage.startsWith('data:image')) {
-                    try {
-                        const uploadResult = await uploadImage(data.coverImage);
-                        coverImageData = {
-                            url: uploadResult.secure_url,
-                            publicId: uploadResult.public_id
-                        };
-
-                        // Delete old cover image if it's not the default
-                        if (existingWork.coverImage.publicId !== 'default') {
-                            await deleteImage(existingWork.coverImage.publicId);
-                        }
-                    } catch (error) {
-                        console.error('Cover image upload failed:', error);
-                        // Continue with existing image
+            const src = data.coverImage?.url || (typeof data.coverImage === 'string' ? data.coverImage : null);
+            if (src?.startsWith('data:image')) {
+                try {
+                    const result = await uploadImage(src, 'works/covers');
+                    const oldId = existingWork.coverImage?.publicId;
+                    if (oldId && !SAFE_IDS.includes(oldId)) {
+                        try { await deleteImage(oldId); } catch { /* non-fatal */ }
                     }
-                } else {
-                    // If it's a regular URL string, use it directly
-                    coverImageData = {
-                        url: data.coverImage,
-                        publicId: 'external'
-                    };
+                    coverImageData = { url: result.secure_url, publicId: result.public_id, alt: data.title || existingWork.title };
+                } catch (err) {
+                    console.error('[PUT /api/works/slug] cover upload failed:', err.message);
                 }
-            } else if (typeof data.coverImage === 'object' && data.coverImage !== null) {
-                // Handle object (already formatted with url and publicId)
-                if (data.coverImage.url) {
-                    coverImageData = data.coverImage;
-                }
+            } else if (src?.startsWith('http')) {
+                coverImageData = {
+                    url: src,
+                    publicId: data.coverImage?.publicId || existingWork.coverImage?.publicId || 'external',
+                    alt: data.title || existingWork.title,
+                };
             }
         }
 
-        // Handle additional images update if provided
+        // Additional images
         let imagesData = Array.isArray(existingWork.images) ? existingWork.images : [];
-
-        if (data.images && Array.isArray(data.images)) {
+        if (Array.isArray(data.images)) {
             imagesData = [];
-            for (const imageData of data.images) {
-                
-                if (typeof imageData === 'string') {
-                    if (imageData.startsWith('data:image')) {
-                        // It's a base64 image, upload it
-                        try {
-                            const uploadResult = await uploadImage(imageData);
-                            imagesData.push({
-                                url: uploadResult.secure_url,
-                                publicId: uploadResult.public_id,
-                                caption: ''
-                            });
-                        } catch (error) {
-                            console.error('Additional image upload failed:', error);
-                            // Continue with next image
-                        }
-                    } else {
-                        // It's a URL string
-                        imagesData.push({
-                            url: imageData,
-                            publicId: 'external',
-                            caption: ''
-                        });
-                    }
-                } else if (typeof imageData === 'object' && imageData !== null && imageData.url) {
-                    // It's already an object with url property
-                    imagesData.push(imageData);
+            for (const img of data.images) {
+                const src = typeof img === 'string' ? img : img?.url;
+                if (src?.startsWith('data:image')) {
+                    try {
+                        const result = await uploadImage(src, 'works/images');
+                        imagesData.push({ url: result.secure_url, publicId: result.public_id, caption: img?.caption || '' });
+                    } catch { /* skip failed */ }
+                } else if (src?.startsWith('http')) {
+                    imagesData.push({ url: src, publicId: img?.publicId || 'external', caption: img?.caption || '' });
                 }
             }
-
-            // Delete old additional images that are not in the new list (only if existingWork.images exists and is an array)
-            if (Array.isArray(existingWork.images)) {
-                for (const oldImage of existingWork.images) {
-                    const stillExists = imagesData.some(img => img.publicId === oldImage.publicId);
-                    if (!stillExists && oldImage.publicId !== 'default') {
-                        try {
-                            await deleteImage(oldImage.publicId);
-                        } catch (error) {
-                            console.error('Failed to delete old image:', error);
-                        }
-                    }
+            // Clean up removed images from Cloudinary
+            for (const old of (existingWork.images || [])) {
+                const still = imagesData.some(i => i.publicId === old.publicId);
+                if (!still && old.publicId && !SAFE_IDS.includes(old.publicId)) {
+                    try { await deleteImage(old.publicId); } catch { /* non-fatal */ }
                 }
             }
         }
 
-        // Update the work
+        // Technologies normalisation
+        const technologies = (data.technologies || existingWork.technologies || [])
+            .map(t => typeof t === 'string' ? { name: t.trim() } : { name: String(t?.name || t).trim() })
+            .filter(t => t.name);
+
+        const { slug: _s, _id, createdAt, ...safeData } = data;
         const updatedWork = await Work.findOneAndUpdate(
             { slug },
-            {
-                ...data,
-                coverImage: coverImageData,
-                images: imagesData,
-                // Don't update the slug as it's used in the URL
-                slug: existingWork.slug
-            },
+            { ...safeData, technologies, coverImage: coverImageData, images: imagesData, slug: existingWork.slug },
             { new: true, runValidators: true }
         );
 
+        // Precise invalidation: this post + all list pages
+        await Promise.all([
+            clearCache(`works:post:${slug}`),
+            clearCacheByPattern('works:list:'),
+        ]);
+
         return NextResponse.json(updatedWork);
     } catch (error) {
-        console.error('Error updating work:', error);
-        return NextResponse.json(
-            { error: 'Failed to update work', details: error.message },
-            { status: 500 }
-        );
+        console.error('[PUT /api/works/slug]', error);
+        return NextResponse.json({ error: 'Failed to update work', details: error.message }, { status: 500 });
     }
 }
 
-// DELETE handler to delete a work
+// ── DELETE /api/works/:slug ───────────────────────────────────────────────────
 export async function DELETE(request, { params }) {
+    const auth = verifyAuth(request);
+    if (!auth.valid) return auth.response;
+
     try {
-        // Check authentication
-        const authHeader = request.headers.get('authorization');
-        if (!authHeader || !authHeader.startsWith('Bearer ')) {
-            return NextResponse.json(
-                { error: 'Unauthorized' },
-                { status: 401 }
-            );
-        }
-
-        // Connect to the database
         await connectToDatabase();
+        const { slug } = await params;
 
-        // Get the slug from the URL
-        const { slug } = params;
-
-        // Find the work
         const work = await Work.findOne({ slug });
+        if (!work) return NextResponse.json({ error: 'Work not found' }, { status: 404 });
 
-        // If work not found
-        if (!work) {
-            return NextResponse.json(
-                { error: 'Work not found' },
-                { status: 404 }
-            );
+        // Cloudinary cleanup
+        const coverId = work.coverImage?.publicId;
+        if (coverId && !SAFE_IDS.includes(coverId)) {
+            try { await deleteImage(coverId); } catch { /* non-fatal */ }
         }
-
-        // Delete the cover image from Cloudinary if it's not the default
-        if (work.coverImage.publicId !== 'default') {
-            try {
-                await deleteImage(work.coverImage.publicId);
-            } catch (error) {
-                console.error('Failed to delete cover image from Cloudinary:', error);
+        for (const img of (work.images || [])) {
+            if (img.publicId && !SAFE_IDS.includes(img.publicId)) {
+                try { await deleteImage(img.publicId); } catch { /* non-fatal */ }
             }
         }
 
-        // Delete additional images from Cloudinary (only if images array exists)
-        if (Array.isArray(work.images)) {
-            for (const image of work.images) {
-                if (image.publicId !== 'default') {
-                    try {
-                        await deleteImage(image.publicId);
-                    } catch (error) {
-                        console.error('Failed to delete additional image from Cloudinary:', error);
-                    }
-                }
-            }
-        }
-
-        // Delete the work
         await Work.findOneAndDelete({ slug });
 
-        return NextResponse.json(
-            { message: 'Work deleted successfully' },
-            { status: 200 }
-        );
+        // Wipe all works-related cache
+        await clearCacheByPattern('works:');
+
+        return NextResponse.json({ message: 'Work deleted successfully' });
     } catch (error) {
-        console.error('Error deleting work:', error);
-        return NextResponse.json(
-            { error: 'Failed to delete work', details: error.message },
-            { status: 500 }
-        );
+        console.error('[DELETE /api/works/slug]', error);
+        return NextResponse.json({ error: 'Failed to delete work', details: error.message }, { status: 500 });
     }
 }

@@ -1,30 +1,39 @@
+// app/api/blogs/[slug]/route.js
 import { NextResponse } from 'next/server';
 import connectToDatabase from '@/lib/mongodb';
 import Blog from '@/lib/models/Blog';
 import { uploadImage, deleteImage } from '@/lib/cloudinary';
 import { verifyAuth } from '@/lib/authMiddleware';
 import { generateCoverImageBase64 } from '@/lib/generateCoverImage';
+import { getFromCache, setInCache, clearCache, clearCacheByPattern, TTL } from '@/lib/cache';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
-// ── GET /api/blogs/[slug]  (public) ───────────────────────────────────────────
+// ── GET /api/blogs/:slug ──────────────────────────────────────────────────────
 export async function GET(request, { params }) {
+    const { slug } = await params;
+    const cacheKey = `blogs:post:${slug}`;
+
+    const cached = await getFromCache(cacheKey);
+    if (cached) {
+        return NextResponse.json(cached, { headers: { 'X-Cache': 'HIT' } });
+    }
+
     try {
         await connectToDatabase();
-        const { slug } = await params;
         const blog = await Blog.findOne({ slug }).lean();
-        if (!blog) {
-            return NextResponse.json({ error: 'Blog not found' }, { status: 404 });
-        }
-        return NextResponse.json(blog);
+        if (!blog) return NextResponse.json({ error: 'Blog not found' }, { status: 404 });
+
+        await setInCache(cacheKey, blog, TTL.BLOGS_POST);
+        return NextResponse.json(blog, { headers: { 'X-Cache': 'MISS' } });
     } catch (error) {
         console.error('[GET /api/blogs/slug]', error);
         return NextResponse.json({ error: 'Failed to fetch blog' }, { status: 500 });
     }
 }
 
-// ── PUT /api/blogs/[slug]  (protected) ────────────────────────────────────────
+// ── PUT /api/blogs/:slug ──────────────────────────────────────────────────────
 export async function PUT(request, { params }) {
     const auth = verifyAuth(request);
     if (!auth.valid) return auth.response;
@@ -34,112 +43,73 @@ export async function PUT(request, { params }) {
         const { slug } = await params;
 
         const existingBlog = await Blog.findOne({ slug });
-        if (!existingBlog) {
-            return NextResponse.json({ error: 'Blog not found' }, { status: 404 });
-        }
+        if (!existingBlog) return NextResponse.json({ error: 'Blog not found' }, { status: 404 });
 
         const data = await request.json();
 
-        // ── Determine the new cover image ─────────────────────────────────────
-        //
-        // The frontend sends coverImage in one of three shapes:
-        //   A) null           → auto-generate a new Design-B cover
-        //   B) { url, publicId } with url starting with "data:image…" → new file upload
-        //   C) { url, publicId } with url starting with "https://"    → existing Cloudinary URL, keep as-is
-        //
-        // Bug 1 fix: the original code called data.coverImage.startsWith() directly,
-        // which throws "startsWith is not a function" when coverImage is an object.
-        //
-        // Bug 2 fix: when coverImage is null (auto-generate), the original code kept
-        // existingBlog.coverImage unchanged, so the old cover was never replaced.
-
-        let coverImageData = existingBlog.coverImage; // default: keep existing
+        // Cover image — same 3-branch logic as before
+        let coverImageData = existingBlog.coverImage;
+        const SAFE_IDS = ['default', 'external', 'generated-fallback'];
 
         if (data.coverImage === null || data.coverImage === undefined) {
-            // ── A) Auto-generate a new Design-B cover ────────────────────────
             try {
-                const authorName = data.author?.name || existingBlog.author?.name || 'Aakash Sharma';
-                const title = data.title || existingBlog.title;
-                const category = data.category || existingBlog.category;
-                const base64 = generateCoverImageBase64(title, category, authorName);
+                const base64 = generateCoverImageBase64(
+                    data.title || existingBlog.title,
+                    data.category || existingBlog.category,
+                    data.author?.name || existingBlog.author?.name || 'Aakash Sharma',
+                );
                 const result = await uploadImage(base64, 'blog/covers/generated');
-
-                // Delete the old generated cover from Cloudinary if it exists
-                const oldPublicId = existingBlog.coverImage?.publicId;
-                if (oldPublicId && oldPublicId !== 'default' && oldPublicId !== 'external') {
-                    try { await deleteImage(oldPublicId); } catch { /* non-fatal */ }
+                const oldId = existingBlog.coverImage?.publicId;
+                if (oldId && !SAFE_IDS.includes(oldId)) {
+                    try { await deleteImage(oldId); } catch { /* non-fatal */ }
                 }
-
-                coverImageData = {
-                    url: result.secure_url,
-                    publicId: result.public_id,
-                    alt: title,
-                };
-                console.log(`[PUT /api/blogs/${slug}] generated cover → ${result.secure_url}`);
-            } catch (genErr) {
-                // Generation failed — keep the existing cover rather than breaking the update
-                console.error(`[PUT /api/blogs/${slug}] cover generation failed:`, genErr.message);
+                coverImageData = { url: result.secure_url, publicId: result.public_id, alt: data.title || existingBlog.title };
+            } catch (err) {
+                console.error('[PUT] cover generation failed:', err.message);
             }
-
         } else if (data.coverImage && typeof data.coverImage === 'object') {
-            const incomingUrl = data.coverImage.url || '';
-
-            if (incomingUrl.startsWith('data:image')) {
-                // ── B) New base64 file upload ─────────────────────────────────
+            const src = data.coverImage.url || '';
+            if (src.startsWith('data:image')) {
                 try {
-                    const result = await uploadImage(incomingUrl, 'blog/covers');
-
-                    const oldPublicId = existingBlog.coverImage?.publicId;
-                    if (oldPublicId && oldPublicId !== 'default' && oldPublicId !== 'external') {
-                        try { await deleteImage(oldPublicId); } catch { /* non-fatal */ }
+                    const result = await uploadImage(src, 'blog/covers');
+                    const oldId = existingBlog.coverImage?.publicId;
+                    if (oldId && !SAFE_IDS.includes(oldId)) {
+                        try { await deleteImage(oldId); } catch { /* non-fatal */ }
                     }
-
-                    coverImageData = {
-                        url: result.secure_url,
-                        publicId: result.public_id,
-                        alt: data.title || existingBlog.title,
-                    };
-                } catch (uploadErr) {
-                    console.error(`[PUT /api/blogs/${slug}] cover upload failed:`, uploadErr.message);
-                    // Keep existing cover on upload failure
+                    coverImageData = { url: result.secure_url, publicId: result.public_id, alt: data.title || existingBlog.title };
+                } catch (err) {
+                    console.error('[PUT] cover upload failed:', err.message);
                 }
-
-            } else if (incomingUrl.startsWith('https://') || incomingUrl.startsWith('http://')) {
-                // ── C) Already a Cloudinary/external URL — keep as-is ─────────
+            } else if (src.startsWith('http')) {
                 coverImageData = {
-                    url: incomingUrl,
+                    url: src,
                     publicId: data.coverImage.publicId || existingBlog.coverImage?.publicId || 'external',
                     alt: data.coverImage.alt || data.title || existingBlog.title,
                 };
             }
-            // If url is empty/invalid, fall through and keep existingBlog.coverImage
         }
 
-        // ── Persist the update ────────────────────────────────────────────────
-        // Exclude fields the client must not overwrite
-        const { slug: _slug, _id, createdAt, ...safeData } = data;
-
+        const { slug: _s, _id, createdAt, ...safeData } = data;
         const updatedBlog = await Blog.findOneAndUpdate(
             { slug },
-            {
-                ...safeData,
-                coverImage: coverImageData,
-                slug: existingBlog.slug,   // slug is immutable
-            },
+            { ...safeData, coverImage: coverImageData, slug: existingBlog.slug },
             { new: true, runValidators: true }
         );
+
+        // Precise invalidation: this post + all list pages
+        await Promise.all([
+            clearCache(`blogs:post:${slug}`),
+            clearCacheByPattern('blogs:list:'),
+        ]);
 
         return NextResponse.json(updatedBlog);
     } catch (error) {
         console.error('[PUT /api/blogs/slug]', error);
-        return NextResponse.json(
-            { error: 'Failed to update blog', details: error.message },
-            { status: 500 }
-        );
+        return NextResponse.json({ error: 'Failed to update blog', details: error.message }, { status: 500 });
     }
 }
 
-// ── DELETE /api/blogs/[slug]  (protected) ─────────────────────────────────────
+// ── DELETE /api/blogs/:slug ───────────────────────────────────────────────────
 export async function DELETE(request, { params }) {
     const auth = verifyAuth(request);
     if (!auth.valid) return auth.response;
@@ -149,23 +119,19 @@ export async function DELETE(request, { params }) {
         const { slug } = await params;
 
         const blog = await Blog.findOne({ slug });
-        if (!blog) {
-            return NextResponse.json({ error: 'Blog not found' }, { status: 404 });
-        }
+        if (!blog) return NextResponse.json({ error: 'Blog not found' }, { status: 404 });
 
-        // Clean up Cloudinary asset
         const publicId = blog.coverImage?.publicId;
-        if (publicId && publicId !== 'default' && publicId !== 'external') {
+        if (publicId && !['default', 'external', 'generated-fallback'].includes(publicId)) {
             try { await deleteImage(publicId); } catch { /* non-fatal */ }
         }
 
         await Blog.findOneAndDelete({ slug });
+        await clearCacheByPattern('blogs:');
+
         return NextResponse.json({ message: 'Blog deleted successfully' });
     } catch (error) {
         console.error('[DELETE /api/blogs/slug]', error);
-        return NextResponse.json(
-            { error: 'Failed to delete blog', details: error.message },
-            { status: 500 }
-        );
+        return NextResponse.json({ error: 'Failed to delete blog', details: error.message }, { status: 500 });
     }
 }
