@@ -1,143 +1,103 @@
-// Explicitly set Node.js runtime (never runs on client)
+// app/api/github-stats/route.js
+// GET  /api/github-stats  → returns { repoCount, totalCommits }
+// POST /api/github-stats  → force-revalidates cache (protected by REVALIDATE_SECRET)
+
 export const runtime = 'nodejs';
 
+import { NextResponse } from 'next/server';
+import { fetchGitHubStats } from '@/lib/github-client';
+import {
+  getFromCache,
+  setInCache,
+  clearCacheByPattern,
+  buildCacheKey,
+  TTL,
+} from '@/lib/cache';
+
+const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
+const GITHUB_USERNAME = process.env.GITHUB_USERNAME;
+
+// Shared cache key used by both GET and POST
+const CACHE_KEY = buildCacheKey('github-stats', { login: GITHUB_USERNAME });
+
+// ─── Fallback values — update these to match your current real numbers ────────
+// Shown only when the API call fails AND cache is empty.
+const FALLBACK = { repoCount: 35, totalCommits: 328 };
+
+// ─── GET /api/github-stats ────────────────────────────────────────────────────
+
 export async function GET() {
-  // ✅ Dynamically import axios + cache utilities only on server
-  const { default: axios } = await import('axios');
-  const { getFromCache, setInCache } = await import('@/lib/cache');
+  try {
+    // 1. Try cache first (6-hour TTL)
+    const cached = await getFromCache(CACHE_KEY);
 
-  const cacheKey = 'github-stats';
-  const cachedData = getFromCache(cacheKey);
-
-  if (cachedData) {
-    return new Response(JSON.stringify(cachedData), {
-      status: 200,
-      headers: { 'Content-Type': 'application/json' }
-    });
-  }
-
-  const token = process.env.GITHUB_TOKEN;
-  const username = process.env.GITHUB_USERNAME;
-
-  // Return fallback values if GitHub credentials are not configured
-  if (!token || !username) {
-    console.warn('GitHub credentials not configured, using fallback values');
-    const fallbackData = { repoCount: 29, totalCommits: 134 };
-    setInCache(cacheKey, fallbackData, 60); // cache 1h
-    return new Response(JSON.stringify(fallbackData), {
-      status: 200,
-      headers: { 'Content-Type': 'application/json' }
-    });
-  }
-
-  // GraphQL queries
-  const fetchReposQuery = `
-    query ($login: String!, $after: String) {
-      user(login: $login) {
-        repositories(first: 100, after: $after, isFork: false) {
-          totalCount
-          pageInfo { hasNextPage endCursor }
-          nodes { name }
-        }
-      }
-    }
-  `;
-
-  const fetchCommitsQuery = `
-    query ($login: String!, $repoName: String!) {
-      repository(owner: $login, name: $repoName) {
-        defaultBranchRef {
-          target {
-            ... on Commit {
-              history { totalCount }
-            }
-          }
-        }
-      }
-    }
-  `;
-
-  // Fetch repositories (paginated)
-  const fetchRepositories = async () => {
-    let repos = [];
-    let hasNextPage = true;
-    let after = null;
-
-    while (hasNextPage) {
-      const response = await axios.post(
-        'https://api.github.com/graphql',
+    if (cached) {
+      const { repoCount, totalCommits } = cached;
+      return NextResponse.json(
+        { repoCount, totalCommits },
         {
-          query: fetchReposQuery,
-          variables: { login: username, after }
-        },
-        {
+          status: 200,
           headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
+            'Cache-Control': 'public, s-maxage=21600, stale-while-revalidate=600',
+            'X-Cache': 'HIT',
+          },
         }
       );
-
-      const data = response.data.data.user.repositories;
-      repos = repos.concat(data.nodes);
-      hasNextPage = data.pageInfo.hasNextPage;
-      after = data.pageInfo.endCursor;
     }
 
-    return repos;
-  };
+    // 2. Cache miss — check credentials
+    if (!GITHUB_TOKEN || !GITHUB_USERNAME) {
+      console.warn('[github-stats] Credentials not configured — using fallback');
+      await setInCache(CACHE_KEY, FALLBACK, TTL.GITHUB_SHORT);
+      return NextResponse.json(FALLBACK, { status: 200 });
+    }
 
-  // Fetch commit count for a repo
-  const fetchCommits = async (repoName) => {
-    try {
-      const response = await axios.post(
-        'https://api.github.com/graphql',
-        {
-          query: fetchCommitsQuery,
-          variables: { login: username, repoName }
+    // 3. Fetch live from GitHub GraphQL
+    const stats = await fetchGitHubStats(GITHUB_USERNAME, GITHUB_TOKEN);
+    await setInCache(CACHE_KEY, stats, TTL.GITHUB);
+
+    return NextResponse.json(
+      { repoCount: stats.repoCount, totalCommits: stats.totalCommits },
+      {
+        status: 200,
+        headers: {
+          'Cache-Control': 'public, s-maxage=21600, stale-while-revalidate=600',
+          'X-Cache': 'MISS',
         },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
-        }
-      );
+      }
+    );
+  } catch (err) {
+    console.error('[github-stats] GET error:', err.message);
 
-      const defaultBranchRef = response.data.data.repository.defaultBranchRef;
-      return defaultBranchRef?.target?.history?.totalCount || 0;
-    } catch (error) {
-      console.error(`Error fetching commits for repo ${repoName}:`, error.message);
-      return 0;
-    }
-  };
+    // Return fallback — never show an error to visitors
+    await setInCache(CACHE_KEY, FALLBACK, TTL.GITHUB_SHORT);
+    return NextResponse.json(FALLBACK, { status: 200 });
+  }
+}
+
+// ─── POST /api/github-stats ───────────────────────────────────────────────────
+// Clears cache and fetches fresh data.
+// Protect with: curl -X POST /api/github-stats -H "x-revalidate-secret: YOUR_SECRET"
+
+export async function POST(req) {
+  const secret = req.headers.get('x-revalidate-secret');
+
+  if (process.env.REVALIDATE_SECRET && secret !== process.env.REVALIDATE_SECRET) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
 
   try {
-    const repos = await fetchRepositories();
-    const repoCount = repos.length;
+    await clearCacheByPattern('github-stats:');
 
-    // Fetch commits in parallel
-    const commitCounts = await Promise.all(repos.map(r => fetchCommits(r.name)));
-    const totalCommits = commitCounts.reduce((a, b) => a + b, 0);
+    const stats = await fetchGitHubStats(GITHUB_USERNAME, GITHUB_TOKEN);
+    await setInCache(CACHE_KEY, stats, TTL.GITHUB);
 
-    const result = { repoCount, totalCommits };
-
-    // Cache for 6 hours (GitHub stats don’t change too often)
-    setInCache(cacheKey, result, 360);
-
-    return new Response(JSON.stringify(result), {
-      status: 200,
-      headers: { 'Content-Type': 'application/json' }
-    });
-  } catch (error) {
-    console.error('Error fetching GitHub stats:', error.message);
-
-    // Fallback response
-    const fallbackData = { repoCount: 29, totalCommits: 142 };
-    setInCache(cacheKey, fallbackData, 30); // cache 30m on error
-    return new Response(JSON.stringify(fallbackData), {
-      status: 200,
-      headers: { 'Content-Type': 'application/json' }
-    });
+    return NextResponse.json(
+      { repoCount: stats.repoCount, totalCommits: stats.totalCommits },
+      { status: 200, headers: { 'X-Cache': 'REVALIDATED' } }
+    );
+  } catch (err) {
+    console.error('[github-stats] POST error:', err.message);
+    return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }

@@ -6,7 +6,6 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { TypeAnimation } from "react-type-animation";
 import { FiDownload, FiArrowRight } from "react-icons/fi";
-// import { FaTwitter } from "react-icons/fa";
 import CountUp from "react-countup";
 import { useContextApi } from "../context/contextApi";
 import { useGitHub } from "../context/githubContext";
@@ -31,6 +30,8 @@ const TechBadge = ({ label, delay = 0 }) => (
 );
 
 // ─── Stat item ────────────────────────────────────────────────────────────────
+// key={num} on CountUp makes it re-animate when the real GitHub number arrives,
+// smoothly counting up from the fallback value to the live value.
 const StatItem = ({ num, label, index }) => (
   <motion.div
     initial={{ opacity: 0, y: 16 }}
@@ -40,8 +41,9 @@ const StatItem = ({ num, label, index }) => (
   >
     <div className="flex items-end gap-1">
       <CountUp
+        key={num}
         end={num}
-        duration={3}
+        duration={2.5}
         delay={0.6}
         className="text-3xl xl:text-4xl font-extrabold text-white tabular-nums"
       />
@@ -56,7 +58,12 @@ const StatItem = ({ num, label, index }) => (
 // ─── Page ─────────────────────────────────────────────────────────────────────
 const Home = () => {
   const font = useContextApi((state) => state.font);
+
+  // isLoading tells us whether GitHub data is still being fetched.
+  // data always has safe default values (repoCount: 35, totalCommits: 350)
+  // so the page never breaks even if the API call fails.
   const { data: githubData } = useGitHub();
+
   const [loadParticles, setLoadParticles] = useState(false);
 
   useEffect(() => {
@@ -72,6 +79,8 @@ const Home = () => {
     }
   }, []);
 
+  // GitHub stats start at fallback values immediately; CountUp re-animates
+  // automatically (via key={num}) when the real numbers arrive from the API.
   const stats = [
     { num: new Date().getFullYear() - 2021, label: "Years of\nexperience" },
     { num: 8, label: "Projects\ncompleted" },
