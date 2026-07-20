@@ -1,47 +1,27 @@
+import withSerwistInit from '@serwist/next';
+
+const withSerwist = withSerwistInit({
+    swSrc: 'app/sw.js',
+    swDest: 'public/sw.js',
+    disable: process.env.NODE_ENV === 'development',
+    reloadOnOnline: false,
+    exclude: [/\/api\//, /\/admin\//],
+});
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     compress: true,
     poweredByHeader: false,
     reactStrictMode: true,
-    // swcMinify removed — it is on by default in Next.js 13+ and the option is deprecated
 
     images: {
         remotePatterns: [
-            // Cloudinary — production images
-            {
-                protocol: 'https',
-                hostname: 'res.cloudinary.com',
-                pathname: '/**',
-            },
-            // ✅ Fix bug 3: allow localhost so next/image can render the default-cover
-            // fallback during development without throwing "hostname not configured".
-            // This pattern is only reachable in local dev (localhost is never public).
-            {
-                protocol: 'http',
-                hostname: 'localhost',
-                port: '3000',
-                pathname: '/**',
-            },
-            {
-                protocol: 'https',
-                hostname: 'aakashsharma.vercel.app',
-                pathname: '/**',
-            },
-            {
-                protocol: 'https',
-                hostname: 'www.aakashsharma.com.np',
-                pathname: '/**',
-            },
-            {
-                protocol: 'https',
-                hostname: 'aakashsharma.com.np',
-                pathname: '/**',
-            },
-            {
-                protocol: 'https',
-                hostname: 'images.unsplash.com',
-                pathname: '/**',
-            },
+            { protocol: 'https', hostname: 'res.cloudinary.com', pathname: '/**' },
+            { protocol: 'http', hostname: 'localhost', port: '3000', pathname: '/**' },
+            { protocol: 'https', hostname: 'aakashsharma.vercel.app', pathname: '/**' },
+            { protocol: 'https', hostname: 'www.aakashsharma.com.np', pathname: '/**' },
+            { protocol: 'https', hostname: 'aakashsharma.com.np', pathname: '/**' },
+            { protocol: 'https', hostname: 'images.unsplash.com', pathname: '/**' },
         ],
         formats: ['image/avif', 'image/webp'],
         deviceSizes: [640, 750, 828, 1080, 1200, 1920],
@@ -49,14 +29,9 @@ const nextConfig = {
         minimumCacheTTL: 31536000,
     },
 
-    // Experimental features are opt-in and may change or be removed in future releases. Use with caution.
     experimental: {
         optimizeCss: true,
-        optimizePackageImports: [
-            'react-icons',
-            'framer-motion',
-            '@radix-ui/react-tooltip',
-        ],
+        optimizePackageImports: ['react-icons', 'framer-motion', '@radix-ui/react-tooltip'],
     },
 
     async headers() {
@@ -68,6 +43,15 @@ const nextConfig = {
             {
                 source: '/_next/static/:path*',
                 headers: [{ key: 'Cache-Control', value: 'public, max-age=31536000, immutable' }],
+            },
+            {
+                // Service worker must never be cached — browser needs to
+                // detect updates immediately on every page load
+                source: '/sw.js',
+                headers: [
+                    { key: 'Cache-Control', value: 'no-cache, no-store, must-revalidate' },
+                    { key: 'Content-Type', value: 'application/javascript; charset=utf-8' },
+                ],
             },
             {
                 source: '/api/:path*',
@@ -85,19 +69,8 @@ const nextConfig = {
                 ...config.optimization.splitChunks,
                 cacheGroups: {
                     ...config.optimization.splitChunks?.cacheGroups,
-                    vendor: {
-                        test: /[\\/]node_modules[\\/]/,
-                        name: 'vendors',
-                        chunks: 'all',
-                        priority: 10,
-                    },
-                    common: {
-                        name: 'common',
-                        minChunks: 2,
-                        chunks: 'all',
-                        priority: 5,
-                    },
-
+                    vendor: { test: /[\\/]node_modules[\\/]/, name: 'vendors', chunks: 'all', priority: 10 },
+                    common: { name: 'common', minChunks: 2, chunks: 'all', priority: 5 },
                 },
             };
         }
@@ -105,4 +78,4 @@ const nextConfig = {
     },
 };
 
-export default nextConfig;
+export default withSerwist(nextConfig);

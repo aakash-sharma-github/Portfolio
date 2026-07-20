@@ -2,6 +2,7 @@ import { JetBrains_Mono } from "next/font/google";
 import localFont from 'next/font/local';
 import "./globals.css";
 import ClientLayout from '@/components/ClientLayout';
+import InstallPrompt from '@/components/InstallPrompt';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import { Analytics } from '@vercel/analytics/react';
 
@@ -322,16 +323,34 @@ export default function RootLayout({ children }) {
           />
         ))}
 
-        {/* PWA / favicon */}
-        <link rel="icon" href="/favicon.ico" sizes="any" />
+        {/* Favicons */}
+        <link rel="icon" href="/icons/icon-32.png" sizes="any" />
+        <link rel="icon" href="/icons/icon-32.png" type="image/png" sizes="32x32" />
+        <link rel="icon" href="/icons/icon-16.png" type="image/png" sizes="16x16" />
+
+        {/* PWA — manifest is auto-linked by Next.js via app/manifest.js
+            No manual <link rel="manifest"> needed — removing old site.webmanifest reference */}
+
+        {/* iOS / iPadOS Safari PWA meta tags */}
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <meta name="apple-mobile-web-app-title" content="Aakash Sharma" />
+        <meta name="mobile-web-app-capable" content="yes" />
+        <meta name="theme-color" content="#3F88C5" />
+
+        {/* Apple touch icons — sized for every iOS device */}
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-        <link rel="manifest" href="/site.webmanifest" />
-        <meta name="theme-color" content="#1c1c22" />
+        <link rel="apple-touch-icon" sizes="180x180" href="/icons/icon-180.png" />
+        <link rel="apple-touch-icon" sizes="152x152" href="/icons/icon-152.png" />
+        <link rel="apple-touch-icon" sizes="144x144" href="/icons/icon-144.png" />
+        <link rel="apple-touch-icon" sizes="120x120" href="/icons/icon-120.png" />
       </head>
       <body className={jetbrainsMono.variable}>
         <ClientLayout myFont={myFont}>
           {children}
         </ClientLayout>
+        {/* PWA install prompt — Chrome/Edge/Android + iOS Safari */}
+        <InstallPrompt />
         {isProduction && <SpeedInsights />}
         {isProduction && <Analytics />}
       </body>
