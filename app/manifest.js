@@ -2,7 +2,7 @@
 
 export default function manifest() {
     return {
-        name:             'Aakash Sharma — Full-Stack Developer',
+        name:             'Aakash Sharma',
         short_name:       'Aakash Sharma',
         description:      'Portfolio of Aakash Sharma — full-stack software developer based in Dubai, UAE.',
         start_url:        '/',

@@ -29,10 +29,18 @@ const Header = ({ myFont }) => {
             <div className="container mx-auto flex items-center justify-between">
                 {/* Logo */}
                 <Link href="/" className="group flex items-center select-none">
-                    <h1 className={`${myFont.className} text-3xl xl:text-4xl font-semibold
-                                    text-white group-hover:text-accent transition-colors duration-200`}>Aakash Sharma</h1>
-                    <span className="text-accent text-3xl xl:text-4xl font-semibold
-                                     group-hover:scale-125 transition-transform duration-200 inline-block">.</span>
+                    <h1
+                        className={`${myFont.className} text-3xl xl:text-4xl font-semibold
+                                    text-white group-hover:text-accent transition-colors duration-200`}
+                    >
+                        Aakash Sharma
+                    </h1>
+                    <span
+                        className={`${myFont.className} text-accent text-3xl xl:text-4xl font-semibold
+                                     group-hover:scale-125 transition-transform duration-200 inline-block`}
+                    >
+                        .
+                    </span>
                 </Link>
 
                 {/* Desktop nav */}
