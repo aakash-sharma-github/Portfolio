@@ -39,17 +39,17 @@ const StatItem = ({ num, label, index }) => (
     transition={{ delay: 0.5 + index * 0.08, duration: 0.35 }}
     className="flex flex-col items-center xl:items-start"
   >
-    <div className="flex items-end gap-1">
+    <div className="flex items-end gap-0.5">
       <CountUp
         key={num}
         end={num}
         duration={2.5}
         delay={0.6}
-        className="text-3xl xl:text-4xl font-extrabold text-white tabular-nums"
+        className="text-xl sm:text-2xl xl:text-4xl font-extrabold text-white tabular-nums"
       />
-      <span className="text-accent text-2xl xl:text-3xl font-extrabold mb-0.5">+</span>
+      <span className="text-accent text-lg sm:text-xl xl:text-3xl font-extrabold mb-0.5">+</span>
     </div>
-    <p className="text-white/50 text-xs leading-snug text-center xl:text-left mt-0.5">
+    <p className="text-white/50 text-[10px] sm:text-xs leading-snug text-center xl:text-left mt-0.5">
       {label}
     </p>
   </motion.div>
@@ -318,7 +318,7 @@ const Home = () => {
       {/* ── Stats bar ── */}
       <section className="container mx-auto px-4 py-10 xl:py-12
                                 border-t border-white/6 mt-4">
-        <div className="grid grid-cols-3 xl:grid-cols-5 gap-6 xl:gap-0
+        <div className="grid grid-cols-5 gap-2 sm:gap-4 xl:gap-0
                                 xl:divide-x xl:divide-white/8">
           {stats.map((stat, i) => (
             <div key={i} className="xl:px-8 first:xl:pl-0 last:xl:pr-0">

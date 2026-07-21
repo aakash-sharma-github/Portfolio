@@ -86,7 +86,7 @@ const MobileNav = () => {
                                 <Link href="/" onClick={() => setOpen(false)}>
                                     <h1 className={`${font} text-2xl font-semibold text-white`}>
                                         Aakash Sharma
-                                        <span className="text-accent">.</span>
+                                        <span className={`${font} text-accent`}>.</span>
                                     </h1>
                                 </Link>
                                 <p className="text-white/40 text-xs mt-1 tracking-widest uppercase">
