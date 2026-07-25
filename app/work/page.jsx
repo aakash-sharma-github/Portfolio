@@ -6,6 +6,7 @@ import { BsGrid3X3Gap, BsList } from "react-icons/bs";
 import Link from "next/link";
 import Image from "next/image";
 import axios from "axios";
+import PageHeader from "@/components/PageHeader";
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -363,14 +364,21 @@ const Work = () => {
             transition={{ duration: 0.4 }}
             className="min-h-screen bg-primary pb-20"
         >
-            <div className="container mx-auto px-4 py-8 xl:py-12">
+            <div className="container mx-auto px-4 py-4 xl:py-4">
 
+                {/* HEADER */}
+                <PageHeader
+                    badge="Portfolio"
+                    header="My"
+                    subheader="Projects"
+                    desc="A curated collection of apps, sites, and experiments I've shipped."
+                />
                 {/* Hero */}
-                <motion.div
+                {/* <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.4 }}
-                    className="text-center mb-10 xl:mb-14"
+                    className="text-center mb-4 xl:mb-6"
                 >
                     <p className="text-accent text-xs font-semibold uppercase tracking-widest mb-3">
                         Portfolio
@@ -381,7 +389,7 @@ const Work = () => {
                     <p className="text-white/50 max-w-md mx-auto text-sm leading-relaxed">
                         A curated collection of apps, sites, and experiments I've shipped.
                     </p>
-                </motion.div>
+                </motion.div> */}
 
                 {/* Filter bar */}
                 <motion.div
@@ -389,7 +397,7 @@ const Work = () => {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.15, duration: 0.35 }}
                     className="flex flex-col sm:flex-row items-start sm:items-center
-                               justify-between gap-4 mb-8"
+                               justify-between gap-4 mb-4"
                 >
                     {/* Search + categories */}
                     <div className="flex flex-wrap items-center gap-2 flex-1">

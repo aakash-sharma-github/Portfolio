@@ -174,7 +174,7 @@ const CreateProject = () => {
                 content: '',   // not required, send empty string
             });
             toast.success('Project created!');
-            router.push('/admin/dashboard/works');
+            router.push('/x7k2-management-9qp/dashboard/works');
         } catch (err) {
             const msg = err?.response?.data?.error || err.message || 'Failed to create project.';
             toast.error(msg);

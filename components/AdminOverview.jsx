@@ -58,7 +58,7 @@ const AdminOverview = () => {
             </div>
 
             {/* Works Card */}
-            <Link href="/admin/dashboard/works" className="bg-[#1e1e24] p-6 rounded-lg shadow-lg hover:bg-[#2a2a35] transition-all">
+            <Link href="/x7k2-management-9qp/dashboard/works" className="bg-[#1e1e24] p-6 rounded-lg shadow-lg hover:bg-[#2a2a35] transition-all">
                 <div className="flex items-center justify-between">
                     <div>
                         <p className="text-white/70 text-sm">Projects</p>
@@ -71,7 +71,7 @@ const AdminOverview = () => {
             </Link>
 
             {/* Blogs Card */}
-            <Link href="/admin/dashboard/blogs" className="bg-[#1e1e24] p-6 rounded-lg shadow-lg hover:bg-[#2a2a35] transition-all">
+            <Link href="/x7k2-management-9qp/dashboard/blogs" className="bg-[#1e1e24] p-6 rounded-lg shadow-lg hover:bg-[#2a2a35] transition-all">
                 <div className="flex items-center justify-between">
                     <div>
                         <p className="text-white/70 text-sm">Blogs</p>
@@ -83,7 +83,7 @@ const AdminOverview = () => {
                 </div>
             </Link>
             {/* Contacts Card */}
-            <Link href="/admin/dashboard/contacts" className="bg-[#1e1e24] p-6 rounded-lg shadow-lg hover:bg-[#2a2a35] transition-all">
+            <Link href="/x7k2-management-9qp/dashboard/contacts" className="bg-[#1e1e24] p-6 rounded-lg shadow-lg hover:bg-[#2a2a35] transition-all">
                 <div className="flex items-center justify-between">
                     <div>
                         <p className="text-white/70 text-sm">Contacts</p>

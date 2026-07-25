@@ -454,7 +454,7 @@ const BlogPostForm = ({ post, onSubmit, isEditing = false }) => {
 
             {/* Actions */}
             <div className="flex items-center justify-between gap-4 pt-2">
-                <Link href="/admin/dashboard/blogs"
+                <Link href="/x7k2-management-9qp/dashboard/blogs"
                     className="flex items-center gap-2 px-5 py-2.5 bg-[#2a2a35] hover:bg-[#3a3a45]
                                text-white text-sm rounded-xl transition-colors border border-white/8">
                     <FiX size={15} /> Cancel

@@ -5,7 +5,7 @@ const withSerwist = withSerwistInit({
     swDest: 'public/sw.js',
     disable: process.env.NODE_ENV === 'development',
     reloadOnOnline: false,
-    exclude: [/\/api\//, /\/admin\//],
+    exclude: [/\/api\//, /\/x7k2-management-9qp\//],
 });
 
 /** @type {import('next').NextConfig} */

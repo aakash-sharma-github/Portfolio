@@ -234,7 +234,7 @@ const CreateBlogPost = () => {
         try {
             await blogApi.createPost({ ...post, coverImage: useGeneratedCover ? null : uploadedCover });
             toast.success('Blog post created successfully!');
-            router.push('/admin/dashboard/blogs');
+            router.push('/x7k2-management-9qp/dashboard/blogs');
         } catch (err) {
             toast.error(err?.response?.data?.error || err.message || 'Failed to create post.');
         } finally {

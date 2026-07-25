@@ -111,7 +111,7 @@ const BlogsManagement = () => {
                     <div className="flex flex-wrap justify-between items-center gap-4">
                         <h2 className="text-lg font-semibold text-white">Blog Posts</h2>
                         <Link
-                            href="/admin/dashboard/blogs/create"
+                            href="/x7k2-management-9qp/dashboard/blogs/create"
                             className="bg-accent hover:bg-accent/80 text-white px-4 py-2 rounded-lg
                                flex items-center gap-2 text-sm font-medium transition-colors"
                         >
@@ -129,7 +129,7 @@ const BlogsManagement = () => {
                 ) : blogs.length === 0 ? (
                     <div className="text-center py-20 text-white/40">
                         No blog posts yet.{' '}
-                        <Link href="/admin/dashboard/blogs/create" className="text-accent underline">
+                        <Link href="/x7k2-management-9qp/dashboard/blogs/create" className="text-accent underline">
                             Create one
                         </Link>
                     </div>
@@ -190,7 +190,7 @@ const BlogsManagement = () => {
                                                     title="View post">
                                                     <FiEye size={17} />
                                                 </Link>
-                                                <Link href={`/admin/dashboard/edit/${blog.slug}`}
+                                                <Link href={`/x7k2-management-9qp/dashboard/edit/${blog.slug}`}
                                                     className="text-yellow-400 hover:text-yellow-300 transition-colors"
                                                     title="Edit post">
                                                     <FiEdit2 size={17} />

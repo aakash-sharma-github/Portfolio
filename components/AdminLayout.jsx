@@ -7,7 +7,7 @@ import AdminSidebar from "./AdminSidebar";
 
 const AdminLayout = ({ children, title }) => {
     const pathname = usePathname();
-    const isDashboard = pathname === "/admin/dashboard";
+    const isDashboard = pathname === "/x7k2-management-9qp/dashboard";
     const isEditingOrCreating = pathname.includes("/create") || pathname.includes("/edit");
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
     const [unreadMessages, setUnreadMessages] = useState(0);
@@ -33,7 +33,7 @@ const AdminLayout = ({ children, title }) => {
     const handleLogout = () => {
         if (typeof window !== "undefined") {
             localStorage.removeItem("adminToken");
-            window.location.href = "/admin";
+            window.location.href = "/x7k2-management-9qp";
         }
     };
 
@@ -65,7 +65,7 @@ const AdminLayout = ({ children, title }) => {
 
                         <div className="flex gap-4">
                             {/* Notifications Badge */}
-                            <Link href="/admin/dashboard/contacts?filter=unread" className="relative p-2">
+                            <Link href="/x7k2-management-9qp/dashboard/contacts?filter=unread" className="relative p-2">
                                 <FiBell className="text-white text-xl" />
                                 {unreadMessages > 0 && (
                                     <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">

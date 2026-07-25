@@ -242,7 +242,7 @@ const EditProject = ({ params }) => {
       });
 
       toast.success('Project updated successfully!');
-      router.push('/admin/dashboard/works');
+      router.push('/x7k2-management-9qp/dashboard/works');
     } catch (err) {
       const msg = err?.response?.data?.error || err.message || 'Failed to update project.';
       toast.error(msg);
@@ -270,7 +270,7 @@ const EditProject = ({ params }) => {
                                 p-6 rounded-2xl max-w-lg mx-auto">
           <p className="font-bold text-red-400 mb-1">Failed to load project</p>
           <p className="text-white/60 text-sm mb-4">{loadError}</p>
-          <button onClick={() => router.push('/admin/dashboard/works')}
+          <button onClick={() => router.push('/x7k2-management-9qp/dashboard/works')}
             className="flex items-center gap-2 text-sm text-white/60
                                    hover:text-white transition-colors">
             <FiArrowLeft /> Back to Projects
@@ -291,7 +291,7 @@ const EditProject = ({ params }) => {
       <div className="max-w-3xl mx-auto">
         <div className="bg-[#1e1e24] border border-white/6 rounded-2xl p-6 md:p-8 shadow-xl">
           <div className="flex items-center gap-3 mb-8">
-            <button type="button" onClick={() => router.push('/admin/dashboard/works')}
+            <button type="button" onClick={() => router.push('/x7k2-management-9qp/dashboard/works')}
               className="text-white/40 hover:text-white transition-colors">
               <FiArrowLeft size={20} />
             </button>

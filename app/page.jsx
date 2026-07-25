@@ -1,8 +1,9 @@
 "use client";
-import { useState, useEffect, Suspense } from "react";
+import { useState, useEffect, useRef, useCallback, Suspense } from "react";
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { TypeAnimation } from "react-type-animation";
 import { FiDownload, FiArrowRight } from "react-icons/fi";
@@ -15,6 +16,51 @@ const ParticlesContainer = dynamic(() => import("@/components/ParticleContainer"
   ssr: false,
   loading: () => null,
 });
+
+// ─── AvatarWithTap ────────────────────────────────────────────────────────────
+// Mobile secret: tap the avatar 7 times within 4 seconds → navigate to admin.
+// No visual feedback. No button. Completely invisible to visitors.
+// Desktop users use the keystroke sequence in ClientLayout instead.
+const SECRET_ROUTE = '/x7k2-management-9qp';
+const REQUIRED_TAPS = 7;
+const TAP_WINDOW_MS = 4000;
+
+const AvatarWithTap = ({ children }) => {
+  const router = useRouter();
+  const tapCount = useRef(0);
+  const tapTimer = useRef(null);
+
+  const handleTap = useCallback(() => {
+    tapCount.current += 1;
+
+    // Reset the window timer on every tap
+    clearTimeout(tapTimer.current);
+    tapTimer.current = setTimeout(() => {
+      tapCount.current = 0;
+    }, TAP_WINDOW_MS);
+
+    // 7th tap — navigate silently
+    if (tapCount.current >= REQUIRED_TAPS) {
+      tapCount.current = 0;
+      clearTimeout(tapTimer.current);
+      router.push(SECRET_ROUTE);
+    }
+  }, [router]);
+
+  return (
+    <div
+      className="absolute inset-3 rounded-full overflow-hidden mix-blend-lighten"
+      // onTouchStart fires on mobile taps without any 300ms delay
+      // onClick fires on desktop clicks (but desktop uses keystroke instead)
+      onTouchStart={handleTap}
+      onClick={handleTap}
+      // No cursor change, no visual hint — completely invisible
+      style={{ WebkitTapHighlightColor: 'transparent' }}
+    >
+      {children}
+    </div>
+  );
+};
 
 // ─── Floating tech badge ──────────────────────────────────────────────────────
 const TechBadge = ({ label, delay = 0 }) => (
@@ -268,8 +314,8 @@ const Home = () => {
                 />
               </svg>
 
-              {/* Avatar image */}
-              <div className="absolute inset-3 rounded-full overflow-hidden mix-blend-lighten">
+              {/* Avatar image — 7 taps on mobile navigates to secret admin route */}
+              <AvatarWithTap>
                 <Image
                   src="/assets/avatar.png"
                   alt="Aakash Sharma"
@@ -279,7 +325,7 @@ const Home = () => {
                   className="object-cover"
                   sizes="(max-width: 640px) 260px, (max-width: 1024px) 320px, 460px"
                 />
-              </div>
+              </AvatarWithTap>
 
               {/* Floating badge — years of exp */}
               <motion.div

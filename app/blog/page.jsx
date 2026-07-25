@@ -422,7 +422,7 @@ export default function BlogPage() {
                     initial={{ opacity: 0, y: 12 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.35, delay: 0.1 }}
-                    className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 mb-8
+                    className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 mb-4
                                max-w-2xl mx-auto"
                 >
                     {/* Search */}

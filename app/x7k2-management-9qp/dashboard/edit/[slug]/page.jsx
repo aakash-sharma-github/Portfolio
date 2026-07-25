@@ -58,7 +58,7 @@ const EditBlogPost = ({ params }) => {
         try {
             await blogApi.updatePost(slug, formData);
             toast.success('Post updated successfully!');
-            router.push('/admin/dashboard/blogs');
+            router.push('/x7k2-management-9qp/dashboard/blogs');
         } catch (err) {
             const msg = err?.response?.data?.error || err.message || 'Failed to update post.';
             toast.error(msg);
@@ -87,7 +87,7 @@ const EditBlogPost = ({ params }) => {
                                     p-6 rounded-2xl">
                         <p className="font-bold text-red-400 mb-1">Failed to load post</p>
                         <p className="text-white/60 text-sm mb-4">{error}</p>
-                        <Link href="/admin/dashboard/blogs"
+                        <Link href="/x7k2-management-9qp/dashboard/blogs"
                             className="inline-flex items-center gap-2 text-sm text-accent
                                        hover:underline">
                             <FiArrowLeft size={14} /> Back to posts
@@ -105,7 +105,7 @@ const EditBlogPost = ({ params }) => {
             <div className="max-w-3xl mx-auto">
                 <div className="bg-[#1e1e24] border border-white/6 rounded-2xl p-6 md:p-8 shadow-xl">
                     <div className="flex items-center gap-3 mb-8">
-                        <Link href="/admin/dashboard/blogs"
+                        <Link href="/x7k2-management-9qp/dashboard/blogs"
                             className="text-white/40 hover:text-white transition-colors">
                             <FiArrowLeft size={20} />
                         </Link>

@@ -10,10 +10,10 @@ const AdminSidebar = () => {
     const font = useContextApi((state) => state.font)
 
     const navItems = [
-        { name: 'Dashboard', path: '/admin/dashboard', icon: <FiGrid /> },
-        { name: 'Projects', path: '/admin/dashboard/works', icon: <FiPackage /> },
-        { name: 'Blogs', path: '/admin/dashboard/blogs', icon: <FiFileText /> },
-        { name: 'Contacts', path: '/admin/dashboard/contacts', icon: <FiMail /> }
+        { name: 'Dashboard', path: '/x7k2-management-9qp/dashboard', icon: <FiGrid /> },
+        { name: 'Projects', path: '/x7k2-management-9qp/dashboard/works', icon: <FiPackage /> },
+        { name: 'Blogs', path: '/x7k2-management-9qp/dashboard/blogs', icon: <FiFileText /> },
+        { name: 'Contacts', path: '/x7k2-management-9qp/dashboard/contacts', icon: <FiMail /> }
     ];
 
     return (

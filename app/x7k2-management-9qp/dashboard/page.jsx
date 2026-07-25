@@ -37,7 +37,7 @@ const AdminDashboard = () => {
             try {
                 const token = localStorage.getItem('adminToken');
                 if (!token) {
-                    router.push('/admin');
+                    router.push('/x7k2-management-9qp');
                     return;
                 }
 
@@ -46,13 +46,13 @@ const AdminDashboard = () => {
 
                     if (!isValid) {
                         localStorage.removeItem('adminToken');
-                        router.push('/admin');
+                        router.push('/x7k2-management-9qp');
                         return;
                     }
                 } catch (verifyError) {
                     console.error('Token verification error:', verifyError);
                     localStorage.removeItem('adminToken');
-                    router.push('/admin');
+                    router.push('/x7k2-management-9qp');
                     return;
                 }
 

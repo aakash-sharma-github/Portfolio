@@ -19,21 +19,21 @@ const CreateBlogPost = () => {
             try {
                 const token = localStorage.getItem('adminToken');
                 if (!token) {
-                    router.push('/admin');
+                    router.push('/x7k2-management-9qp');
                     return;
                 }
 
                 const isValid = await authApi.verifyToken(token);
                 if (!isValid) {
                     localStorage.removeItem('adminToken');
-                    router.push('/admin');
+                    router.push('/x7k2-management-9qp');
                     return;
                 }
 
                 setIsAuthenticated(true);
             } catch (error) {
                 setError('Authentication failed. Please log in again.');
-                router.push('/admin');
+                router.push('/x7k2-management-9qp');
             } finally {
                 setIsLoading(false);
             }
@@ -45,7 +45,7 @@ const CreateBlogPost = () => {
     const handleSubmit = async (formData) => {
         try {
             await blogApi.createPost(formData);
-            // router.push('/admin/dashboard');
+            // router.push('/x7k2-management-9qp/dashboard');
             toast.success('Post created successfully.');
         } catch (error) {
             toast.error('Failed to create blog post. Please try again.');

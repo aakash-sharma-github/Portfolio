@@ -21,7 +21,7 @@ const AdminLogin = () => {
                 if (token) {
                     const isValid = await authApi.verifyToken(token);
                     if (isValid) {
-                        router.push('/admin/dashboard');
+                        router.push('/x7k2-management-9qp/dashboard');
                     } else {
                         localStorage.removeItem('adminToken');
                     }
@@ -46,7 +46,7 @@ const AdminLogin = () => {
             if (result.token) {
                 localStorage.setItem('adminToken', result.token);
                 console.log('Login successful, redirecting...');
-                router.push('/admin/dashboard');
+                router.push('/x7k2-management-9qp/dashboard');
             } else {
                 setError('No token received from server.');
             }

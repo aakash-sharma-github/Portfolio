@@ -118,7 +118,7 @@ const WorksManagement = () => {
                 <div className="flex flex-col sm:flex-row justify-between items-center gap-4 p-6 bg-[#2a2a35]">
                     <h2 className="text-lg sm:text-xl font-semibold text-white">Projects</h2>
                     <Link 
-                        href="/admin/dashboard/works/create"
+                        href="/x7k2-management-9qp/dashboard/works/create"
                         className="bg-accent hover:bg-accent/80 text-white px-4 py-2 rounded-lg flex items-center gap-2 w-full sm:w-auto justify-center"
                     >
                         <FiPlus /> Add New Project
@@ -168,7 +168,7 @@ const WorksManagement = () => {
                                                 <FiEye size={18} />
                                             </Link>
                                             <Link
-                                                href={`/admin/dashboard/works/edit/${work.slug}`}
+                                                href={`/x7k2-management-9qp/dashboard/works/edit/${work.slug}`}
                                                 className="text-yellow-400 hover:text-yellow-300"
                                             >
                                                 <FiEdit2 size={18} />
