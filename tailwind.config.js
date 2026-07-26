@@ -15,6 +15,7 @@ module.exports = {
 
     },
     screens: {
+      "xs": "480px",
       "sm": "640px",
       "md": "768px",
       "lg": "960px",
@@ -93,9 +94,9 @@ module.exports = {
     },
   },
   plugins: [
-    require("tailwindcss-animate"), 
+    require("tailwindcss-animate"),
     require('@tailwindcss/typography'),
-    function({ addUtilities }) {
+    function ({ addUtilities }) {
       const newUtilities = {
         '.line-clamp-1': {
           overflow: 'hidden',

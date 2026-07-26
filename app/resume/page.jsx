@@ -22,6 +22,7 @@ import {
   SiTailwindcss,
   SiMongodb,
   SiMysql,
+  SiPostgresql,
   SiIntellijidea,
   SiExpress,
   SiDjango,
@@ -126,6 +127,7 @@ const skillsData = {
         { Icon: SiClaude, name: "Claude" },
         { Icon: SiLinux, name: "Linux" },
         { Icon: SiVercel, name: "Vercel" },
+        { Icon: SiSupabase, name: "Supabase" },
       ],
     },
     {
@@ -133,7 +135,7 @@ const skillsData = {
       items: [
         { Icon: SiMysql, name: "MySQL" },
         { Icon: SiMongodb, name: "MongoDB" },
-        { Icon: SiSupabase, name: "Supabase" },
+        { Icon: SiPostgresql, name: "PostgreSQL" },
       ],
     },
   ],

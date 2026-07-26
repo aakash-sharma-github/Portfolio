@@ -248,7 +248,6 @@ const CreateBlogPost = () => {
 
     return (
         <AdminLayout title="Create Blog Post">
-            <Toaster richColors position="top-right" />
             <div className="max-w-3xl mx-auto">
                 <div className="bg-[#1e1e24] border border-white/6 rounded-2xl p-6 md:p-8 shadow-xl">
                     <h2 className="text-2xl font-bold text-white mb-8">Create New Blog Post</h2>
@@ -369,6 +368,7 @@ const CreateBlogPost = () => {
                     </form>
                 </div>
             </div>
+            <Toaster richColors position="bottom-right" />
         </AdminLayout>
     );
 };

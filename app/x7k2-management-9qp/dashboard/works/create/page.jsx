@@ -189,7 +189,6 @@ const CreateProject = () => {
 
     return (
         <AdminLayout title="Create Project">
-            <Toaster richColors position="top-right" />
 
             <div className="max-w-3xl mx-auto">
                 <div className="bg-[#1e1e24] border border-white/6 rounded-2xl p-6 md:p-8 shadow-xl">
@@ -363,6 +362,7 @@ const CreateProject = () => {
                     </form>
                 </div>
             </div>
+            <Toaster richColors position="bottom-right" />
         </AdminLayout>
     );
 };

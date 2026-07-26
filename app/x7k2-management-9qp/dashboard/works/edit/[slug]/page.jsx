@@ -286,7 +286,6 @@ const EditProject = ({ params }) => {
 
   return (
     <AdminLayout title="Edit Project">
-      <Toaster richColors position="top-right" />
 
       <div className="max-w-3xl mx-auto">
         <div className="bg-[#1e1e24] border border-white/6 rounded-2xl p-6 md:p-8 shadow-xl">
@@ -478,6 +477,7 @@ const EditProject = ({ params }) => {
           </form>
         </div>
       </div>
+      <Toaster richColors position="top-right" />
     </AdminLayout>
   );
 };
